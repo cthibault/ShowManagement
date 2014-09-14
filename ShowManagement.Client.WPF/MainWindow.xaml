@@ -1,0 +1,11 @@
+﻿<mahapps:MetroWindow x:Class="ShowManagement.Client.WPF.MainWindow"
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:mahapps="http://metro.mahapps.com/winfx/xaml/controls"
+                     Title="SHOW MANAGEMENT" 
+                     EnableDWMDropShadow="True"
+                     Height="350" Width="525">
+    <Grid>
+        
+    </Grid>
+</mahapps:MetroWindow>
