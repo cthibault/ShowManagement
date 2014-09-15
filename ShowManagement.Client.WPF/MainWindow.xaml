@@ -1,11 +1,39 @@
-﻿<mahapps:MetroWindow x:Class="ShowManagement.Client.WPF.MainWindow"
-                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                     xmlns:mahapps="http://metro.mahapps.com/winfx/xaml/controls"
-                     Title="SHOW MANAGEMENT" 
-                     EnableDWMDropShadow="True"
-                     Height="350" Width="525">
+﻿<controls:MetroWindow x:Class="ShowManagement.Client.WPF.MainWindow"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+                      xmlns:views="clr-namespace:ShowManagement.Client.WPF.Views"
+                      Title="SHOW MANAGEMENT" 
+                      EnableDWMDropShadow="True"
+                      Height="400" Width="750">
+
+    <controls:MetroWindow.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </controls:MetroWindow.Resources>
+    
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!--<controls:MetroProgressBar Grid.Row="0"
+                                   IsIndeterminate="true" 
+                                   Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"
+                                   Foreground="{DynamicResource AccentColorBrush}" />-->
+
+        <controls:MetroContentControl Grid.Row="1">
+            <controls:MetroAnimatedSingleRowTabControl>
+                <controls:MetroAnimatedSingleRowTabControl.Items>
+                    <TabItem Header="shows">
+                        <views:ShowsView />
+                    </TabItem>
+                    <TabItem Header="parsers">
+                        <TextBlock Text="This is the parsers view" FontSize="30" />
+                    </TabItem>
+                </controls:MetroAnimatedSingleRowTabControl.Items>
+            </controls:MetroAnimatedSingleRowTabControl>
+        </controls:MetroContentControl>
     </Grid>
-</mahapps:MetroWindow>
+</controls:MetroWindow>
