@@ -15,7 +15,7 @@
         <!--AppBar Buttons-->
         <StackPanel Grid.Column="0" Orientation="Vertical">
             <Button Width="50" Height="50" ToolTip="refresh" Style="{DynamicResource MetroCircleButtonStyle}"
-                    Command="{Binding RefreshAllShows}">
+                    Command="{Binding RefreshShowsCommand}">
                 <Rectangle Width="20" Height="20">
                     <Rectangle.Fill>
                         <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_refresh}" />

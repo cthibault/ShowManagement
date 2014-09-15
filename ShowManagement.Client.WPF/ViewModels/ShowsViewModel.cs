@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,21 +20,22 @@ namespace ShowManagement.Client.WPF.ViewModels
             this.InitializeData();
         }
 
-        private async void InitializeData()
+        private void InitializeData()
         {
             this.Shows = this.ShowModels.CreateDerivedCollection(
                 s => new ShowViewModel(s),
                 null,
                 (s1, s2) => s1.Name.CompareTo(s2.Name));
 
-            await this.RefreshShows();
         }
         private void InitializeCommands()
         {
             this.AddShowCommand = ReactiveCommand.CreateAsyncTask(x => this.AddShow());
+            this.RefreshShowsCommand = ReactiveCommand.CreateAsyncTask(x => this.RefreshShows());
         }
 
         #region Refresh
+        public ReactiveCommand<Unit> RefreshShowsCommand { get; private set; }
         private async Task RefreshShows()
         {
             try
@@ -59,6 +61,10 @@ namespace ShowManagement.Client.WPF.ViewModels
         {
             this.ShowModels.Add(new ShowInfo() { Name = "Add" });
         }
+        #endregion
+
+        #region Select
+
         #endregion
 
 

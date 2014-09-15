@@ -123,11 +123,9 @@
     <Compile Include="Models\Change.cs" />
     <Compile Include="Services\ServiceProvider.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
-    <Compile Include="ViewModels\Interfaces\ITabViewModel.cs" />
     <Compile Include="ViewModels\ShowsViewModel.cs" />
     <Compile Include="ViewModels\ShowViewModel.cs" />
     <Compile Include="ViewModels\TrackableObject.cs" />
-    <Compile Include="Views\Interfaces\IView.cs" />
     <Compile Include="Views\ShowsView.xaml.cs">
       <DependentUpon>ShowsView.xaml</DependentUpon>
     </Compile>
@@ -187,7 +185,10 @@
   <ItemGroup>
     <Resource Include="Resources\Entypo-license.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="ViewModels\Interfaces\" />
+    <Folder Include="Views\Interfaces\" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ShowManagement.Core\ShowManagement.Core.csproj">
       <Project>{5bac28ed-95ad-4830-a2a1-c67f85d1bfad}</Project>
