@@ -211,6 +211,7 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ShowInfoController.cs" />
     <Compile Include="Controllers\ShowsController.cs" />
+    <Compile Include="Converters\DtoConverters.cs" />
     <Compile Include="Data\Entities\ShowParser.cs" />
     <Compile Include="Data\Entities\Show.cs" />
     <Compile Include="Data\Repositories\BaseRepository.cs" />

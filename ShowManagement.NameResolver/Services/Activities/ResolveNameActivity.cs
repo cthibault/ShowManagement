@@ -85,10 +85,6 @@ namespace ShowManagement.NameResolver.Services.Activities
         }
         
 
-        /// <summary>
-        /// Find File on FS and Validate Directory structure
-        /// </summary>
-        /// <returns>FileInfo if valid to process</returns>
         private FileInfo FindAndValidateFileInfo()
         {
             var fileInfo = new FileInfo(this.FilePath);
@@ -124,14 +120,19 @@ namespace ShowManagement.NameResolver.Services.Activities
 
                 if (this.IsValidToPerformRename(showInfo))
                 {
-                    int seasonNumber = this.Parse(showInfo.Parsers.Where(p => p.ParserType == ParserType.Season), fileInfo.Name);
-                    int episodeNumber = this.Parse(showInfo.Parsers.Where(p => p.ParserType == ParserType.Episode), fileInfo.Name);
+                    int seasonNumber = this.Parse(showInfo.Parsers.Where(p => p.Type == ParserType.Season), fileInfo.Name);
+                    int episodeNumber = this.Parse(showInfo.Parsers.Where(p => p.Type == ParserType.Episode), fileInfo.Name);
 
-                    var episodeData = await this.ServiceProvider.GetEpisodeData(showInfo.TvdbId, seasonNumber, episodeNumber);
+                    Trace.WriteLine(string.Format("S:{0}, E:{1}", seasonNumber, episodeNumber));
 
-                    if (episodeData != null)
+                    if (seasonNumber > 0 && episodeNumber > 0)
                     {
-                        isSuccess = await this.PerformRename(fileInfo, episodeData);
+                        var episodeData = await this.ServiceProvider.GetEpisodeData(showInfo.TvdbId, seasonNumber, episodeNumber);
+
+                        if (episodeData != null)
+                        {
+                            isSuccess = await this.PerformRename(fileInfo, episodeData);
+                        }
                     }
                 }
             }
@@ -203,9 +204,13 @@ namespace ShowManagement.NameResolver.Services.Activities
             {
                 foreach (var parser in parsers)
                 {
-                    if (parser.TryParse(fileName, out parsedNumber))
+                    string result;
+                    if (parser.TryParse(fileName, out result))
                     {
-                        break;
+                        if (result.TryParseAsInt(parser.ExcludedCharacters, out parsedNumber))
+                        {
+                            break;
+                        }
                     }
                 }
             }

@@ -8,7 +8,7 @@ namespace ShowManagement.Business.Enums
 {
     public enum ParserType
     {
-        Season,
-        Episode
+        Season = 1,
+        Episode = 2
     }
 }

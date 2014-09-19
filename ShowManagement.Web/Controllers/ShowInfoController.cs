@@ -1,5 +1,6 @@
 ﻿using ShowManagement.Business.Enums;
 using ShowManagement.Business.Models;
+using ShowManagement.Web.Converters;
 using ShowManagement.Web.Data.Entities;
 using ShowManagement.Web.Data.Repositories;
 using System;
@@ -41,17 +42,9 @@ namespace ShowManagement.Web.Controllers
         [HttpGet]
         public IEnumerable<ShowInfo> GetShowInfos()
         {
-            IEnumerable<Show> shows = this.UnitOfWork.ShowRepository.Get();
+            IEnumerable<Show> shows = this.UnitOfWork.ShowRepository.Get(null, null, "ShowParsers");
 
-            var showInfos = shows.Select(s =>
-                new ShowInfo()
-                {
-                    ShowId = s.ShowId,
-                    TvdbId = s.TvdbId,
-                    ImdbId = s.ImdbId,
-                    Name = s.Name,
-                    Directory = s.Directory,
-                }).ToList();
+            var showInfos = shows.Select(s => DtoConverters.ToShowInfo(s)).ToList();
 
             return showInfos;
         }
@@ -61,43 +54,36 @@ namespace ShowManagement.Web.Controllers
         public IHttpActionResult Get(string directoryPath)
         {
             var show = this.UnitOfWork.ShowRepository
-                .Get(s => s.Directory == directoryPath)
+                .Get(s => s.Directory == directoryPath, null, "ShowParsers")
                 .SingleOrDefault();
 
             if (show == null)
             {
-                return Ok(new ShowInfo());
+                return NotFound();
             }
 
-            var showInfo = new ShowInfo();
-            showInfo.ShowId = show.ShowId;
-            showInfo.TvdbId = show.TvdbId;
-            showInfo.ImdbId = show.ImdbId;
-            showInfo.Name = show.Name;
-            showInfo.Directory = show.Directory;
-            showInfo.Parsers.Add(new Parser(ParserType.Season, "season", "chars"));
-            showInfo.Parsers.Add(new Parser(ParserType.Episode, "episode", "chars"));
+            var showInfo = DtoConverters.ToShowInfo(show);
 
             return this.Ok(showInfo);
         }
 
-        [HttpPost]
-        [ResponseType(typeof(ShowInfo))]
-        public IHttpActionResult PostShow(ShowInfo showInfo)
-        {
-            var show = new Show();
-            show.TvdbId = showInfo.TvdbId;
-            show.ImdbId = showInfo.ImdbId;
-            show.Name = showInfo.Name;
-            show.Directory = showInfo.Directory;
+        //[HttpPost]
+        //[ResponseType(typeof(ShowInfo))]
+        //public IHttpActionResult PostShow(ShowInfo showInfo)
+        //{
+        //    var show = new Show();
+        //    show.TvdbId = showInfo.TvdbId;
+        //    show.ImdbId = showInfo.ImdbId;
+        //    show.Name = showInfo.Name;
+        //    show.Directory = showInfo.Directory;
 
-            this.UnitOfWork.ShowRepository.Insert(show);
+        //    this.UnitOfWork.ShowRepository.Insert(show);
 
-            this.UnitOfWork.Save();
+        //    this.UnitOfWork.Save();
 
-            showInfo.ShowId = show.ShowId;
+        //    showInfo.ShowId = show.ShowId;
 
-            return Ok(showInfo);
-        }
+        //    return Ok(showInfo);
+        //}
     }
 }
