@@ -1,7 +1,7 @@
 ﻿using ReactiveUI;
+using ShowManagement.Business.Models;
 using ShowManagement.Client.WPF.Models;
 using ShowManagement.Core.Extensions;
-using ShowManagement.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

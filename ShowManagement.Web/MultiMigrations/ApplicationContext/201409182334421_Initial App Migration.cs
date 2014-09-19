@@ -1,9 +1,9 @@
-namespace ShowManagement.Web.Migrations
+namespace ShowManagement.Web.MultiMigrations.ApplicationContext
 {
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class Initial : DbMigration
+    public partial class InitialAppMigration : DbMigration
     {
         public override void Up()
         {
@@ -31,22 +31,12 @@ namespace ShowManagement.Web.Migrations
                 .Index(t => t.RoleId);
             
             CreateTable(
-                "dbo.Shows",
-                c => new
-                    {
-                        ShowId = c.Int(nullable: false, identity: true),
-                        TvdbId = c.Int(nullable: false),
-                        ImdbId = c.String(),
-                        Name = c.String(),
-                        Directory = c.String(),
-                    })
-                .PrimaryKey(t => t.ShowId);
-            
-            CreateTable(
                 "dbo.AspNetUsers",
                 c => new
                     {
                         Id = c.String(nullable: false, maxLength: 128),
+                        HomeTown = c.String(),
+                        DateOfBirth = c.DateTime(),
                         Email = c.String(maxLength: 256),
                         EmailConfirmed = c.Boolean(nullable: false),
                         PasswordHash = c.String(),
@@ -104,7 +94,6 @@ namespace ShowManagement.Web.Migrations
             DropTable("dbo.AspNetUserLogins");
             DropTable("dbo.AspNetUserClaims");
             DropTable("dbo.AspNetUsers");
-            DropTable("dbo.Shows");
             DropTable("dbo.AspNetUserRoles");
             DropTable("dbo.AspNetRoles");
         }

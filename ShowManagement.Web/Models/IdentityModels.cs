@@ -22,34 +22,4 @@ namespace ShowManagement.Web.Models
         public string HomeTown { get; set; }
         public DateTime? DateOfBirth { get; set; }
     }
-
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
-    {
-        public ApplicationDbContext()
-            : base("DefaultConnection", throwIfV1Schema: false)
-        {
-        }
-
-        public static ApplicationDbContext Create()
-        {
-            return new ApplicationDbContext();
-        }
-
-        public DbSet<Show> Shows { get; set; }
-    }
-
-    public class ShowManagementDbContext : DbContext
-    {
-        public ShowManagementDbContext()
-            : base ("DefaultConnection")
-        {
-        }
-
-        public static ShowManagementDbContext Create()
-        {
-            return new ShowManagementDbContext();
-        }
-
-        public DbSet<Show> Shows { get; set; }
-    }
 }

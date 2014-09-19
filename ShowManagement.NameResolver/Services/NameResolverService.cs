@@ -1,4 +1,5 @@
 ﻿using Microsoft.Practices.Unity;
+using ShowManagement.CommonServiceProviders;
 using ShowManagement.NameResolver.Services.Activities;
 using System;
 using System.Collections.Concurrent;
@@ -13,7 +14,7 @@ namespace ShowManagement.NameResolver.Services
 {
     public class NameResolverService : INameResolverService
     {
-        public NameResolverService(SettingsManager settingsManager, IShowManagementService service)
+        public NameResolverService(SettingsManager settingsManager, IShowManagementServiceProvider showManagementServiceProvider)
         {
             if (settingsManager == null)
             {
@@ -22,6 +23,8 @@ namespace ShowManagement.NameResolver.Services
 
             this.ItemRetryAttempts = settingsManager.ItemRetryAttempts;
             this.ItemRetryDurationSeconds = settingsManager.ItemRetryDurationSeconds;
+
+            this._showManagementServiceProvider = showManagementServiceProvider;
         }
 
         public async Task Start()
@@ -74,7 +77,7 @@ namespace ShowManagement.NameResolver.Services
                     {
                         foreach (var filePath in filePaths)
                         {
-                            var activity = new ResolveNameActivity(filePath, retryAttempts);
+                            var activity = new ResolveNameActivity(filePath, retryAttempts, this._showManagementServiceProvider);
 
                             await this.AddToCollection(this.Queue, activity, this.ExternalInfluenceCTS.Token);
                         }
@@ -94,7 +97,7 @@ namespace ShowManagement.NameResolver.Services
 
                 if (paths != null)
                 {
-                    var mockActivities = paths.Select(p => new ResolveNameActivity(p, 0));
+                    var mockActivities = paths.Select(p => new ResolveNameActivity(p, 0, null));
 
                     var activitiesToCancel = this.Queue.Intersect(mockActivities, new ActivityComparer());
 
@@ -111,7 +114,7 @@ namespace ShowManagement.NameResolver.Services
 
                 if (paths != null)
                 {
-                    var mockActivities = paths.Select(p => new ResolveNameActivity(p, 0));
+                    var mockActivities = paths.Select(p => new ResolveNameActivity(p, 0, null));
 
                     var activitiesToCancel = this.RetryQueue.Intersect(mockActivities, new ActivityComparer());
 
@@ -213,8 +216,10 @@ namespace ShowManagement.NameResolver.Services
         private CancellationTokenSource _externalInfluenceCTS;
 
 
-
         private BlockingCollection<IActivity> Queue = new BlockingCollection<IActivity>();
         private BlockingCollection<IActivity> RetryQueue = new BlockingCollection<IActivity>();
+
+        private IShowManagementServiceProvider _showManagementServiceProvider;
+
     }
 }

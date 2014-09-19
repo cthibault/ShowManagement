@@ -58,6 +58,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ShowManagement.Business\ShowManagement.Business.csproj">
+      <Project>{f5b8871e-8108-4b8d-81c5-9df33ac19bfa}</Project>
+      <Name>ShowManagement.Business</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ShowManagement.Core\ShowManagement.Core.csproj">
       <Project>{5bac28ed-95ad-4830-a2a1-c67f85d1bfad}</Project>
       <Name>ShowManagement.Core</Name>

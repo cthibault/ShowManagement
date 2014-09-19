@@ -63,7 +63,6 @@
     <Compile Include="Components\Interfaces\IDirectoryMonitor.cs" />
     <Compile Include="Services\Activities\ActivityComparer.cs" />
     <Compile Include="Services\Activities\IActivity.cs" />
-    <Compile Include="Services\Interfaces\IShowManagementService.cs" />
     <Compile Include="Services\Interfaces\INameResolverService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\NameResolverService.cs" />
@@ -73,7 +72,20 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\ShowManagement.Business\ShowManagement.Business.csproj">
+      <Project>{f5b8871e-8108-4b8d-81c5-9df33ac19bfa}</Project>
+      <Name>ShowManagement.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ShowManagement.CommonServiceProviders\ShowManagement.CommonServiceProviders.csproj">
+      <Project>{dc06d071-869e-44f9-97c0-cd1188999aee}</Project>
+      <Name>ShowManagement.CommonServiceProviders</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ShowManagement.Core\ShowManagement.Core.csproj">
+      <Project>{5bac28ed-95ad-4830-a2a1-c67f85d1bfad}</Project>
+      <Name>ShowManagement.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

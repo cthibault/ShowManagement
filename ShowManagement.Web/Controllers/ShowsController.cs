@@ -10,8 +10,8 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using ShowManagement.Web.Models;
 using ShowManagement.Web.Data.Entities;
-using ShowManagement.Core.Models;
 using ShowManagement.Web.Data.Repositories;
+using ShowManagement.Business.Models;
 
 namespace ShowManagement.Web.Controllers
 {
@@ -63,8 +63,6 @@ namespace ShowManagement.Web.Controllers
                     ImdbId = s.ImdbId,
                     Name = s.Name,
                     Directory = s.Directory,
-                    SeasonParserCount = 0,
-                    EpisodeParserCount = 0,
                 }).ToList();
 
             return showInfos;

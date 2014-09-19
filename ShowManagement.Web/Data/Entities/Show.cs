@@ -12,5 +12,7 @@ namespace ShowManagement.Web.Data.Entities
         public string ImdbId { get; set; }
         public string Name { get; set; }
         public string Directory { get; set; }
+
+        public virtual ICollection<ShowParser> ShowParsers { get; set; }
     }
 }

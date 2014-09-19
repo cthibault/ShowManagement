@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShowManagement.Core.Models
+namespace ShowManagement.Business.Models
 {
     public class ShowInfo
     {
@@ -15,7 +15,19 @@ namespace ShowManagement.Core.Models
         public string ImdbId { get; set; }
         public string Name { get; set; }
         public string Directory { get; set; }
-        public int SeasonParserCount { get; set; }
-        public int EpisodeParserCount { get; set; }
+        public List<Parser> Parsers
+        {
+            get
+            {
+                if (this._parsers == null)
+                {
+                    this._parsers = new List<Parser>();
+                }
+                return this._parsers;
+            }
+        }
+
+
+        private List<Parser> _parsers;
     }
 }
