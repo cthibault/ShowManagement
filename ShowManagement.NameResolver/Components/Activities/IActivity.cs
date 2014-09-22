@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShowManagement.NameResolver.Services.Activities
+namespace ShowManagement.NameResolver.Components.Activities
 {
     public interface IActivity: IEquatable<IActivity>
     {

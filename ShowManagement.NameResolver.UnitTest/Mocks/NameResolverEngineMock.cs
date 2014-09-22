@@ -1,4 +1,4 @@
-﻿using ShowManagement.NameResolver.Services;
+﻿using ShowManagement.NameResolver.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ShowManagement.NameResolver.UnitTest.Mocks
 {
-    public class NameResolverServiceMock : INameResolverService
+    public class NameResolverEngineMock : INameResolverEngine
     {
         public async Task Start()
         {

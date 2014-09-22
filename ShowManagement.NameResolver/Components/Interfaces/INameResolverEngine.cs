@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShowManagement.NameResolver.Services
+namespace ShowManagement.NameResolver.Components
 {
-    public interface INameResolverService
+    public interface INameResolverEngine
     {
         Task Start();
         Task Stop();

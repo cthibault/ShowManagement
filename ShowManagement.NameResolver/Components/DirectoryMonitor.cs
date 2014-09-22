@@ -1,5 +1,5 @@
 ﻿using Microsoft.Practices.Unity;
-using ShowManagement.NameResolver.Services;
+using ShowManagement.NameResolver.Components;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +11,7 @@ namespace ShowManagement.NameResolver.Components
 {
     public class DirectoryMonitor : BaseComponent, IDirectoryMonitor
     {
-        public DirectoryMonitor(IUnityContainer unityContainer, SettingsManager settingsManager, INameResolverService nameResolverService)
+        public DirectoryMonitor(IUnityContainer unityContainer, SettingsManager settingsManager, INameResolverEngine nameResolverEngine)
             : base(unityContainer)
         {
             if (settingsManager == null)
@@ -20,19 +20,19 @@ namespace ShowManagement.NameResolver.Components
             }
 
             this.SettingsManager = settingsManager;
-            this.NameResolverService = nameResolverService;
+            this.NameResolverEngine = nameResolverEngine;
         }
 
         public void Start()
         {
-            this.NameResolverService.Start();
+            this.NameResolverEngine.Start();
             this.FileSystemWatcher.EnableRaisingEvents = true;
         }
 
         public void Stop()
         {
             this.FileSystemWatcher.EnableRaisingEvents = false;
-            this.NameResolverService.Stop();
+            this.NameResolverEngine.Stop();
         }
 
         public void PerformFullScan()
@@ -67,7 +67,7 @@ namespace ShowManagement.NameResolver.Components
 
                 var filteredFileNames = filteredFileInfos.Select(fi => fi.FullName);
 
-                this.NameResolverService.Add(filteredFileNames, retryAttempts);
+                this.NameResolverEngine.Add(filteredFileNames, retryAttempts);
             }
         }
 
@@ -90,19 +90,19 @@ namespace ShowManagement.NameResolver.Components
             get { return this.FileSystemWatcher.EnableRaisingEvents;}
         }
        
-        protected INameResolverService NameResolverService
+        protected INameResolverEngine NameResolverEngine
         {
             get
             {
-                if (this._nameResolverService == null)
+                if (this._nameResolverEngine == null)
                 {
-                    this._nameResolverService = this.UnityContainer.Resolve<INameResolverService>();
+                    this._nameResolverEngine = this.UnityContainer.Resolve<INameResolverEngine>();
                 }
-                return this._nameResolverService;
+                return this._nameResolverEngine;
             }
-            private set { this._nameResolverService = value; }
+            private set { this._nameResolverEngine = value; }
         }
-        private INameResolverService _nameResolverService;
+        private INameResolverEngine _nameResolverEngine;
 
 
         private FileSystemWatcher FileSystemWatcher

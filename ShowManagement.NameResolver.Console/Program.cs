@@ -1,5 +1,5 @@
 ﻿using ShowManagement.CommonServiceProviders;
-using ShowManagement.NameResolver.Services;
+using ShowManagement.NameResolver.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +24,7 @@ namespace ShowManagement.NameResolver.Console
                     { SettingsManager.ITEM_RETRY_DURATION_KEY, "3" },
                 });
 
-            var nrService = new NameResolverService(settings, new ShowManagementServiceProvider());
+            var nrService = new NameResolverEngine(settings, new ShowManagementServiceProvider());
 
 
             var quit = false;
@@ -35,7 +35,7 @@ namespace ShowManagement.NameResolver.Console
             }            
         }
 
-        private static bool ProcessInput(INameResolverService nrService)
+        private static bool ProcessInput(INameResolverEngine nrService)
         {
             bool quit = false;
 

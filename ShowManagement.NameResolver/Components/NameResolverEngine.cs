@@ -1,6 +1,7 @@
 ﻿using Microsoft.Practices.Unity;
 using ShowManagement.CommonServiceProviders;
-using ShowManagement.NameResolver.Services.Activities;
+using ShowManagement.NameResolver.Components.Activities;
+using ShowManagement.Core.Extensions;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -10,11 +11,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ShowManagement.NameResolver.Services
+namespace ShowManagement.NameResolver.Components
 {
-    public class NameResolverService : INameResolverService
+    public class NameResolverEngine : INameResolverEngine
     {
-        public NameResolverService(SettingsManager settingsManager, IShowManagementServiceProvider showManagementServiceProvider)
+        public NameResolverEngine(SettingsManager settingsManager, IShowManagementServiceProvider showManagementServiceProvider)
         {
             if (settingsManager == null)
             {
@@ -31,7 +32,7 @@ namespace ShowManagement.NameResolver.Services
         {
             try
             {
-                Trace.WriteLine("Starting the Service Processes");
+                Trace.WriteLine("Starting the Engine Processing Queues");
 
                 await Task.Run(() => 
                     {

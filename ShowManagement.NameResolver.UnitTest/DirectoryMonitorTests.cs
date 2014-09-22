@@ -1,7 +1,6 @@
 ﻿using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
 using ShowManagement.NameResolver.Components;
-using ShowManagement.NameResolver.Services;
 using ShowManagement.NameResolver.UnitTest.Mocks;
 using System;
 using System.Collections.Generic;
@@ -19,7 +18,7 @@ namespace ShowManagement.NameResolver.UnitTest
         public void NotMonitoringOnCreate()
         {
             var unityContainer = new UnityContainer();
-            unityContainer.RegisterType<INameResolverService, NameResolverServiceMock>();
+            unityContainer.RegisterType<INameResolverEngine, NameResolverEngineMock>();
             unityContainer.RegisterType<IDirectoryMonitor, DirectoryMonitor>();
 
             var settings = new SettingsManager(new Dictionary<string, string>
@@ -40,7 +39,7 @@ namespace ShowManagement.NameResolver.UnitTest
         public void MonitoringAfterStart()
         {
             var unityContainer = new UnityContainer();
-            unityContainer.RegisterType<INameResolverService, NameResolverServiceMock>();
+            unityContainer.RegisterType<INameResolverEngine, NameResolverEngineMock>();
             unityContainer.RegisterType<IDirectoryMonitor, DirectoryMonitor>();
 
             var settings = new SettingsManager(new Dictionary<string, string>
@@ -64,7 +63,7 @@ namespace ShowManagement.NameResolver.UnitTest
         public void NotMonitoringAfterStop()
         {
             var unityContainer = new UnityContainer();
-            unityContainer.RegisterType<INameResolverService, NameResolverServiceMock>();
+            unityContainer.RegisterType<INameResolverEngine, NameResolverEngineMock>();
             unityContainer.RegisterType<IDirectoryMonitor, DirectoryMonitor>();
 
             var settings = new SettingsManager(new Dictionary<string, string>
@@ -89,7 +88,7 @@ namespace ShowManagement.NameResolver.UnitTest
         public void PerformFullScan()
         {
             var unityContainer = new UnityContainer();
-            unityContainer.RegisterType<INameResolverService, NameResolverServiceMock>();
+            unityContainer.RegisterType<INameResolverEngine, NameResolverEngineMock>();
             unityContainer.RegisterType<IDirectoryMonitor, DirectoryMonitor>();
 
             var settings = new SettingsManager(new Dictionary<string, string>
@@ -101,7 +100,7 @@ namespace ShowManagement.NameResolver.UnitTest
                     { SettingsManager.ITEM_RETRY_DURATION_KEY, "1000" },
                 });
 
-            NameResolverServiceMock mockService = new NameResolverServiceMock();
+            NameResolverEngineMock mockService = new NameResolverEngineMock();
 
             var directoryMonitor = unityContainer.Resolve<IDirectoryMonitor>(
                 new ParameterOverride("settingsManager", settings),

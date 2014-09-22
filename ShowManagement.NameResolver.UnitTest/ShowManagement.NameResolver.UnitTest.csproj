@@ -55,7 +55,7 @@
   <ItemGroup>
     <Compile Include="NameResolverServiceTest.cs" />
     <Compile Include="DirectoryMonitorTests.cs" />
-    <Compile Include="Mocks\NameResolverServiceMock.cs" />
+    <Compile Include="Mocks\NameResolverEngineMock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

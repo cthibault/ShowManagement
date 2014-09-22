@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShowManagement.NameResolver.Services.Activities
+namespace ShowManagement.NameResolver.Components.Activities
 {
     abstract class Activity : IActivity
     {
