@@ -14,16 +14,38 @@ namespace ShowManagement.CommonServiceProviders
     {
         public async Task<ShowInfo> GetShowInfo(string directoryPath)
         {
-            ShowInfo showInfo = null;
+            var parameters = new Dictionary<string, object>()
+            {
+                { "directoryPath", directoryPath },
+            };
+
+            ShowInfo showInfo = await this.GetAsync<ShowInfo>("api/showInfo/Get", parameters);
+
+            return showInfo;
+        }
+
+        public async Task<EpisodeData> GetEpisodeData(int tvdbId, int seasonNumber, int episodeNumber)
+        {
+            var parameters = new Dictionary<string, object>()
+            {
+                { "seriesId", tvdbId },
+                { "seasonNumber", seasonNumber },
+                { "episodeNumber", episodeNumber },
+            };
+
+            EpisodeData episodeData = await this.GetAsync<EpisodeData>("api/tvdb/GetEpisodeData", parameters);
+
+            return episodeData;
+        }
+
+
+        private async Task<T> GetAsync<T>(string apiUri, Dictionary<string, object> parameters)
+        {
+            T result = default(T);
 
             using (var client = new HttpClient())
             {
-                var parameters = new Dictionary<string, string>()
-                {
-                    { "directoryPath", directoryPath }
-                };
-
-                var queryString = this.BuildQueryString("api/showInfo/Get", parameters);
+                var queryString = this.BuildQueryString(apiUri, parameters);
 
                 client.BaseAddress = new Uri(this.BaseAddress);
                 client.DefaultRequestHeaders.Accept.Clear();
@@ -33,21 +55,13 @@ namespace ShowManagement.CommonServiceProviders
 
                 response.EnsureSuccessStatusCode();
 
-                showInfo = await response.Content.ReadAsAsync<ShowInfo>();
+                result = await response.Content.ReadAsAsync<T>();
             }
 
-            return showInfo;
+            return result;
         }
 
-        public async Task<EpisodeData> GetEpisodeData(int tvdbId, int seasonNumber, int episodeNumber)
-        {
-            // TODO: Implement
-
-            return null;
-        }
-
-
-        private string BuildQueryString(string apiUri, Dictionary<string,string> parameters)
+        private string BuildQueryString(string apiUri, Dictionary<string, object> parameters)
         {
             string queryString = apiUri;
 
@@ -55,9 +69,9 @@ namespace ShowManagement.CommonServiceProviders
 
             if (parameters != null)
             {
-                foreach (var parameter in parameters)
+                foreach (var parameterKvp in parameters)
                 {
-                    queryCollection[parameter.Key] = parameter.Value;
+                    queryCollection[parameterKvp.Key] = parameterKvp.Value.ToString();
                 }
             }
 

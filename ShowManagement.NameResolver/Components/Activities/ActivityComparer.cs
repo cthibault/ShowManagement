@@ -1,5 +1,7 @@
-﻿using System;
+﻿using ShowManagement.NameResolver.Diagnostics;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,11 +12,30 @@ namespace ShowManagement.NameResolver.Components.Activities
     {
         public bool Equals(IActivity x, IActivity y)
         {
-            if (object.ReferenceEquals(x, y)) return true;
+            bool? isEquals = null;
 
-            if (object.ReferenceEquals(x, null) || object.ReferenceEquals(y, null)) return false;
+            if (object.ReferenceEquals(x, y))
+            {
+                TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "object.ReferenceEquals is TRUE.\r\n\t{0}\r\n\t{1}", x, y);
+                isEquals = true;
+            }
+            else if (object.ReferenceEquals(x, null) || object.ReferenceEquals(y, null))
+            {
+                TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "One of the Activity objects is NULL.\r\n\t{0}\r\n\t{1}", x, y);
+                isEquals = false;
+            }
+            else
+            {
+                isEquals = x.Equals(y);
+            }
 
-            return x.Equals(y);
+            if (!isEquals.HasValue)
+            {
+                TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Warning, 0, "ShowManagement.NameResolver.Components.Activities.ActivityComparer.Equals() failed to calculate Equality.");
+                isEquals = false;
+            }
+
+            return isEquals.Value;
         }
 
         public int GetHashCode(IActivity obj)

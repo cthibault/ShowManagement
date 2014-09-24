@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArgModel.cs" />
+    <Compile Include="Diagnostics\TraceSourceManager.cs" />
     <Compile Include="NameResolverWindowsService.cs">
       <SubType>Component</SubType>
     </Compile>

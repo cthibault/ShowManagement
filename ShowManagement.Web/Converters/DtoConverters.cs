@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using TvdbLib.Data;
 
 namespace ShowManagement.Web.Converters
 {
@@ -47,6 +48,29 @@ namespace ShowManagement.Web.Converters
             }
 
             return parser;
+        }
+
+        public static EpisodeData ToEpisodeData(TvdbEpisode tvdbEpisode)
+        {
+            EpisodeData episodeData = null;
+
+            if (tvdbEpisode != null)
+            {
+                episodeData = new EpisodeData(
+                    id: tvdbEpisode.Id,
+                    imdbId: tvdbEpisode.ImdbId,
+                    seriesId: tvdbEpisode.SeriesId,
+                    seasonId: tvdbEpisode.SeasonId,
+                    lastUpdated: tvdbEpisode.LastUpdated,
+                    absoluteNumber: tvdbEpisode.AbsoluteNumber,
+                    seasonNumber: tvdbEpisode.SeasonNumber,
+                    episodeNumber: tvdbEpisode.EpisodeNumber,
+                    episodeName: tvdbEpisode.EpisodeName,
+                    overview: tvdbEpisode.Overview
+                    );
+            }
+
+            return episodeData;
         }
     }
 }

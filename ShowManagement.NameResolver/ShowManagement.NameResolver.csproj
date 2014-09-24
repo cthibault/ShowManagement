@@ -64,6 +64,7 @@
     <Compile Include="Components\Activities\ActivityComparer.cs" />
     <Compile Include="Components\Activities\IActivity.cs" />
     <Compile Include="Components\Interfaces\INameResolverEngine.cs" />
+    <Compile Include="Diagnostics\TraceSourceManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Components\NameResolverEngine.cs" />
     <Compile Include="Components\Activities\ResolveNameActivity.cs" />

@@ -174,6 +174,9 @@
     <Reference Include="System.Web.Optimization">
       <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
     </Reference>
+    <Reference Include="TvdbLib">
+      <HintPath>..\lib\TvdbLib.dll</HintPath>
+    </Reference>
     <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
@@ -211,6 +214,7 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ShowInfoController.cs" />
     <Compile Include="Controllers\ShowsController.cs" />
+    <Compile Include="Controllers\TvdbController.cs" />
     <Compile Include="Converters\DtoConverters.cs" />
     <Compile Include="Data\Entities\ShowParser.cs" />
     <Compile Include="Data\Entities\Show.cs" />
