@@ -1,4 +1,5 @@
-﻿using ShowManagement.NameResolver.Diagnostics;
+﻿using ShowManagement.Core.Extensions;
+using ShowManagement.NameResolver.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,12 +17,12 @@ namespace ShowManagement.NameResolver.Components.Activities
 
             if (object.ReferenceEquals(x, y))
             {
-                TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "object.ReferenceEquals is TRUE.\r\n\t{0}\r\n\t{1}", x, y);
+                TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "object.ReferenceEquals is TRUE.\r\n\t{0}\r\n\t{1}", x, y);
                 isEquals = true;
             }
             else if (object.ReferenceEquals(x, null) || object.ReferenceEquals(y, null))
             {
-                TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "One of the Activity objects is NULL.\r\n\t{0}\r\n\t{1}", x, y);
+                TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "One of the Activity objects is NULL.\r\n\t{0}\r\n\t{1}", x, y);
                 isEquals = false;
             }
             else
@@ -31,7 +32,7 @@ namespace ShowManagement.NameResolver.Components.Activities
 
             if (!isEquals.HasValue)
             {
-                TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Warning, 0, "ShowManagement.NameResolver.Components.Activities.ActivityComparer.Equals() failed to calculate Equality.");
+                TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Warning, 0, "ShowManagement.NameResolver.Components.Activities.ActivityComparer.Equals() failed to calculate Equality.");
                 isEquals = false;
             }
 

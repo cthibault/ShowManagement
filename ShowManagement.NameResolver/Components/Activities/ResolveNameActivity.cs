@@ -24,7 +24,7 @@ namespace ShowManagement.NameResolver.Components.Activities
 
         public override async Task<IActivity> Perform()
         {
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Information, 0, "Begin Performing Activity: ", this);
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Information, 0, "Begin Performing Activity: ", this);
 
             IActivity nextActivity = null;
 
@@ -36,7 +36,7 @@ namespace ShowManagement.NameResolver.Components.Activities
             {
                 nextActivity = this.BuildNextActivity(isSuccess, validFileInfo != null);
 
-                TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Next Activity: ", nextActivity);
+                TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Next Activity: ", nextActivity);
             }
 
             return nextActivity;
@@ -45,7 +45,7 @@ namespace ShowManagement.NameResolver.Components.Activities
         {
             this.IsCancelled = true;
 
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Information, 0, "Cancelled Activity: ", this);
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Information, 0, "Cancelled Activity: ", this);
         }
 
 
@@ -93,17 +93,17 @@ namespace ShowManagement.NameResolver.Components.Activities
 
             if (!fileInfo.Exists)
             {
-                TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "File Does Not Exist: {0}", fileInfo.FullName);
+                TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "File Does Not Exist: {0}", fileInfo.FullName);
                 fileInfo = null;
             }
             else if (fileInfo.Directory == null || !fileInfo.Directory.Exists)
             {
-                TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Season Directory Does Not Exist: {0}", fileInfo.Directory != null ? fileInfo.Directory.FullName : string.Empty);
+                TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Season Directory Does Not Exist: {0}", fileInfo.Directory != null ? fileInfo.Directory.FullName : string.Empty);
                 fileInfo = null;
             }
             else if (fileInfo.Directory.Parent == null || !fileInfo.Directory.Parent.Exists)
             {
-                TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Show Directory Does Not Exist: {0}", fileInfo.Directory.Parent != null ? fileInfo.Directory.Parent.FullName : string.Empty);
+                TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Show Directory Does Not Exist: {0}", fileInfo.Directory.Parent != null ? fileInfo.Directory.Parent.FullName : string.Empty);
                 fileInfo = null;
             }
 
@@ -131,7 +131,7 @@ namespace ShowManagement.NameResolver.Components.Activities
                         int seasonNumber = this.Parse(showInfo.Parsers.Where(p => p.Type == ParserType.Season), fileInfo.Name);
                         int episodeNumber = this.Parse(showInfo.Parsers.Where(p => p.Type == ParserType.Episode), fileInfo.Name);
 
-                        TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "S:{0}, E:{1}", seasonNumber, episodeNumber);
+                        TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "S:{0}, E:{1}", seasonNumber, episodeNumber);
 
                         if (seasonNumber > 0 && episodeNumber > 0)
                         {
@@ -166,17 +166,17 @@ namespace ShowManagement.NameResolver.Components.Activities
 
                     isSuccess = true;
 
-                    TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Renamed \"{0}\"  == TO ==  \"{1}\"", originalName, fullPath);
+                    TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Renamed \"{0}\"  == TO ==  \"{1}\"", originalName, fullPath);
                 }
                 catch (IOException ioException)
                 {
-                    TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Error, 0, "Exception caught in ResolveNameActivity.PerformRename(); Unable to rename {0}  [{1}]", fileInfo.FullName, ioException.ExtractExceptionMessage());
+                    TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Error, 0, "Exception caught in ResolveNameActivity.PerformRename(); Unable to rename {0}  [{1}]", fileInfo.FullName, ioException.ExtractExceptionMessage());
                     isSuccess = false;
                 }
                 catch (Exception ex)
                 {
                     // TODO
-                    TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Error, 0, "Exception caught in ResolveNameActivity.PerformRename(): {0}", ex.ExtractExceptionMessage());
+                    TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Error, 0, "Exception caught in ResolveNameActivity.PerformRename(): {0}", ex.ExtractExceptionMessage());
                     isSuccess = false;
                 }
             }
@@ -190,7 +190,7 @@ namespace ShowManagement.NameResolver.Components.Activities
                 && showInfo.TvdbId > 0
                 && showInfo.Parsers.Any();
 
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Is Valid To Perform Rename: {0}", isValid);
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Is Valid To Perform Rename: {0}", isValid);
             return isValid;
         }
 
@@ -200,14 +200,14 @@ namespace ShowManagement.NameResolver.Components.Activities
 
             try
             {
-                TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Information, 0, "Calling GetShowInfo with Directory = {0}.", showDirectoryFullName);
+                TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Information, 0, "Calling GetShowInfo with Directory = {0}.", showDirectoryFullName);
                 
                 showInfo = await this.ServiceProvider.GetShowInfo(showDirectoryFullName);
             }
             catch (Exception ex)
             {
                 // TODO
-                TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Error, 0, "Exception caught in ResolveNameActivity.GetShowInfo(): {0}", ex.ExtractExceptionMessage());
+                TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Error, 0, "Exception caught in ResolveNameActivity.GetShowInfo(): {0}", ex.ExtractExceptionMessage());
             }
 
             return showInfo;
@@ -215,7 +215,7 @@ namespace ShowManagement.NameResolver.Components.Activities
 
         private int Parse(IEnumerable<Parser> parsers, string fileName)
         {
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Enter ResolveNameActivity.Parse()");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Enter ResolveNameActivity.Parse()");
 
             int parsedNumber = 0;
 
@@ -229,14 +229,14 @@ namespace ShowManagement.NameResolver.Components.Activities
                         // TODO: Move this logic into the TryParse function
                         if (result.TryParseAsInt(parser.ExcludedCharacters, out parsedNumber))
                         {
-                            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Parse was successful: {0}", parsedNumber);
+                            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Parse was successful: {0}", parsedNumber);
                             break;
                         }
                     }
                 }
             }
 
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Exit ResolveNameActivity.Parse()");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Exit ResolveNameActivity.Parse()");
             return parsedNumber;
         }
 

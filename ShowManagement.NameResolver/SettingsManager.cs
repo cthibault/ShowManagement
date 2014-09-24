@@ -166,6 +166,24 @@ namespace ShowManagement.NameResolver
                 return this._itemRetryDurationSeconds.Value;
             }
         }
+
+        public string BaseAddress
+        {
+            get
+            {
+                if (this._baseAddress == null)
+                {
+                    this._baseAddress = string.Empty;
+                    if (this._settingsDictionary.ContainsKey(BASE_ADDRESS_KEY))
+                    {
+                        _baseAddress = this._settingsDictionary[BASE_ADDRESS_KEY];
+                    }
+                }
+
+                return this._baseAddress;
+            }
+        }
+
         #endregion
 
         #region Private Fields
@@ -180,6 +198,8 @@ namespace ShowManagement.NameResolver
         private int? _itemRetryAttempts;
         private int? _itemRetryDurationSeconds;
 
+        private string _baseAddress;
+
         #endregion
 
         #region Constants
@@ -191,6 +211,7 @@ namespace ShowManagement.NameResolver
         public const string SUPPORTED_FILE_TYPES_KEY = "SupportedFileTypes";
         public const string ITEM_RETRY_ATTEMPTS_KEY = "ItemRetryAttempts";
         public const string ITEM_RETRY_DURATION_KEY = "ItemRetryDurationInSeconds";
+        public const string BASE_ADDRESS_KEY = "baseAddress";
 
         public const string PARENT_DIRECTORY_DEFAULT_VALUE = "";
         public const int ITEM_RETRY_ATTEMPTS_DEFAULT_VALUE = 0;

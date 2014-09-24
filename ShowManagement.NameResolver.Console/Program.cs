@@ -2,6 +2,7 @@
 using ShowManagement.NameResolver.Components;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,7 +25,10 @@ namespace ShowManagement.NameResolver.Console
                     { SettingsManager.ITEM_RETRY_DURATION_KEY, "3" },
                 });
 
-            var nrService = new NameResolverEngine(settings, new ShowManagementServiceProvider());
+
+            var baseAddress = ConfigurationManager.AppSettings["baseAddress"];
+
+            var nrService = new NameResolverEngine(settings, new ShowManagementServiceProvider(baseAddress));
 
 
             var quit = false;

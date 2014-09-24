@@ -1,4 +1,5 @@
 ﻿using Microsoft.Practices.Unity;
+using ShowManagement.Core.Extensions;
 using ShowManagement.NameResolver.Components;
 using ShowManagement.NameResolver.Diagnostics;
 using System;
@@ -27,32 +28,32 @@ namespace ShowManagement.NameResolver.Components
 
         public void Start()
         {
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Enter ShowManagement.NameResolver.Components.DirectoryMonitor.Start()");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Enter ShowManagement.NameResolver.Components.DirectoryMonitor.Start()");
 
             this.NameResolverEngine.Start();
             this.FileSystemWatcher.EnableRaisingEvents = true;
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Information, 0, "Directory Monitor Started");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Information, 0, "Directory Monitor Started");
 
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Exit ShowManagement.NameResolver.Components.DirectoryMonitor.Start()");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Exit ShowManagement.NameResolver.Components.DirectoryMonitor.Start()");
         }
 
         public void Stop()
         {
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Enter ShowManagement.NameResolver.Components.DirectoryMonitor.Stop()");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Enter ShowManagement.NameResolver.Components.DirectoryMonitor.Stop()");
 
             this.FileSystemWatcher.EnableRaisingEvents = false;
             this.NameResolverEngine.Stop();
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Information, 0, "Directory Monitor Stopped");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Information, 0, "Directory Monitor Stopped");
 
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Exit ShowManagement.NameResolver.Components.DirectoryMonitor.Stop()");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Exit ShowManagement.NameResolver.Components.DirectoryMonitor.Stop()");
         }
 
         public void PerformFullScan()
         {
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Enter ShowManagement.NameResolver.Components.DirectoryMonitor.PerformFullScan()");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Enter ShowManagement.NameResolver.Components.DirectoryMonitor.PerformFullScan()");
 
             var searchOption = this.IncludeSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Use Search Option {0} when enumerating files in directory = {1}", searchOption, this.ParentDirectory);
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Use Search Option {0} when enumerating files in directory = {1}", searchOption, this.ParentDirectory);
 
             var filePaths = Directory.EnumerateFiles(this.ParentDirectory, "*.*", searchOption);
 
@@ -60,15 +61,15 @@ namespace ShowManagement.NameResolver.Components
 
             this.ProcessFileInfo(fileInfos, 1);
 
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Exit ShowManagement.NameResolver.Components.DirectoryMonitor.PerformFullScan()");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Exit ShowManagement.NameResolver.Components.DirectoryMonitor.PerformFullScan()");
         }
 
 
         private void FileSystemWatcherOnCreated(object sender, FileSystemEventArgs fileSystemEventArgs)
         {
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Enter ShowManagement.NameResolver.Components.DirectoryMonitor.FileSystemWatcherOnCreated()");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Enter ShowManagement.NameResolver.Components.DirectoryMonitor.FileSystemWatcherOnCreated()");
             this.ProcessFileInfo(new FileInfo(fileSystemEventArgs.FullPath), this.ItemRetryAttempts);
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Exit ShowManagement.NameResolver.Components.DirectoryMonitor.FileSystemWatcherOnCreated()");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Exit ShowManagement.NameResolver.Components.DirectoryMonitor.FileSystemWatcherOnCreated()");
         }
 
         private void ProcessFileInfo(FileInfo fileInfo, int retryAttempts)
@@ -80,7 +81,7 @@ namespace ShowManagement.NameResolver.Components
         }
         private void ProcessFileInfo(IEnumerable<FileInfo> fileInfos, int retryAttempts)
         {
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Enter ShowManagement.NameResolver.Components.DirectoryMonitor.ProcessFileInfo()");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Enter ShowManagement.NameResolver.Components.DirectoryMonitor.ProcessFileInfo()");
 
             if (fileInfos != null)
             {
@@ -90,22 +91,22 @@ namespace ShowManagement.NameResolver.Components
 
                 if (filteredFileNames.Any())
                 {
-                    TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Information, 0, "Passing {0} file paths into the NamResolverEngine", filteredFileNames.Count);
-                    TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "The file paths being processed are:\r\n\t", string.Join("\r\n\t", filteredFileNames));
+                    TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Information, 0, "Passing {0} file paths into the NamResolverEngine", filteredFileNames.Count);
+                    TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "The file paths being processed are:\r\n\t", string.Join("\r\n\t", filteredFileNames));
                     this.NameResolverEngine.Add(filteredFileNames, retryAttempts);
                 }
             }
 
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Enter ShowManagement.NameResolver.Components.DirectoryMonitor.ProcessFileInfo()");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Enter ShowManagement.NameResolver.Components.DirectoryMonitor.ProcessFileInfo()");
         }
 
         private bool IsSupportedFileType(FileInfo fileInfo)
         {
             var supported = this.SupportedFileTypes.Any(type => type.Equals(fileInfo.Extension, StringComparison.CurrentCultureIgnoreCase));
 
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Current File Path: {0}", fileInfo.FullName);
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Supported File Types: {0}", string.Join(", ", this.SupportedFileTypes));
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Is Current File supported: {0}", supported);
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Current File Path: {0}", fileInfo.FullName);
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Supported File Types: {0}", string.Join(", ", this.SupportedFileTypes));
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Is Current File supported: {0}", supported);
 
             return supported;
         }
@@ -113,8 +114,8 @@ namespace ShowManagement.NameResolver.Components
         {
             var eligible = !char.IsDigit(fileInfo.FullName, 0);
 
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Current File Path: {0}", fileInfo.FullName);
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Is Current File eligible to process: {0}", eligible);
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Current File Path: {0}", fileInfo.FullName);
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Is Current File eligible to process: {0}", eligible);
 
             return eligible;
         }
@@ -131,7 +132,7 @@ namespace ShowManagement.NameResolver.Components
             {
                 if (this._nameResolverEngine == null)
                 {
-                    TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Initializing the INameResolverEngine instance.");
+                    TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Initializing the INameResolverEngine instance.");
                     this._nameResolverEngine = this.UnityContainer.Resolve<INameResolverEngine>();
                 }
                 return this._nameResolverEngine;
@@ -147,7 +148,7 @@ namespace ShowManagement.NameResolver.Components
             {
                 if (this._fileSystemWatcher == null)
                 {
-                    TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Initializing the FileSystemWatcher instance with Parent Directory: {0}.", this.ParentDirectory);
+                    TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Initializing the FileSystemWatcher instance with Parent Directory: {0}.", this.ParentDirectory);
                     this._fileSystemWatcher = new FileSystemWatcher(this.ParentDirectory);
                     this._fileSystemWatcher.EnableRaisingEvents = false;
                     this._fileSystemWatcher.IncludeSubdirectories = true;

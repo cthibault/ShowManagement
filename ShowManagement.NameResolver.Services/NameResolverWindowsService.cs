@@ -33,11 +33,11 @@ namespace ShowManagement.NameResolver.Services
         }
         public void Start()
         {
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Enter ShowManagement.NameResolver.Services.NameResolverWindowsService.Start()");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Enter ShowManagement.NameResolver.Services.NameResolverWindowsService.Start()");
 
             if (this.DirectoryMonitor != null)
             {
-                TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Information, 0, "Start Directory Monitor");
+                TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Information, 0, "Start Directory Monitor");
                 this.DirectoryMonitor.Start();
 
                 if (this.SettingsManager.InitialDirectoryScan)
@@ -46,7 +46,7 @@ namespace ShowManagement.NameResolver.Services
                 }
             }
 
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Exit ShowManagement.NameResolver.Services.NameResolverWindowsService.Start()");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Exit ShowManagement.NameResolver.Services.NameResolverWindowsService.Start()");
         }
 
         protected override void OnStop()
@@ -57,15 +57,15 @@ namespace ShowManagement.NameResolver.Services
         }
         public void Stop()
         {
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Enter ShowManagement.NameResolver.Services.NameResolverWindowsService.Stop()");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Enter ShowManagement.NameResolver.Services.NameResolverWindowsService.Stop()");
 
             if (this.DirectoryMonitor != null)
             {
-                TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Information, 0, "Stop Directory Monitor");
+                TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Information, 0, "Stop Directory Monitor");
                 this.DirectoryMonitor.Stop();
             }
 
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Exit ShowManagement.NameResolver.Services.NameResolverWindowsService.Stop()");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Exit ShowManagement.NameResolver.Services.NameResolverWindowsService.Stop()");
         }
 
         private IUnityContainer UnityContainer
@@ -74,7 +74,7 @@ namespace ShowManagement.NameResolver.Services
             {
                 if (this._unityContainer == null)
                 {
-                    TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Initializing the IUnityContainer instance.");
+                    TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Initializing the IUnityContainer instance.");
                     this._unityContainer = new UnityContainer();
 
                     var unityConfigSection = ConfigurationManager.GetSection("unity") as UnityConfigurationSection;
@@ -92,7 +92,7 @@ namespace ShowManagement.NameResolver.Services
             {
                 if (this._settingsManager == null)
                 {
-                    TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Initializing the SettingsManager instance.");
+                    TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Initializing the SettingsManager instance.");
                     this._settingsManager = new SettingsManager(ConfigurationManager.AppSettings);
                 }
                 return this._settingsManager;
@@ -106,9 +106,14 @@ namespace ShowManagement.NameResolver.Services
             {
                 if (this._directoryMonitor == null)
                 {
-                    TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Initializing the IDirectoryMonitor instance.");
+                    TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Initializing the IDirectoryMonitor instance.");
+
+                    //var nameResolverEngine = this.UnityContainer.Resolve<INameResolverEngine>(
+                    //    new ParameterOverride("", ""));
+
                     this._directoryMonitor = this.UnityContainer.Resolve<IDirectoryMonitor>(
-                        new ParameterOverride("settingsManager", this.SettingsManager));
+                        new ParameterOverride("settingsManager", this.SettingsManager),
+                        new ParameterOverride("baseAddress", this.SettingsManager.BaseAddress));
                 }
                 return this._directoryMonitor;
             }
@@ -118,7 +123,7 @@ namespace ShowManagement.NameResolver.Services
 
         public static void Install(string[] args)
         {
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Enter ShowManagement.NameResolver.Services.NameResolverWindowsService.Install()");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Enter ShowManagement.NameResolver.Services.NameResolverWindowsService.Install()");
             Console.WriteLine("Installing...");
 
             try
@@ -129,12 +134,12 @@ namespace ShowManagement.NameResolver.Services
                 }
 
                 string assemblyLocation = Assembly.GetExecutingAssembly().Location;
-                TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Assembly Location: {0}", assemblyLocation);
+                TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Assembly Location: {0}", assemblyLocation);
 
 
-                TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Information, 0, "Initiate Install.");
+                TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Information, 0, "Initiate Install.");
                 ManagedInstallerClass.InstallHelper(new string[] { assemblyLocation });
-                TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Information, 0, "Install Successful.");
+                TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Information, 0, "Install Successful.");
 
                 Console.WriteLine("Install Complete");
             }
@@ -142,48 +147,48 @@ namespace ShowManagement.NameResolver.Services
             {
                 string exceptionMessage = ex.ExtractExceptionMessage();
 
-                TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Error, 0, "Exception caught in ShowManagement.NameResolver.Services.NameResolverWindowsService.Install(): {0}", exceptionMessage);
+                TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Error, 0, "Exception caught in ShowManagement.NameResolver.Services.NameResolverWindowsService.Install(): {0}", exceptionMessage);
                 Console.Error.WriteLine("Exception was raised during Service Install:");
                 Console.Error.WriteLine(exceptionMessage);
             }
 
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Exit ShowManagement.NameResolver.Services.NameResolverWindowsService.Install()");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Exit ShowManagement.NameResolver.Services.NameResolverWindowsService.Install()");
         }
 
         public static void Uninstall(string[] args)
         {
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Enter ShowManagement.NameResolver.Services.NameResolverWindowsService.Uninstall()");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Enter ShowManagement.NameResolver.Services.NameResolverWindowsService.Uninstall()");
             Console.WriteLine("Uninstalling...");
 
             try
             {
                 string assemblyLocation = Assembly.GetExecutingAssembly().Location;
-                TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Assembly Location: {0}", assemblyLocation);
+                TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Assembly Location: {0}", assemblyLocation);
 
 
-                TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Information, 0, "Initiate Uninstall.");
+                TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Information, 0, "Initiate Uninstall.");
                 ManagedInstallerClass.InstallHelper(new string[] { "/u", assemblyLocation });
-                TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Information, 0, "Uninstall Successful.");
+                TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Information, 0, "Uninstall Successful.");
                 Console.WriteLine("Uninstall Complete");
             }
             catch (Exception ex)
             {
                 string exceptionMessage = ex.ExtractExceptionMessage();
 
-                TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Error, 0, "Exception caught in ShowManagement.NameResolver.Services.NameResolverWindowsService.Uninstall(): {0}", exceptionMessage);                
+                TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Error, 0, "Exception caught in ShowManagement.NameResolver.Services.NameResolverWindowsService.Uninstall(): {0}", exceptionMessage);                
                 Console.Error.WriteLine("Exception was raised during Service Uninstall:");
                 Console.Error.WriteLine(exceptionMessage);
             }
 
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Exit ShowManagement.NameResolver.Services.NameResolverWindowsService.Uninstall()");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Exit ShowManagement.NameResolver.Services.NameResolverWindowsService.Uninstall()");
         }
 
         private static bool IsServiceInstalled()
         {
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Specified Service Name: {0}.", NameResolverWindowsService.SpecifiedServiceName);
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Specified Service Name: {0}.", NameResolverWindowsService.SpecifiedServiceName);
 
             bool isServiceInstalled = ServiceController.GetServices().Any(s => s.ServiceName == NameResolverWindowsService.SpecifiedServiceName);
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Is Service Installed: {0}.", isServiceInstalled);
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Is Service Installed: {0}.", isServiceInstalled);
 
             return isServiceInstalled;
         }

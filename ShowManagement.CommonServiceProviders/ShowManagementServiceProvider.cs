@@ -12,6 +12,11 @@ namespace ShowManagement.CommonServiceProviders
 {
     public class ShowManagementServiceProvider : IShowManagementServiceProvider
     {
+        public ShowManagementServiceProvider(string baseAddress)
+        {
+            this.BaseAddress = baseAddress;
+        }
+
         public async Task<ShowInfo> GetShowInfo(string directoryPath)
         {
             var parameters = new Dictionary<string, object>()
@@ -85,6 +90,6 @@ namespace ShowManagement.CommonServiceProviders
             return queryString;
         }
 
-        private string BaseAddress = "https://localhost:44300/";
+        private string BaseAddress = string.Empty;
     }
 }

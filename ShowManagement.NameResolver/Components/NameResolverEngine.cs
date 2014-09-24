@@ -31,11 +31,11 @@ namespace ShowManagement.NameResolver.Components
 
         public async Task Start()
         {
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Enter ShowManagement.NameResolver.Components.NameResolverEngine.Start()");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Enter ShowManagement.NameResolver.Components.NameResolverEngine.Start()");
 
             try
             {
-                TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Information, 0, "Starting the Engine Processing Queues.");
+                TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Information, 0, "Starting the Engine Processing Queues.");
 
                 await Task.Run(() => 
                     {
@@ -47,24 +47,24 @@ namespace ShowManagement.NameResolver.Components
             }
             catch (OperationCanceledException ex)
             {
-                TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Error, 0, "Exception caught and rethrown in ShowManagement.NameResolver.Components.NameResolverEngine.Start(): {0}", ex.ExtractExceptionMessage());
+                TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Error, 0, "Exception caught and rethrown in ShowManagement.NameResolver.Components.NameResolverEngine.Start(): {0}", ex.ExtractExceptionMessage());
                 throw;
             }
 
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Exit ShowManagement.NameResolver.Components.NameResolverEngine.Start()");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Exit ShowManagement.NameResolver.Components.NameResolverEngine.Start()");
         }
 
         public async Task Stop()
         {
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Enter ShowManagement.NameResolver.Components.NameResolverEngine.Stop()");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Enter ShowManagement.NameResolver.Components.NameResolverEngine.Stop()");
 
             this.InternalExecutionCTS.Cancel();
             this.ExternalInfluenceCTS.Cancel();
 
             this.IsRunning = false;
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Information, 0, "Stopped the Engine Processing Queues");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Information, 0, "Stopped the Engine Processing Queues");
 
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Exit ShowManagement.NameResolver.Components.NameResolverEngine.Stop()");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Exit ShowManagement.NameResolver.Components.NameResolverEngine.Stop()");
         }
 
         public async Task Add(string filePath)
@@ -81,13 +81,13 @@ namespace ShowManagement.NameResolver.Components
         }
         public async Task Add(IEnumerable<string> filePaths, int retryAttempts)
         {
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Enter ShowManagement.NameResolver.Components.NameResolverEngine.Add()");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Enter ShowManagement.NameResolver.Components.NameResolverEngine.Add()");
 
             await Task.Run(async () =>
                 {
                     if (filePaths != null)
                     {
-                        TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Information, 0, "Trying to add the {0} new file paths to Process Queue", filePaths.Count());
+                        TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Information, 0, "Trying to add the {0} new file paths to Process Queue", filePaths.Count());
                         foreach (var filePath in filePaths)
                         {
                             var activity = new ResolveNameActivity(filePath, retryAttempts, this._showManagementServiceProvider);
@@ -97,7 +97,7 @@ namespace ShowManagement.NameResolver.Components
                     }
                 });
 
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Exit ShowManagement.NameResolver.Components.NameResolverEngine.Add()");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Exit ShowManagement.NameResolver.Components.NameResolverEngine.Add()");
         }
 
         public async Task Remove(string filePath)
@@ -106,7 +106,7 @@ namespace ShowManagement.NameResolver.Components
         }
         public async Task Remove(IEnumerable<string> filePaths)
         {
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Enter ShowManagement.NameResolver.Components.NameResolverEngine.Remove()");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Enter ShowManagement.NameResolver.Components.NameResolverEngine.Remove()");
 
             var removeFromQueueTask = Task.Factory.StartNew((x) =>
             {
@@ -114,14 +114,14 @@ namespace ShowManagement.NameResolver.Components
 
                 if (paths != null)
                 {
-                    TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Information, 0, "Trying to remove the {0} file paths from Process Queue", paths.Count());
+                    TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Information, 0, "Trying to remove the {0} file paths from Process Queue", paths.Count());
                     var mockActivities = paths.Select(p => new ResolveNameActivity(p, 0, null));
 
                     var activitiesToCancel = this.ProcessQueue.Intersect(mockActivities, new ActivityComparer());
 
                     if (activitiesToCancel.Any())
                     {
-                        TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "{0} items to remove from the Process Queue:\r\n\t", activitiesToCancel.Count(), string.Join("\r\n\t", activitiesToCancel));
+                        TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "{0} items to remove from the Process Queue:\r\n\t", activitiesToCancel.Count(), string.Join("\r\n\t", activitiesToCancel));
 
                         foreach (var activity in activitiesToCancel)
                         {
@@ -130,7 +130,7 @@ namespace ShowManagement.NameResolver.Components
                     }
                     else
                     {
-                        TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "0 items to remove from the Process Queue");
+                        TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "0 items to remove from the Process Queue");
                     }
                 }
             }, filePaths, this.ExternalInfluenceCTS.Token);
@@ -141,14 +141,14 @@ namespace ShowManagement.NameResolver.Components
 
                 if (paths != null)
                 {
-                    TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Information, 0, "Trying to remove the {0} file paths from Retry Queue", paths.Count());
+                    TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Information, 0, "Trying to remove the {0} file paths from Retry Queue", paths.Count());
                     var mockActivities = paths.Select(p => new ResolveNameActivity(p, 0, null));
 
                     var activitiesToCancel = this.RetryQueue.Intersect(mockActivities, new ActivityComparer());
                     
                     if (activitiesToCancel.Any())
                     {
-                        TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "{0} items to remove from the Retry Queue:\r\n\t", activitiesToCancel.Count(), string.Join("\r\n\t", activitiesToCancel));
+                        TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "{0} items to remove from the Retry Queue:\r\n\t", activitiesToCancel.Count(), string.Join("\r\n\t", activitiesToCancel));
 
                         foreach (var activity in activitiesToCancel)
                         {
@@ -157,14 +157,14 @@ namespace ShowManagement.NameResolver.Components
                     }
                     else
                     {
-                        TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "0 items to remove from the Retry Queue");
+                        TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "0 items to remove from the Retry Queue");
                     }
                 }
             }, filePaths, this.ExternalInfluenceCTS.Token);
 
             await Task.WhenAll(removeFromQueueTask, removeFromRetryQueueTask);
 
-            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Exit ShowManagement.NameResolver.Components.NameResolverEngine.Remove()");
+            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Exit ShowManagement.NameResolver.Components.NameResolverEngine.Remove()");
         }
 
 
@@ -174,12 +174,12 @@ namespace ShowManagement.NameResolver.Components
             {
                 if (!activity.IsCancelled)
                 {
-                    TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Information, 0, "Perform Activity: {0}", activity);
+                    TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Information, 0, "Perform Activity: {0}", activity);
                     IActivity result = await activity.Perform();
 
                     if (result != null)
                     {
-                        TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Information, 0, "Adding Activity to the Retry Queue: {0}", result);
+                        TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Information, 0, "Adding Activity to the Retry Queue: {0}", result);
                         await this.AddToCollection(this.RetryQueue, result, cancellationToken);
                     }
                 }
@@ -194,14 +194,14 @@ namespace ShowManagement.NameResolver.Components
                     var delta = activity.CreatedDtm.AddSeconds(this.ItemRetryDurationSeconds).Subtract(DateTime.Now);
                     if (delta.TotalMilliseconds > 0)
                     {
-                        TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Delay of {0} started for {1} milliseconds", activity, delta.TotalMilliseconds.ToString());
+                        TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Delay of {0} started for {1} milliseconds", activity, delta.TotalMilliseconds.ToString());
                         await Task.Delay((int)delta.TotalMilliseconds, cancellationToken);
-                        TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Delay of {0} finished", activity);
+                        TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Delay of {0} finished", activity);
                     }
 
                     if (!activity.IsCancelled)
                     {
-                        TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Information, 0, "Adding Activity to the Process Queue: {0}", activity);
+                        TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Information, 0, "Adding Activity to the Process Queue: {0}", activity);
                         await this.AddToCollection(this.ProcessQueue, activity, cancellationToken);
                     }
                 }
@@ -218,7 +218,7 @@ namespace ShowManagement.NameResolver.Components
                         if (!collection.Any(a => a.Equals(activity)))
                         {
                             collection.Add(activity, cancellationToken);
-                            TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Added to collection: {0}", activity);
+                            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Added to collection: {0}", activity);
                         }
                     });
             }
@@ -237,7 +237,7 @@ namespace ShowManagement.NameResolver.Components
             {
                 if (this._internalExecutionCTS == null || this._internalExecutionCTS.IsCancellationRequested)
                 {
-                    TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Creating new Internal Execution CancellationTokenSource");
+                    TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Creating new Internal Execution CancellationTokenSource");
                     this._internalExecutionCTS = new CancellationTokenSource();
                 }
                 return this._internalExecutionCTS;
@@ -251,7 +251,7 @@ namespace ShowManagement.NameResolver.Components
             {
                 if (this._externalInfluenceCTS == null || this._externalInfluenceCTS.IsCancellationRequested)
                 {
-                    TraceSourceManager.TraceSource.TraceEvent(TraceEventType.Verbose, 0, "Creating new External Influence CancellationTokenSource");
+                    TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Creating new External Influence CancellationTokenSource");
                     this._externalInfluenceCTS = new CancellationTokenSource();
                 }
                 return this._externalInfluenceCTS;
