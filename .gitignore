@@ -178,3 +178,5 @@ App_Data/*.ldf
 ##################
 *PrivateSettings.config
 *ConnectionStrings.config
+ShowManagement.Web/App_Data/aspnet-ShowManagement.Web-20140913123002.mdf
+ShowManagement.Web/App_Data/aspnet-ShowManagement.Web-20140913123002_log.ldf

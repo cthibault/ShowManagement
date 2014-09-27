@@ -128,14 +128,13 @@ namespace ShowManagement.NameResolver.Components.Activities
 
                     if (this.IsValidToPerformRename(showInfo))
                     {
-                        int seasonNumber = this.Parse(showInfo.Parsers.Where(p => p.Type == ParserType.Season), fileInfo.Name);
-                        int episodeNumber = this.Parse(showInfo.Parsers.Where(p => p.Type == ParserType.Episode), fileInfo.Name);
+                        var parsedInfo = ParsedInfo.Parse(showInfo, fileInfo.Name);
 
-                        TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "S:{0}, E:{1}", seasonNumber, episodeNumber);
+                        TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Parse Successful: {0}, S:{1}, E:{2}", parsedInfo.IsParseSuccessful, parsedInfo.SeasonNumber, parsedInfo.EpisodeNumber);
 
-                        if (seasonNumber > 0 && episodeNumber > 0)
+                        if (parsedInfo.IsParseSuccessful)
                         {
-                            var episodeData = await this.ServiceProvider.GetEpisodeData(showInfo.TvdbId, seasonNumber, episodeNumber);
+                            var episodeData = await this.GetEpisodeData(parsedInfo);
 
                             if (episodeData != null)
                             {
@@ -213,31 +212,24 @@ namespace ShowManagement.NameResolver.Components.Activities
             return showInfo;
         }
 
-        private int Parse(IEnumerable<Parser> parsers, string fileName)
+        private async Task<EpisodeData> GetEpisodeData(ParsedInfo parsedInfo)
         {
-            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Enter ResolveNameActivity.Parse()");
+            EpisodeData episodeData = null;
 
-            int parsedNumber = 0;
-
-            if (parsers != null)
+            try
             {
-                foreach (var parser in parsers)
-                {
-                    string result;
-                    if (parser.TryParse(fileName, out result))
-                    {
-                        // TODO: Move this logic into the TryParse function
-                        if (result.TryParseAsInt(parser.ExcludedCharacters, out parsedNumber))
-                        {
-                            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Parse was successful: {0}", parsedNumber);
-                            break;
-                        }
-                    }
-                }
+                TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Information, 0, "Calling GetEpisodeData for {0} (Tvdb={1}) Season {2} Episode {3}",
+                    parsedInfo.ShowInfo.Name, parsedInfo.ShowInfo.TvdbId, parsedInfo.SeasonNumber, parsedInfo.EpisodeNumber);
+
+                episodeData = await this.ServiceProvider.GetEpisodeData(parsedInfo.ShowInfo.TvdbId, parsedInfo.SeasonNumber, parsedInfo.EpisodeNumber);
+            }
+            catch (Exception ex)
+            {
+                // TODO
+                TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Error, 0, "Exception caught in ResolveNameActivity.GetEpisodeData(): {0}", ex.ExtractExceptionMessage());
             }
 
-            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Exit ResolveNameActivity.Parse()");
-            return parsedNumber;
+            return episodeData;
         }
 
         private string BuildPath(FileInfo fileInfo, EpisodeData episodeData)
@@ -282,5 +274,71 @@ namespace ShowManagement.NameResolver.Components.Activities
         public string FilePath { get; private set; }
         private IShowManagementServiceProvider ServiceProvider { get;   set; }
         private EpisodeData CachedEpisodeData { get; set; }
+
+
+        private class ParsedInfo
+        {
+            public static ParsedInfo Parse(ShowInfo showInfo, string fileName)
+            {
+                if (showInfo == null)
+                {
+                    throw new ArgumentNullException("showInfo");
+                }
+
+                var parsedInfo = new ParsedInfo(showInfo, fileName);
+
+                parsedInfo.Parse();
+
+                return parsedInfo;
+            }
+            private ParsedInfo(ShowInfo showInfo, string fileName)
+            {
+                this.ShowInfo = showInfo;
+            }
+
+            private void Parse()
+            {
+                this.SeasonNumber = this.Parse(this.ShowInfo.Parsers.Where(p => p.Type == ParserType.Season), this.FileName);
+                this.EpisodeNumber = this.Parse(this.ShowInfo.Parsers.Where(p => p.Type == ParserType.Episode), this.FileName);
+            }
+
+            private int Parse(IEnumerable<Parser> parsers, string fileName)
+            {
+                TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Enter ResolveNameActivity.Parse()");
+
+                int parsedNumber = 0;
+
+                if (parsers != null)
+                {
+                    foreach (var parser in parsers)
+                    {
+                        string result;
+                        if (parser.TryParse(fileName, out result))
+                        {
+                            // TODO: Move this logic into the TryParse function
+                            if (result.TryParseAsInt(parser.ExcludedCharacters, out parsedNumber))
+                            {
+                                TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Parse was successful: {0}", parsedNumber);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Exit ResolveNameActivity.Parse()");
+                return parsedNumber;
+            }
+
+            public ShowInfo ShowInfo { get; private set; }
+            public string FileName { get; private set; }
+
+            public int SeasonNumber { get; private set; }
+            public int EpisodeNumber { get; private set; }
+
+            public bool IsParseSuccessful
+            {
+                get { return this.SeasonNumber > 0 && this.EpisodeNumber > 0; }
+            }
+        }
     }
 }
