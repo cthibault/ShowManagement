@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.NameResolver", "ShowManagement.NameResolver\ShowManagement.NameResolver.csproj", "{3ACF3CF8-C0DA-4912-9FFA-5563EF7F2883}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.WindowsServices.NameResolver", "ShowManagement.WindowsServices.NameResolver\ShowManagement.WindowsServices.NameResolver.csproj", "{3ACF3CF8-C0DA-4912-9FFA-5563EF7F2883}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.NameResolver.Console", "ShowManagement.NameResolver.Console\ShowManagement.NameResolver.Console.csproj", "{9A1283E4-99D6-4C17-B1CC-445C513928D1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.WindowsServices.NameResolver.Console", "ShowManagement.WindowsServices.NameResolver.Console\ShowManagement.WindowsServices.NameResolver.Console.csproj", "{9A1283E4-99D6-4C17-B1CC-445C513928D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.NameResolver.Services", "ShowManagement.NameResolver.Services\ShowManagement.NameResolver.Services.csproj", "{16AE0380-5A68-40B0-8E60-620CF30EDCF5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.WindowsServices.NameResolver.Services", "ShowManagement.WindowsServices.NameResolver.Services\ShowManagement.WindowsServices.NameResolver.Services.csproj", "{16AE0380-5A68-40B0-8E60-620CF30EDCF5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.NameResolver.UnitTest", "ShowManagement.NameResolver.UnitTest\ShowManagement.NameResolver.UnitTest.csproj", "{CBF37ACD-3DD7-4F71-B537-D4D0B2408185}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.WindowsServices.NameResolver.UnitTest", "ShowManagement.WindowsServices.NameResolver.UnitTest\ShowManagement.WindowsServices.NameResolver.UnitTest.csproj", "{CBF37ACD-3DD7-4F71-B537-D4D0B2408185}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.Business", "ShowManagement.Business\ShowManagement.Business.csproj", "{F5B8871E-8108-4B8D-81C5-9DF33AC19BFA}"
 EndProject
