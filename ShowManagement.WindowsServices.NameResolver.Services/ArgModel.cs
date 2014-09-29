@@ -23,6 +23,12 @@ namespace ShowManagement.WindowsServices.NameResolver.Services
             {
                 switch (args[i].ToLower())
                 {
+                    case "-a":
+                    case "-auto":
+                        model.Auto = true;
+                        TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Auto Flag set to TRUE.");
+                        break;
+
                     case "-i":
                     case "-install":
                         model.Install = true;
@@ -65,6 +71,7 @@ namespace ShowManagement.WindowsServices.NameResolver.Services
             return model;
         }
 
+        public bool Auto { get; private set; }
         public bool Install { get; private set; }
         public bool Uninstall { get; private set; }
         public bool Console { get; private set; }

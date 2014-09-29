@@ -33,16 +33,16 @@ namespace ShowManagement.WindowsServices.NameResolver.Services
                 {
                     TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Information, 0, "Uninstalling the Service.");
                     NameResolverWindowsService.Uninstall(args);
-                    Console.WriteLine("Press any key to exit console.");
-                    Console.ReadKey(true);
+
+                    Program.PromptUserToClose(model.Auto);
                 }
 
                 if (model.Install)
                 {
                     TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Information, 0, "Installing the Service.");
                     NameResolverWindowsService.Install(args);
-                    Console.WriteLine("Press any key to exit console.");
-                    Console.ReadKey(true);
+
+                    Program.PromptUserToClose(model.Auto);
                 }
 
                 if (model.Console)
@@ -62,6 +62,8 @@ namespace ShowManagement.WindowsServices.NameResolver.Services
                     service.Stop();
 
                     Console.WriteLine("Service Stopped");
+
+                    Program.PromptUserToClose(model.Auto);
                 }
                 else if (!(model.Uninstall || model.Install))
                 {
@@ -92,6 +94,15 @@ namespace ShowManagement.WindowsServices.NameResolver.Services
             }
 
             TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Exit ShowManagement.WindowsServices.NameResolver.Services.Program.Main()");
+        }
+
+        private static void PromptUserToClose(bool auto)
+        {
+            if (!auto)
+            {
+                Console.WriteLine("Press any key to exit console.");
+                Console.ReadKey(true);
+            }
         }
     }
 }
