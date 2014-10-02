@@ -176,13 +176,11 @@ App_Data/*.ldf
 ##################
 ## PRIVATE CONFIGS
 ##################
-*PrivateSettings.config
-*ConnectionStrings.config
-ShowManagement.Web/App_Data/aspnet-ShowManagement.Web-20140913123002.mdf
-ShowManagement.Web/App_Data/aspnet-ShowManagement.Web-20140913123002_log.ldf
-
+*Private_*.config
 
 ##################
 ## Test Data
 ##################
 TestData/*
+ShowManagement.Web/App_Data/aspnet-ShowManagement.Web-20140913123002.mdf
+ShowManagement.Web/App_Data/aspnet-ShowManagement.Web-20140913123002_log.ldf

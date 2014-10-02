@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.Client.Conso
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.Client.WPF", "ShowManagement.Client.WPF\ShowManagement.Client.WPF.csproj", "{534696E3-1441-4094-86DB-480328731496}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared Projects", "Shared Projects", "{A5BFF4BF-E10E-4572-A526-977FA2D23B16}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Shared", "_Shared", "{A5BFF4BF-E10E-4572-A526-977FA2D23B16}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.Business", "ShowManagement.Business\ShowManagement.Business.csproj", "{F5B8871E-8108-4B8D-81C5-9DF33AC19BFA}"
 EndProject

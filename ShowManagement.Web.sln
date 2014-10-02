@@ -5,7 +5,7 @@ VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.Web", "ShowManagement.Web\ShowManagement.Web.csproj", "{8A06C23C-B649-47ED-9EF1-15D10919F1AE}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared Projects", "Shared Projects", "{0BAC3EFD-17C9-47FC-A0B5-B0337DBE2E82}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Shared", "_Shared", "{0BAC3EFD-17C9-47FC-A0B5-B0337DBE2E82}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.Business", "ShowManagement.Business\ShowManagement.Business.csproj", "{F5B8871E-8108-4B8D-81C5-9DF33AC19BFA}"
 EndProject

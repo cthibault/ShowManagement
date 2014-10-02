@@ -3,21 +3,31 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.WindowsServices.NameResolver", "ShowManagement.WindowsServices.NameResolver\ShowManagement.WindowsServices.NameResolver.csproj", "{3ACF3CF8-C0DA-4912-9FFA-5563EF7F2883}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NameResolver", "WindowsServices\NameResolver\NameResolver.csproj", "{3ACF3CF8-C0DA-4912-9FFA-5563EF7F2883}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.WindowsServices.NameResolver.Console", "ShowManagement.WindowsServices.NameResolver.Console\ShowManagement.WindowsServices.NameResolver.Console.csproj", "{9A1283E4-99D6-4C17-B1CC-445C513928D1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NameResolver.Console", "WindowsServices\NameResolver.Console\NameResolver.Console.csproj", "{9A1283E4-99D6-4C17-B1CC-445C513928D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.WindowsServices.NameResolver.Services", "ShowManagement.WindowsServices.NameResolver.Services\ShowManagement.WindowsServices.NameResolver.Services.csproj", "{16AE0380-5A68-40B0-8E60-620CF30EDCF5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NameResolver.Service", "WindowsServices\NameResolver.Services\NameResolver.Service.csproj", "{16AE0380-5A68-40B0-8E60-620CF30EDCF5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.WindowsServices.NameResolver.UnitTest", "ShowManagement.WindowsServices.NameResolver.UnitTest\ShowManagement.WindowsServices.NameResolver.UnitTest.csproj", "{CBF37ACD-3DD7-4F71-B537-D4D0B2408185}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NameResolver.UnitTest", "WindowsServices\NameResolver.UnitTest\NameResolver.UnitTest.csproj", "{CBF37ACD-3DD7-4F71-B537-D4D0B2408185}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.Business", "ShowManagement.Business\ShowManagement.Business.csproj", "{F5B8871E-8108-4B8D-81C5-9DF33AC19BFA}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared Projects", "Shared Projects", "{5ADB434C-5535-480E-A676-6FB1202A6EF7}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Shared", "_Shared", "{5ADB434C-5535-480E-A676-6FB1202A6EF7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.CommonServiceProviders", "ShowManagement.CommonServiceProviders\ShowManagement.CommonServiceProviders.csproj", "{DC06D071-869E-44F9-97C0-CD1188999AEE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.Core", "ShowManagement.Core\ShowManagement.Core.csproj", "{5BAC28ED-95AD-4830-A2A1-C67F85D1BFAD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NameResolver", "NameResolver", "{A52B38BF-1D84-483E-8ABC-E57AAE291671}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "uTorrentCleanup", "uTorrentCleanup", "{71A4FB62-869E-4702-9C26-6873B6083017}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uTorrentCleanup", "WindowsServices\uTorrentCleanup\uTorrentCleanup.csproj", "{A2AEB35F-ABE1-4281-A274-1C8C2125CB60}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uTorrentCleanup.Service", "WindowsServices\uTorrentCleanup.Service\uTorrentCleanup.Service.csproj", "{FFEBCDE9-F28A-44BE-A6D0-7DA5F57774C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uTorrentCleanup.UnitTest", "WindowsServices\uTorrentCleanup.UnitTest\uTorrentCleanup.UnitTest.csproj", "{1AD0B66E-9643-4202-B8BF-2C24998A7B00}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,13 +63,32 @@ Global
 		{5BAC28ED-95AD-4830-A2A1-C67F85D1BFAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BAC28ED-95AD-4830-A2A1-C67F85D1BFAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BAC28ED-95AD-4830-A2A1-C67F85D1BFAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2AEB35F-ABE1-4281-A274-1C8C2125CB60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2AEB35F-ABE1-4281-A274-1C8C2125CB60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2AEB35F-ABE1-4281-A274-1C8C2125CB60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2AEB35F-ABE1-4281-A274-1C8C2125CB60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFEBCDE9-F28A-44BE-A6D0-7DA5F57774C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFEBCDE9-F28A-44BE-A6D0-7DA5F57774C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFEBCDE9-F28A-44BE-A6D0-7DA5F57774C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFEBCDE9-F28A-44BE-A6D0-7DA5F57774C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AD0B66E-9643-4202-B8BF-2C24998A7B00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AD0B66E-9643-4202-B8BF-2C24998A7B00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AD0B66E-9643-4202-B8BF-2C24998A7B00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AD0B66E-9643-4202-B8BF-2C24998A7B00}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{3ACF3CF8-C0DA-4912-9FFA-5563EF7F2883} = {A52B38BF-1D84-483E-8ABC-E57AAE291671}
+		{9A1283E4-99D6-4C17-B1CC-445C513928D1} = {A52B38BF-1D84-483E-8ABC-E57AAE291671}
+		{16AE0380-5A68-40B0-8E60-620CF30EDCF5} = {A52B38BF-1D84-483E-8ABC-E57AAE291671}
+		{CBF37ACD-3DD7-4F71-B537-D4D0B2408185} = {A52B38BF-1D84-483E-8ABC-E57AAE291671}
 		{F5B8871E-8108-4B8D-81C5-9DF33AC19BFA} = {5ADB434C-5535-480E-A676-6FB1202A6EF7}
 		{DC06D071-869E-44F9-97C0-CD1188999AEE} = {5ADB434C-5535-480E-A676-6FB1202A6EF7}
 		{5BAC28ED-95AD-4830-A2A1-C67F85D1BFAD} = {5ADB434C-5535-480E-A676-6FB1202A6EF7}
+		{A2AEB35F-ABE1-4281-A274-1C8C2125CB60} = {71A4FB62-869E-4702-9C26-6873B6083017}
+		{FFEBCDE9-F28A-44BE-A6D0-7DA5F57774C2} = {71A4FB62-869E-4702-9C26-6873B6083017}
+		{1AD0B66E-9643-4202-B8BF-2C24998A7B00} = {71A4FB62-869E-4702-9C26-6873B6083017}
 	EndGlobalSection
 EndGlobal
