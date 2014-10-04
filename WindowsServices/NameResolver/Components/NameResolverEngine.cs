@@ -16,7 +16,7 @@ namespace ShowManagement.WindowsServices.NameResolver.Components
 {
     public class NameResolverEngine : INameResolverEngine
     {
-        public NameResolverEngine(SettingsManager settingsManager, IShowManagementServiceProvider showManagementServiceProvider)
+        public NameResolverEngine(SettingsManager settingsManager, Services.IServiceProvider serviceProvider)
         {
             if (settingsManager == null)
             {
@@ -26,7 +26,7 @@ namespace ShowManagement.WindowsServices.NameResolver.Components
             this.ItemRetryAttempts = settingsManager.ItemRetryAttempts;
             this.ItemRetryDurationSeconds = settingsManager.ItemRetryDurationSeconds;
 
-            this._showManagementServiceProvider = showManagementServiceProvider;
+            this._serviceProvider = serviceProvider;
         }
 
         public async Task Start()
@@ -90,7 +90,7 @@ namespace ShowManagement.WindowsServices.NameResolver.Components
                         TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Information, 0, "Trying to add the {0} new file paths to Process Queue", filePaths.Count());
                         foreach (var filePath in filePaths)
                         {
-                            var activity = new ResolveNameActivity(filePath, retryAttempts, this._showManagementServiceProvider);
+                            var activity = new ResolveNameActivity(filePath, retryAttempts, this._serviceProvider);
 
                             await this.AddToCollection(this.ProcessQueue, activity, this.ExternalInfluenceCTS.Token);
                         }
@@ -263,7 +263,7 @@ namespace ShowManagement.WindowsServices.NameResolver.Components
         private BlockingCollection<IActivity> ProcessQueue = new BlockingCollection<IActivity>();
         private BlockingCollection<IActivity> RetryQueue = new BlockingCollection<IActivity>();
 
-        private IShowManagementServiceProvider _showManagementServiceProvider;
+        private Services.IServiceProvider _serviceProvider;
 
     }
 }

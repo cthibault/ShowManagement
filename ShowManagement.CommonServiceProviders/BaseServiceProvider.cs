@@ -1,5 +1,4 @@
-﻿using ShowManagement.Business.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -10,41 +9,14 @@ using System.Web;
 
 namespace ShowManagement.CommonServiceProviders
 {
-    public class ShowManagementServiceProvider : IShowManagementServiceProvider
+    public abstract class BaseServiceProvider
     {
-        public ShowManagementServiceProvider(string baseAddress)
+        protected BaseServiceProvider(string baseAddress)
         {
             this.BaseAddress = baseAddress;
         }
 
-        public async Task<ShowInfo> GetShowInfo(string directoryPath)
-        {
-            var parameters = new Dictionary<string, object>()
-            {
-                { "directoryPath", directoryPath },
-            };
-
-            ShowInfo showInfo = await this.GetAsync<ShowInfo>("api/showInfo/Get", parameters);
-
-            return showInfo;
-        }
-
-        public async Task<EpisodeData> GetEpisodeData(int tvdbId, int seasonNumber, int episodeNumber)
-        {
-            var parameters = new Dictionary<string, object>()
-            {
-                { "seriesId", tvdbId },
-                { "seasonNumber", seasonNumber },
-                { "episodeNumber", episodeNumber },
-            };
-
-            EpisodeData episodeData = await this.GetAsync<EpisodeData>("api/tvdb/GetEpisodeData", parameters);
-
-            return episodeData;
-        }
-
-
-        private async Task<T> GetAsync<T>(string apiUri, Dictionary<string, object> parameters)
+        public async Task<T> GetAsync<T>(string apiUri, Dictionary<string, object> parameters)
         {
             T result = default(T);
 
@@ -66,7 +38,7 @@ namespace ShowManagement.CommonServiceProviders
             return result;
         }
 
-        private string BuildQueryString(string apiUri, Dictionary<string, object> parameters)
+        public string BuildQueryString(string apiUri, Dictionary<string, object> parameters)
         {
             string queryString = apiUri;
 
@@ -90,6 +62,6 @@ namespace ShowManagement.CommonServiceProviders
             return queryString;
         }
 
-        private string BaseAddress = string.Empty;
+        protected string BaseAddress { get; private set; }
     }
 }

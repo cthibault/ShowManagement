@@ -63,10 +63,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\ShowManagement.CommonServiceProviders\ShowManagement.CommonServiceProviders.csproj">
-      <Project>{dc06d071-869e-44f9-97c0-cd1188999aee}</Project>
-      <Name>ShowManagement.CommonServiceProviders</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\ShowManagement.Core\ShowManagement.Core.csproj">
       <Project>{5bac28ed-95ad-4830-a2a1-c67f85d1bfad}</Project>
       <Name>ShowManagement.Core</Name>

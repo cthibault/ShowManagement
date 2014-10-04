@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShowManagement.CommonServiceProviders
+namespace ShowManagement.WindowsServices.NameResolver.Services
 {
-    public interface IShowManagementServiceProvider
+    public interface IServiceProvider
     {
         Task<ShowInfo> GetShowInfo(string directoryPath);
 

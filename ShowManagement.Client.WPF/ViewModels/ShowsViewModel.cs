@@ -1,6 +1,7 @@
 ﻿using Microsoft.Practices.Unity;
 using ReactiveUI;
 using ShowManagement.Business.Models;
+using ShowManagement.CommonServiceProviders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace ShowManagement.Client.WPF.ViewModels
 {
     class ShowsViewModel : BaseViewModel
     {
-        public ShowsViewModel(IUnityContainer unityContainer)
+        public ShowsViewModel(IUnityContainer unityContainer, IShowManagementServiceProvider serviceProvider)
             : base(unityContainer)
         {
             this.InitializeCommands();
@@ -40,8 +41,6 @@ namespace ShowManagement.Client.WPF.ViewModels
         {
             try
             {
-                var service = new ShowManagement.Client.WPF.Services.ServiceProvider();
-
                 var newData = await service.GetAllShows();
 
                 this.ShowModels.Clear();
@@ -70,6 +69,10 @@ namespace ShowManagement.Client.WPF.ViewModels
 
         private ReactiveList<ShowInfo> ShowModels = new ReactiveList<ShowInfo>();
         public IReactiveDerivedList<ShowViewModel> Shows { get; private set; }
+
+        #region ShowProvider
+        private IShowManagementServiceProvider ShowProvider { get; set; }
+        #endregion
 
         #region Constants
         public static readonly string TitleText = "shows";

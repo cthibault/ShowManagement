@@ -121,7 +121,6 @@
     </ApplicationDefinition>
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Models\Change.cs" />
-    <Compile Include="Services\ServiceProvider.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\ShowsViewModel.cs" />
     <Compile Include="ViewModels\ShowViewModel.cs" />

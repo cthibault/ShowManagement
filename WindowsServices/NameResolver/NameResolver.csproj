@@ -69,6 +69,8 @@
     <Compile Include="Components\NameResolverEngine.cs" />
     <Compile Include="Components\Activities\ResolveNameActivity.cs" />
     <Compile Include="SettingsManager.cs" />
+    <Compile Include="Services\ServiceProvider.cs" />
+    <Compile Include="Services\Interfaces\IServiceProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -87,6 +89,7 @@
       <Name>ShowManagement.Core</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

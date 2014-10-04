@@ -49,8 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IShowManagementServiceProvider.cs" />
-    <Compile Include="ShowManagementServiceProvider.cs" />
+    <Compile Include="BaseServiceProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

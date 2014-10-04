@@ -1,5 +1,6 @@
 ﻿using ShowManagement.CommonServiceProviders;
 using ShowManagement.WindowsServices.NameResolver.Components;
+using ShowManagement.WindowsServices.NameResolver.Services;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -21,7 +22,7 @@ namespace ShowManagement.WindowsServices.NameResolver.Console
         {
             Program.SettingsManager = new SettingsManager(ConfigurationManager.AppSettings);
 
-            var nrService = new NameResolverEngine(Program.SettingsManager, new ShowManagementServiceProvider(Program.SettingsManager.BaseAddress));
+            var nrService = new NameResolverEngine(Program.SettingsManager, new ServiceProvider(Program.SettingsManager.BaseAddress));
 
             var quit = false;
 

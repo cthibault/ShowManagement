@@ -15,11 +15,11 @@ namespace ShowManagement.WindowsServices.NameResolver.Components.Activities
 {
     class ResolveNameActivity : Activity
     {
-        public ResolveNameActivity(string filePath, int maxRetryAttempts, IShowManagementServiceProvider showManagementServiceProvider)
+        public ResolveNameActivity(string filePath, int maxRetryAttempts, Services.IServiceProvider serviceProvider)
             : base(maxRetryAttempts)
         {
             this.FilePath = filePath;
-            this.ServiceProvider = showManagementServiceProvider;
+            this.ServiceProvider = serviceProvider;
         }
 
         public override async Task<IActivity> Perform()
@@ -272,7 +272,7 @@ namespace ShowManagement.WindowsServices.NameResolver.Components.Activities
 
 
         public string FilePath { get; private set; }
-        private IShowManagementServiceProvider ServiceProvider { get;   set; }
+        private Services.IServiceProvider ServiceProvider { get;   set; }
         private EpisodeData CachedEpisodeData { get; set; }
 
 
