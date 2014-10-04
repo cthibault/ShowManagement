@@ -112,7 +112,7 @@ namespace ShowManagement.WindowsServices.NameResolver.Components
         }
         private bool IsEligibleToProcess(FileInfo fileInfo)
         {
-            var eligible = !char.IsDigit(fileInfo.FullName, 0);
+            var eligible = !char.IsDigit(fileInfo.Name, 0);
 
             TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Current File Path: {0}", fileInfo.FullName);
             TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Is Current File eligible to process: {0}", eligible);
