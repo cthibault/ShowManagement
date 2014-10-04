@@ -181,6 +181,7 @@ App_Data/*.ldf
 ##################
 ## Test Data
 ##################
-TestData/*
-ShowManagement.Web/App_Data/aspnet-ShowManagement.Web-20140913123002.mdf
-ShowManagement.Web/App_Data/aspnet-ShowManagement.Web-20140913123002_log.ldf
+TestData/
+[Ss]cripts/
+ShowManagement.Web/App_Data/*.mdf
+ShowManagement.Web/App_Data/*.ldf
