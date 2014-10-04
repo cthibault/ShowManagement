@@ -16,21 +16,30 @@ namespace ShowManagement.Business.Models
         {
             bool success = false;
 
-            if (!string.IsNullOrWhiteSpace(this.Pattern))
+            if (input != null)
             {
-                var regex = new Regex(this.Pattern);
+                if (!string.IsNullOrWhiteSpace(this.Pattern))
+                {
+                    var regex = new Regex(this.Pattern);
 
-                var match = regex.Match(input);
+                    var match = regex.Match(input);
 
-                success = match.Success;
+                    success = match.Success;
 
-                result = success ? match.Value : null;
+                    result = success ? match.Value : null;
+                }
+                else
+                {
+                    success = true;
+
+                    result = input;
+                }
             }
             else
             {
-                success = true;
+                success = false;
 
-                result = input;
+                result = null;
             }
 
             return success;

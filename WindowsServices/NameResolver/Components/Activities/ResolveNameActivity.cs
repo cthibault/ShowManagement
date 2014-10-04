@@ -294,7 +294,7 @@ namespace ShowManagement.WindowsServices.NameResolver.Components.Activities
             private ParsedInfo(ShowInfo showInfo, string fileName)
             {
                 this.ShowInfo = showInfo;
-                this.FileName = FileName;
+                this.FileName = fileName;
             }
 
             private void Parse()
@@ -311,13 +311,20 @@ namespace ShowManagement.WindowsServices.NameResolver.Components.Activities
 
                 if (parsers != null)
                 {
-                    foreach (var parser in parsers)
+                    foreach (var parser in parsers.ToList())
                     {
+                        TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Parser - Id:{0}, Pattern:{1}, ExcludedChars:{2}, Filename:{3}", parser.ParserId, parser.Pattern, parser.ExcludedCharacters, fileName);
+
                         string result;
-                        if (parser.TryParse(fileName, out result))
+                        bool tryParse = parser.TryParse(fileName, out result);
+                        TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "TryParse:{0}, Result:{1}", tryParse, result ?? "{NULL}");
+
+                        if (tryParse)
                         {
-                            // TODO: Move this logic into the TryParse function
-                            if (result.TryParseAsInt(parser.ExcludedCharacters, out parsedNumber))
+                            bool tryParseAsInt = result.TryParseAsInt(parser.ExcludedCharacters, out parsedNumber);
+                            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "TryParseAsInt:{0}", tryParseAsInt);
+
+                            if (tryParseAsInt)
                             {
                                 TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Parse was successful: {0}", parsedNumber);
                                 break;
