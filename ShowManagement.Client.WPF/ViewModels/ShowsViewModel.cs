@@ -24,7 +24,7 @@ namespace ShowManagement.Client.WPF.ViewModels
             this.DefineCommands();
 
             // Load Initial Data
-            this.RefreshShowsCommand.Execute(null);
+            //this.RefreshShowsCommand.Execute(null);
         }
 
         private void DefineData()
@@ -41,6 +41,7 @@ namespace ShowManagement.Client.WPF.ViewModels
                     null, 
                     (s1, s2) => s1.Name.CompareTo(s2.Name));
 
+            this.ShowsToSave = this.Shows.CreateDerivedCollection(svm => svm, svm => svm.NeedsToBeSaved);
         }
         private void DefineCommands()
         {
@@ -89,9 +90,8 @@ namespace ShowManagement.Client.WPF.ViewModels
             #endregion
 
             #region Save All
-            var canExecuteSaveAll = this.Shows.CreateDerivedCollection(x => x, x => x.NeedsToBeSaved).CountChanged.Select(x => x > 0);
             this.SaveAllCommand = ReactiveCommand.CreateAsyncTask(
-                canExecuteSaveAll,
+                this.ShowsToSave.CountChanged.Select(x => x > 0),
                 async x =>
                 {
                     using (var context = this.AddBusyContext("Saving..."))
@@ -109,8 +109,10 @@ namespace ShowManagement.Client.WPF.ViewModels
         #endregion
 
 
-        private ReactiveList<ShowInfo> ShowModels = new ReactiveList<ShowInfo>();
         public IReactiveDerivedList<ShowViewModel> Shows { get; private set; }
+        private ReactiveList<ShowInfo> ShowModels = new ReactiveList<ShowInfo>();
+
+        private IReactiveDerivedList<ShowViewModel> ShowsToSave { get; set; }
 
         #region ShowProvider
         private Services.IServiceProvider ServiceProvider { get; set; }

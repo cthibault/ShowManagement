@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -15,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+
 
 namespace ShowManagement.Client.WPF.Views
 {
@@ -25,6 +28,8 @@ namespace ShowManagement.Client.WPF.Views
     {
         public ShowsView()
         {
+            InitializeComponent();
+
             var baseAddress = ConfigurationManager.AppSettings["baseAddress"];
 
             var serviceProvider = new Services.ServiceProvider(baseAddress);
@@ -32,7 +37,14 @@ namespace ShowManagement.Client.WPF.Views
             this.ViewModel = new ShowsViewModel(App.UnityContainer, serviceProvider);
             this.DataContext = this.ViewModel;
 
-            InitializeComponent();
+            this.InvokeRefreshShows();
+        }
+
+        private void InvokeRefreshShows()
+        {
+            var peer = UIElementAutomationPeer.CreatePeerForElement(this.refreshShowsBtn);
+            var invokeProvider = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
+            invokeProvider.Invoke();
         }
 
         private ShowsViewModel ViewModel { get; set; }
