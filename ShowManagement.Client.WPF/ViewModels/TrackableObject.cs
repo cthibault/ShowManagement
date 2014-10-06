@@ -1,5 +1,6 @@
 ﻿using ReactiveUI;
 using ShowManagement.Client.WPF.Models;
+using ShowManagement.Core.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
@@ -18,7 +19,7 @@ namespace ShowManagement.Client.WPF.ViewModels
         }
         protected TrackableObject(bool trackChanges)
         {
-            this.TrackChanges = trackChanges;
+            this.TrackChanges = trackChanges;            
         }
 
         protected T LogRaiseAndSetIfChanged<T>(T oldValue, T newValue, Action<T> setAction, [CallerMemberName] string propertyName = null)
@@ -54,6 +55,7 @@ namespace ShowManagement.Client.WPF.ViewModels
             this.TrackChanges = false;
 
             this.ChangesInternal.Clear();
+            this.RaisePropertyChanged(this.ExtractPropertyName(x => x.HasChanges));
         }
 
         protected void LogChange(object oldValue, object newValue, [CallerMemberName] string propertyName = null)
@@ -69,12 +71,14 @@ namespace ShowManagement.Client.WPF.ViewModels
                     change = new Change(propertyName, oldValue, newValue);
 
                     this.ChangesInternal.Add(propertyName, change);
+                    this.RaisePropertyChanged(this.ExtractPropertyName(x => x.HasChanges));
                 }
                 else
                 {
                     if (object.Equals(change.OriginalValue, newValue))
                     {
                         this.ChangesInternal.Remove(propertyName);
+                        this.RaisePropertyChanged(this.ExtractPropertyName(x => x.HasChanges));
                     }
                     else
                     {

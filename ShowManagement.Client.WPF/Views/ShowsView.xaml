@@ -6,15 +6,31 @@
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
         <!--AppBar Buttons-->
         <StackPanel Grid.Column="0" Orientation="Vertical">
-            <Button Width="50" Height="50" ToolTip="refresh" Style="{DynamicResource MetroCircleButtonStyle}"
+            <Button Width="50" Height="50" ToolTip="add" Style="{DynamicResource MetroCircleButtonStyle}"
+                    Command="{Binding AddShowCommand}">
+                <Rectangle Width="20" Height="20">
+                    <Rectangle.Fill>
+                        <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_add}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Button>
+
+            <Button Width="50" Height="50" Margin="0,12,0,0" ToolTip="refresh" Style="{DynamicResource MetroCircleButtonStyle}"
                     Command="{Binding RefreshShowsCommand}">
                 <Rectangle Width="20" Height="20">
                     <Rectangle.Fill>
@@ -22,11 +38,11 @@
                     </Rectangle.Fill>
                 </Rectangle>
             </Button>
-            <Button Width="50" Height="50" ToolTip="add" Style="{DynamicResource MetroCircleButtonStyle}"
-                    Command="{Binding AddShowCommand}">
+            <Button Width="50" Height="50" ToolTip="save all" Style="{DynamicResource MetroCircleButtonStyle}"
+                    Command="{Binding SaveAllCommand}">
                 <Rectangle Width="20" Height="20">
                     <Rectangle.Fill>
-                        <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_add}" />
+                        <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_save}" />
                     </Rectangle.Fill>
                 </Rectangle>
             </Button>
@@ -41,10 +57,34 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <controls:Tile Title="{Binding Name}" TiltFactor="2" />
+                        <controls:Tile Title="{Binding DisplayName}" TiltFactor="2" Command="{Binding SelectedCommand}">
+                            <controls:Tile.Style>
+                                <Style TargetType="controls:Tile">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding NeedsToBeSaved}" Value="True">
+                                            <Setter Property="FontWeight" Value="ExtraBold" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </controls:Tile.Style>
+                        </controls:Tile>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
+        
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Vertical">
+            <StackPanel.Style>
+                <Style TargetType="StackPanel">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=busyProgressBar, Path=Visibility}" Value="Hidden">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Style>
+            <TextBlock Text="{Binding BusyContextManager.Current}" />
+            <ProgressBar x:Name="busyProgressBar" IsIndeterminate="True" Visibility="{Binding BusyContextManager.IsBusy, Converter={StaticResource BoolToVisibilityConverter}}" />
+        </StackPanel>
     </Grid>
 </UserControl>

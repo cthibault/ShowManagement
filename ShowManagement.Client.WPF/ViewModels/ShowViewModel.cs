@@ -5,6 +5,8 @@ using ShowManagement.Core.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,6 +18,16 @@ namespace ShowManagement.Client.WPF.ViewModels
         public ShowViewModel(ShowInfo showInfo)
             : base(true)
         {
+            this.SelectedCommand = ReactiveCommand.Create();
+
+            this.WhenAnyValue(svm => svm.HasChanges)
+                .Select(x => x || this.IsNew)
+                .ToProperty(this, svm => svm.NeedsToBeSaved, out this._needsToBeSaved);
+
+            this.WhenAnyValue(svm => svm.NeedsToBeSaved)
+                .Select(x => string.Format("{0}{1}", this.Name, x ? "*" : string.Empty))
+                .ToProperty(this, svm => svm.DisplayName, out this._displayName);
+
             this._model = showInfo;
         }
 
@@ -55,6 +67,18 @@ namespace ShowManagement.Client.WPF.ViewModels
             get { return this.ShowId == 0; }
         }
 
+        public bool NeedsToBeSaved
+        {
+            get { return this._needsToBeSaved.Value; }
+        }
+        readonly ObservableAsPropertyHelper<bool> _needsToBeSaved;
+
+        public string DisplayName
+        {
+            get { return this._displayName.Value; }
+        }
+        readonly ObservableAsPropertyHelper<string> _displayName;
+
         public void Update(ShowInfo showInfo)
         {
             this._model = showInfo;
@@ -67,6 +91,8 @@ namespace ShowManagement.Client.WPF.ViewModels
 
             this.RaisePropertyChanged(this.ExtractPropertyName(x => x.IsNew));
         }
+
+        public ReactiveCommand<object> SelectedCommand { get; private set; }
 
         private ShowInfo _model;
     }

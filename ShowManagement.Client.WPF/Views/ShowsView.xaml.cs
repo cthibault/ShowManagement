@@ -2,6 +2,7 @@
 using ShowManagement.Client.WPF.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,7 +25,11 @@ namespace ShowManagement.Client.WPF.Views
     {
         public ShowsView()
         {
-            this.ViewModel = App.UnityContainer.Resolve<ShowsViewModel>();
+            var baseAddress = ConfigurationManager.AppSettings["baseAddress"];
+
+            var serviceProvider = new Services.ServiceProvider(baseAddress);
+
+            this.ViewModel = new ShowsViewModel(App.UnityContainer, serviceProvider);
             this.DataContext = this.ViewModel;
 
             InitializeComponent();

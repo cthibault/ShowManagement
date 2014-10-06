@@ -1,4 +1,5 @@
 ﻿using Microsoft.Practices.Unity;
+using ShowManagement.Client.WPF.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -19,9 +20,12 @@ namespace ShowManagement.Client.WPF
             var unityContainer = new UnityContainer();
 
             App.UnityContainer = unityContainer;
+            App.BusyContextManager = new BusyContextManager();
 
             base.OnStartup(e);
         }
         public static IUnityContainer UnityContainer { get; private set; }
+
+        public static BusyContextManager BusyContextManager { get; private set; }
     }
 }
