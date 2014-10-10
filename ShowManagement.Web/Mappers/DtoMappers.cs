@@ -51,7 +51,7 @@ namespace ShowManagement.Web.Mappers
             return parser;
         }
 
-        public static Show ToShow(ShowInfo showInfo)
+        public static Show ToShow(ShowInfo showInfo, bool forceInsert)
         {
             Show show = null;
 
@@ -59,7 +59,7 @@ namespace ShowManagement.Web.Mappers
             {
                 show = new Show
                 {
-                    ShowId = showInfo.ShowId,
+                    ShowId = forceInsert ? 0 : showInfo.ShowId,
                     TvdbId = showInfo.TvdbId,
                     ImdbId = showInfo.ImdbId,
                     Name = showInfo.Name,
@@ -67,7 +67,7 @@ namespace ShowManagement.Web.Mappers
                 };
 
                 var showParsers = showInfo.Parsers != null
-                    ? showInfo.Parsers.Select(p => DtoMappers.ToShowParser(p))
+                    ? showInfo.Parsers.Select(p => DtoMappers.ToShowParser(p, forceInsert))
                                       .Where(p => p != null)
                                       .ToList()
                     : new List<ShowParser>();
@@ -77,7 +77,7 @@ namespace ShowManagement.Web.Mappers
 
             return show;
         }
-        public static ShowParser ToShowParser(Parser parser)
+        public static ShowParser ToShowParser(Parser parser, bool forceInsert)
         {
             ShowParser showParser = null;
 
@@ -85,7 +85,7 @@ namespace ShowManagement.Web.Mappers
             {
                 showParser = new ShowParser
                 {
-                    ShowParserId = parser.ParserId,
+                    ShowParserId = forceInsert ? 0 : parser.ParserId,
                     Type = parser.TypeKey,
                     Pattern = parser.Pattern,
                     ExcludedCharacters = parser.ExcludedCharacters

@@ -102,8 +102,12 @@ namespace ShowManagement.Web.Controllers
                     show = this.UnitOfWork.ShowRepository.GetById(showInfo.ShowId);
                     if (show != null)
                     {
-                        show = DtoMappers.ToShow(showInfo);
+                        show = DtoMappers.ToShow(showInfo, false);
+
                         this.UnitOfWork.ShowRepository.Update(show);
+                        this.UnitOfWork.Save();
+
+                        response = this.Ok(show);
                     }
                 }
 
@@ -111,7 +115,8 @@ namespace ShowManagement.Web.Controllers
                 if (show == null)
                 {
                     // INSERT
-                    show = DtoMappers.ToShow(showInfo);
+                    show = DtoMappers.ToShow(showInfo, true);
+
                     this.UnitOfWork.ShowRepository.Insert(show);
                     this.UnitOfWork.Save();
 
