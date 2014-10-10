@@ -315,20 +315,12 @@ namespace ShowManagement.WindowsServices.NameResolver.Components.Activities
                     {
                         TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Parser - Id:{0}, Pattern:{1}, ExcludedChars:{2}, Filename:{3}", parser.ParserId, parser.Pattern, parser.ExcludedCharacters, fileName);
 
-                        string result;
-                        bool tryParse = parser.TryParse(fileName, out result);
-                        TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "TryParse:{0}, Result:{1}", tryParse, result ?? "{NULL}");
+                        bool success = parser.TryParse(fileName, out parsedNumber);
+                        TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "TryParse:{0}, Result:{1}", success, parsedNumber);
 
-                        if (tryParse)
+                        if (success)
                         {
-                            bool tryParseAsInt = result.TryParseAsInt(parser.ExcludedCharacters, out parsedNumber);
-                            TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "TryParseAsInt:{0}", tryParseAsInt);
-
-                            if (tryParseAsInt)
-                            {
-                                TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Parse was successful: {0}", parsedNumber);
-                                break;
-                            }
+                            break;
                         }
                     }
                 }
