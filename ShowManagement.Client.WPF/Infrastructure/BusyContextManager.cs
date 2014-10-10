@@ -37,41 +37,50 @@ namespace ShowManagement.Client.WPF.Infrastructure
         {
             get
             {
-                var current = default(T);
+                var currentData = default(T);
 
-                if (this.Contexts.Any())
+                AmbientContext<T> currentContext = this.CurrentContext;
+                if (currentContext != null)
                 {
-                    current = this.Contexts.Peek().Data;
+                    currentData = currentContext.Data;
                 }
 
-                return current;
+                return currentData;
+            }
+        }
+        
+        protected AmbientContext<T> CurrentContext
+        {
+            get
+            {
+                var currentContext = this.Contexts.LastOrDefault();
+
+                return currentContext;
             }
         }
 
         public void Add(AmbientContext<T> context)
         {
-            this.Contexts.Push(context);
+            this.Contexts.Add(context);
 
             this.RaisePropertyChanged(this.ExtractPropertyName(x => x.Current));
         }
         public void Remove(AmbientContext<T> context)
         {
-            var currentContext = this.Contexts.Pop();
+            AmbientContext<T> currentContext = this.CurrentContext;
 
-            this.RaisePropertyChanged(this.ExtractPropertyName(x => x.Current));
+            this.Contexts.Remove(context);
 
-#if DEBUG
-            if (!ReferenceEquals(currentContext, context))
+            if (context.Equals(currentContext))
             {
-                throw new InvalidOperationException("Context Store - The removed context does not match the expected context");
-            } 
-#endif
+                this.RaisePropertyChanged(this.ExtractPropertyName(x => x.Current));
+            }
         }
 
-        protected Stack<AmbientContext<T>> Contexts
+        protected List<AmbientContext<T>> Contexts
         {
             get { return this._contexts; }
         }
-        private Stack<AmbientContext<T>> _contexts = new Stack<AmbientContext<T>>();
+        private List<AmbientContext<T>> _contexts = new List<AmbientContext<T>>();
     }
 }

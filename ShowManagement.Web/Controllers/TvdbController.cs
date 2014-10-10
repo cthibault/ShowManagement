@@ -1,5 +1,5 @@
 ﻿using ShowManagement.Business.Models;
-using ShowManagement.Web.Converters;
+using ShowManagement.Web.Mappers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,7 +39,7 @@ namespace ShowManagement.Web.Controllers
 
                 if (tvdbEpisode != null)
                 {
-                    episodeData = DtoConverters.ToEpisodeData(tvdbEpisode);
+                    episodeData = DtoMappers.ToEpisodeData(tvdbEpisode);
                 }
             }
             catch (Exception ex)

@@ -121,9 +121,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Behaviors\RemoveCloseFromFlyoutBehavior.cs" />
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Infrastructure\BusyContextManager.cs" />
     <Compile Include="Infrastructure\Interfaces\IContextStore.cs" />
+    <Compile Include="Infrastructure\VisualTreeHelpers.cs" />
     <Compile Include="Models\BusyContext.cs" />
     <Compile Include="Models\Change.cs" />
     <Compile Include="Services\Interfaces\IServiceProvider.cs" />
@@ -134,6 +136,9 @@
     <Compile Include="ViewModels\TrackableObject.cs" />
     <Compile Include="Views\ShowsView.xaml.cs">
       <DependentUpon>ShowsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ShowView.xaml.cs">
+      <DependentUpon>ShowView.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -152,6 +157,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\ShowsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ShowView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

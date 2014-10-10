@@ -19,6 +19,9 @@ namespace ShowManagement.Client.WPF
         {
             var unityContainer = new UnityContainer();
 
+            var baseAddress = ConfigurationManager.AppSettings["baseAddress"];
+            unityContainer.RegisterInstance<string>("baseAddress", baseAddress);
+
             App.UnityContainer = unityContainer;
             App.BusyContextManager = new BusyContextManager();
 

@@ -13,13 +13,30 @@ namespace ShowManagement.Client.WPF.Services
         public ServiceProvider(string baseAddress)
             : base(baseAddress)
         {
-
         }
 
         public async Task<List<ShowInfo>> GetAllShows()
         {
-            List<ShowInfo> showInfos = await this.GetAsync<List<ShowInfo>>("api/shows/GetShowInfos");
+            List<ShowInfo> showInfos = await this.GetAsync<List<ShowInfo>>("api/showInfo/Get");
 
+            return showInfos;
+        }
+
+        public async Task<ShowInfo> GetShow(int showId)
+        {
+            var parameters = new Dictionary<string, object> { { "showId", showId } };
+
+            ShowInfo showInfo = await this.GetAsync<ShowInfo>("api/showInfo/Get", parameters);
+
+            return showInfo;
+        }
+
+        public async Task<ShowInfo> SaveShow(ShowInfo showInfo)
+        {
+            return showInfo;
+        }
+        public async Task<List<ShowInfo>> SaveShows(List<ShowInfo> showInfos)
+        {
             return showInfos;
         }
     }

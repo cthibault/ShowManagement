@@ -3,7 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:behaviors="clr-namespace:ShowManagement.Client.WPF.Behaviors"
+             xmlns:views="clr-namespace:ShowManagement.Client.WPF.Views"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -39,7 +42,7 @@
                 </Rectangle>
             </Button>
             <Button Width="50" Height="50" ToolTip="save all" Style="{DynamicResource MetroCircleButtonStyle}"
-                    Command="{Binding SaveAllCommand}">
+                    Command="{Binding SaveShowsCommand}">
                 <Rectangle Width="20" Height="20">
                     <Rectangle.Fill>
                         <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_save}" />
@@ -57,12 +60,15 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <controls:Tile Title="{Binding DisplayName}" TiltFactor="2" Command="{Binding SelectedCommand}">
+                        <controls:Tile Title="{Binding DisplayName}" TiltFactor="2" Command="{Binding SelectedCommand}" IsEnabled="{Binding IsEnabled}">
                             <controls:Tile.Style>
                                 <Style TargetType="controls:Tile">
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding NeedsToBeSaved}" Value="True">
                                             <Setter Property="FontWeight" Value="ExtraBold" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsEnabled}" Value="False">
+                                            <Setter Property="Background" Value="DarkGray" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -86,5 +92,22 @@
             <TextBlock Text="{Binding BusyContextManager.Current}" />
             <ProgressBar x:Name="busyProgressBar" IsIndeterminate="True" Visibility="{Binding BusyContextManager.IsBusy, Converter={StaticResource BoolToVisibilityConverter}}" />
         </StackPanel>
+
+        <controls:FlyoutsControl Grid.RowSpan="2" Grid.ColumnSpan="2">
+            <controls:Flyout DataContext="{Binding}"
+                             Header="{Binding SelectedShowViewModel.DisplayName}"
+                             CloseCommand="{Binding SelectedShowViewModel.CloseCommand}"
+                             IsOpen="{Binding ShowEditPane, Mode=OneWay}"
+                             Theme="Accent"
+                             Position="Right"
+                             Width="450">
+                <i:Interaction.Behaviors>
+                    <behaviors:RemoveCloseFromFlyoutBehavior />
+                </i:Interaction.Behaviors>
+
+                <views:ShowView DataContext="{Binding SelectedShowViewModel}" />
+                
+            </controls:Flyout>
+        </controls:FlyoutsControl>
     </Grid>
 </UserControl>

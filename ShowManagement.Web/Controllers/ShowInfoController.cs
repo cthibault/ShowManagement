@@ -1,6 +1,6 @@
 ﻿using ShowManagement.Business.Enums;
 using ShowManagement.Business.Models;
-using ShowManagement.Web.Converters;
+using ShowManagement.Web.Mappers;
 using ShowManagement.Web.Data.Entities;
 using ShowManagement.Web.Data.Repositories;
 using System;
@@ -40,11 +40,11 @@ namespace ShowManagement.Web.Controllers
         #endregion
 
         [HttpGet]
-        public IEnumerable<ShowInfo> GetShowInfos()
+        public IEnumerable<ShowInfo> Get()
         {
             IEnumerable<Show> shows = this.UnitOfWork.ShowRepository.Get(null, null, "ShowParsers");
 
-            var showInfos = shows.Select(s => DtoConverters.ToShowInfo(s)).ToList();
+            var showInfos = shows.Select(s => DtoMappers.ToShowInfo(s)).ToList();
 
             return showInfos;
         }
@@ -62,9 +62,68 @@ namespace ShowManagement.Web.Controllers
                 return NotFound();
             }
 
-            var showInfo = DtoConverters.ToShowInfo(show);
+            var showInfo = DtoMappers.ToShowInfo(show);
 
             return this.Ok(showInfo);
+        }
+
+        [HttpGet]
+        [ResponseType(typeof(ShowInfo))]
+        public IHttpActionResult Get(int showId)
+        {
+            var show = this.UnitOfWork.ShowRepository
+                .Get(s => s.ShowId == showId, null, "ShowParsers")
+                .SingleOrDefault();
+
+            if (show == null)
+            {
+                return NotFound();
+            }
+
+            var showInfo = DtoMappers.ToShowInfo(show);
+
+            return this.Ok(showInfo);
+        }
+
+
+        [HttpPut]
+        [ResponseType(typeof(ShowInfo))]
+        public IHttpActionResult Put(ShowInfo showInfo)
+        {
+            IHttpActionResult response = null;
+
+            if (showInfo != null)
+            {
+                Show show = null;
+
+                if (showInfo.ShowId > 0)
+                {
+                    // UPDATE
+                    show = this.UnitOfWork.ShowRepository.GetById(showInfo.ShowId);
+                    if (show != null)
+                    {
+                        show = DtoMappers.ToShow(showInfo);
+                        this.UnitOfWork.ShowRepository.Update(show);
+                    }
+                }
+
+
+                if (show == null)
+                {
+                    // INSERT
+                    show = DtoMappers.ToShow(showInfo);
+                    this.UnitOfWork.ShowRepository.Insert(show);
+                    this.UnitOfWork.Save();
+
+                    response = this.Ok(show);
+                }
+            }
+            else
+            {
+                response = BadRequest("ShowInfo was Null");
+            }
+
+            return response;
         }
 
         //[HttpPost]

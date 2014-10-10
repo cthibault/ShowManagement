@@ -7,9 +7,9 @@ using System.Linq;
 using System.Web;
 using TvdbLib.Data;
 
-namespace ShowManagement.Web.Converters
+namespace ShowManagement.Web.Mappers
 {
-    public static class DtoConverters
+    public static class DtoMappers
     {
         public static ShowInfo ToShowInfo(Show show)
         {
@@ -26,12 +26,13 @@ namespace ShowManagement.Web.Converters
                     Directory = show.Directory,
                 };
 
-                showInfo.Parsers.AddRange(show.ShowParsers.Select(sp => ToParser(sp)));
+                showInfo.Parsers.AddRange(
+                    show.ShowParsers.Select(sp => DtoMappers.ToParser(sp))
+                                    .Where(sp => sp != null));
             }
 
             return showInfo;
         }
-
         public static Parser ToParser(ShowParser showParser)
         {
             Parser parser = null;
@@ -41,13 +42,57 @@ namespace ShowManagement.Web.Converters
                 parser = new Parser
                 {
                     ParserId = showParser.ShowParserId,
-                    Type = (ParserType)showParser.Type,
+                    TypeKey = showParser.Type,
                     Pattern = showParser.Pattern,
                     ExcludedCharacters = showParser.ExcludedCharacters
                 };
             }
 
             return parser;
+        }
+
+        public static Show ToShow(ShowInfo showInfo)
+        {
+            Show show = null;
+
+            if (showInfo != null)
+            {
+                show = new Show
+                {
+                    ShowId = showInfo.ShowId,
+                    TvdbId = showInfo.TvdbId,
+                    ImdbId = showInfo.ImdbId,
+                    Name = showInfo.Name,
+                    Directory = showInfo.Directory,
+                };
+
+                var showParsers = showInfo.Parsers != null
+                    ? showInfo.Parsers.Select(p => DtoMappers.ToShowParser(p))
+                                      .Where(p => p != null)
+                                      .ToList()
+                    : new List<ShowParser>();
+
+                show.ShowParsers = new List<ShowParser>(showParsers);
+            }
+
+            return show;
+        }
+        public static ShowParser ToShowParser(Parser parser)
+        {
+            ShowParser showParser = null;
+
+            if (parser != null)
+            {
+                showParser = new ShowParser
+                {
+                    ShowParserId = parser.ParserId,
+                    Type = parser.TypeKey,
+                    Pattern = parser.Pattern,
+                    ExcludedCharacters = parser.ExcludedCharacters
+                };
+            }
+
+            return showParser;
         }
 
         public static EpisodeData ToEpisodeData(TvdbEpisode tvdbEpisode)

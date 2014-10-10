@@ -29,9 +29,8 @@ namespace ShowManagement.Client.WPF.Views
         public ShowsView()
         {
             InitializeComponent();
-
-            var baseAddress = ConfigurationManager.AppSettings["baseAddress"];
-
+            
+            var baseAddress = App.UnityContainer.Resolve<string>("baseAddress");
             var serviceProvider = new Services.ServiceProvider(baseAddress);
 
             this.ViewModel = new ShowsViewModel(App.UnityContainer, serviceProvider);

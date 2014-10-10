@@ -46,7 +46,12 @@ namespace ShowManagement.Business.Models
         }
         
         public int ParserId { get; set; }
-        public ParserType Type { get; set; }
+        public ParserType Type
+        {
+            get { return (ParserType)this.TypeKey; }
+            set { this.TypeKey = (int)value; }
+        }
+        public int TypeKey { get; set; }
         public string Pattern { get; set; }
         public string ExcludedCharacters { get; set; }
     }

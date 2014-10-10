@@ -1,4 +1,5 @@
-﻿using ReactiveUI;
+﻿using Microsoft.Practices.Unity;
+using ReactiveUI;
 using ShowManagement.Client.WPF.Models;
 using ShowManagement.Core.Extensions;
 using System;
@@ -11,13 +12,18 @@ using System.Threading.Tasks;
 
 namespace ShowManagement.Client.WPF.ViewModels
 {
-    abstract class TrackableObject : ReactiveObject
+    abstract class TrackableObject : BaseViewModel
     {
         protected TrackableObject()
-            : this(true)
+            : this(null, true)
         {
         }
-        protected TrackableObject(bool trackChanges)
+        protected TrackableObject(IUnityContainer unityContainer) 
+            : this(unityContainer, true)
+        {
+        }
+        protected TrackableObject(IUnityContainer unityContainer, bool trackChanges)
+            : base(unityContainer)
         {
             this.TrackChanges = trackChanges;            
         }
@@ -54,6 +60,14 @@ namespace ShowManagement.Client.WPF.ViewModels
         {
             this.TrackChanges = false;
 
+            if (clearChanges)
+            {
+                this.ClearChanges();
+            }
+        }
+
+        public void ClearChanges()
+        {
             this.ChangesInternal.Clear();
             this.RaisePropertyChanged(this.ExtractPropertyName(x => x.HasChanges));
         }

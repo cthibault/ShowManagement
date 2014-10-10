@@ -10,5 +10,9 @@ namespace ShowManagement.Client.WPF.Services
     public interface IServiceProvider
     {
         Task<List<ShowInfo>> GetAllShows();
+        Task<ShowInfo> GetShow(int showId);
+
+        Task<ShowInfo> SaveShow(ShowInfo showInfo);
+        Task<List<ShowInfo>> SaveShows(List<ShowInfo> showInfos);
     }
 }

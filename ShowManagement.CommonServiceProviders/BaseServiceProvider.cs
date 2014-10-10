@@ -20,7 +20,7 @@ namespace ShowManagement.CommonServiceProviders
         {
             return await this.GetAsync<T>(apiUri, null);
         }
-        
+
         public async Task<T> GetAsync<T>(string apiUri, Dictionary<string, object> parameters)
         {
             T result = default(T);
