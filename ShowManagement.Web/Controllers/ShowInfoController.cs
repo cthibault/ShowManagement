@@ -86,9 +86,9 @@ namespace ShowManagement.Web.Controllers
         }
 
 
-        [HttpPut]
+        [HttpPost]
         [ResponseType(typeof(ShowInfo))]
-        public IHttpActionResult Put(ShowInfo showInfo)
+        public IHttpActionResult Post(ShowInfo showInfo)
         {
             IHttpActionResult response = null;
 

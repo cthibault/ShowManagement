@@ -40,7 +40,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums\ParserType.cs" />
+    <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\EpisodeData.cs" />
+    <Compile Include="Models\IObjectState.cs" />
     <Compile Include="Models\Parser.cs" />
     <Compile Include="Models\ShowInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

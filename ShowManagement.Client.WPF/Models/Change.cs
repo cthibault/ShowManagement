@@ -8,6 +8,15 @@ namespace ShowManagement.Client.WPF.Models
 {
     public struct Change
     {
+        public static Change Default
+        {
+            get
+            {
+                return _default;
+            }
+        }
+        private static Change _default = new Change(null, null, null);
+
         public Change(string valueName, object originalValue, object currentValue)
         {
             this._valueName = valueName;

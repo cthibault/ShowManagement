@@ -52,7 +52,7 @@
         </StackPanel>
 
         <ScrollViewer x:Name="scrollViewer" Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-            <ItemsControl ItemsSource="{Binding Shows}">
+            <ItemsControl ItemsSource="{Binding VisibleShowViewModels}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel Orientation="Vertical" Height="{Binding ElementName=scrollViewer, Path=ViewportHeight}" />

@@ -125,10 +125,12 @@
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Infrastructure\BusyContextManager.cs" />
     <Compile Include="Infrastructure\Interfaces\IContextStore.cs" />
+    <Compile Include="Infrastructure\SettingsManager.cs" />
     <Compile Include="Infrastructure\VisualTreeHelpers.cs" />
     <Compile Include="Models\BusyContext.cs" />
     <Compile Include="Models\Change.cs" />
     <Compile Include="Services\Interfaces\IServiceProvider.cs" />
+    <Compile Include="Services\Mock\MockServiceProvider.cs" />
     <Compile Include="Services\ServiceProvider.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\ShowsViewModel.cs" />

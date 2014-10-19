@@ -26,16 +26,21 @@ namespace ShowManagement.Client.WPF.ViewModels
 
             this.IsEnabled = true;
 
-            var needsToBeSavedObservable = this
-                .WhenAnyValue(svm => svm.HasChanges)
-                .Select(x => x || this.IsNew);
-            
-            needsToBeSavedObservable.ToProperty(this, svm => svm.NeedsToBeSaved, out this._needsToBeSaved);
+
+            this.HasChangesObservable.Subscribe(hasChanges =>
+                {
+                    if (this.ObjectState != ObjectState.Added || this.ObjectState != ObjectState.Deleted)
+                    {
+                        this.ObjectState = hasChanges ? ObjectState.Modified : ObjectState.Unchanged;
+                    }
+                });
+
+            this.NeedsToBeSavedObservable.ToProperty(this, svm => svm.NeedsToBeSaved, out this._needsToBeSaved);
             
             // Populate the DisplayName value
             Observable.Merge
                 (
-                    needsToBeSavedObservable, 
+                    this.NeedsToBeSavedObservable, 
                     this.Changed
                         .Where(x => x.PropertyName == this.ExtractPropertyName(svm => svm.Name))
                         .Select(_ => this.Changes.Any(c => c.ValueName == this.ExtractPropertyName(svm => svm.Name)))
@@ -48,7 +53,7 @@ namespace ShowManagement.Client.WPF.ViewModels
 
             this.CloseCommand = ReactiveCommand.Create();
 
-            this.SaveCommand = ReactiveCommand.Create(needsToBeSavedObservable);
+            this.SaveCommand = ReactiveCommand.Create(this.NeedsToBeSavedObservable);
 
             this.RefreshCommand = ReactiveCommand.CreateAsyncTask(async x => await this.OnRefresh());
             this.RefreshCommand.Subscribe(async result => await this.OnRefreshComplete(result));
@@ -57,9 +62,11 @@ namespace ShowManagement.Client.WPF.ViewModels
             this.CancelCommand = ReactiveCommand.Create();
             this.CancelCommand.Subscribe(_ => this.OnCancel());
 
+            this.DeleteCommand = ReactiveCommand.Create();
+            this.DeleteCommand.Subscribe(_ => this.OnDelete());
+
             var falseObservable = Observable.Return<bool>(false);
             this.CloneCommand = ReactiveCommand.Create(falseObservable);
-            this.DeleteCommand = ReactiveCommand.Create(falseObservable);
         }
 
         #region Wrapper Properties
@@ -91,17 +98,45 @@ namespace ShowManagement.Client.WPF.ViewModels
             get { return this._model.Directory; }
             set { this.LogRaiseAndSetIfChanged(this._model.Directory, value, v => this._model.Directory = v); }
         } 
+
+        public ObjectState ObjectState
+        {
+            get { return this._model.ObjectState; }
+            set 
+            {
+                if (this._model.ObjectState != value)
+                {
+                    this.RaisePropertyChanging();
+                    this._model.ObjectState = value;
+                    this.RaisePropertyChanged();
+                }
+            }
+        }
+
+        public List<Parser> Parsers { get; set; }
         #endregion
 
         public bool IsNew
         {
-            get { return this.ShowId == 0; }
+            get { return this.ObjectState == ObjectState.Added; }
         }
 
+        public IObservable<bool> NeedsToBeSavedObservable
+        {
+            get
+            {
+                if (this._needsToBeSavedObservable == null)
+                {
+                    this._needsToBeSavedObservable = this.WhenAnyValue(svm => svm.ObjectState).Select(os => os != ObjectState.Unchanged);
+                }
+                return this._needsToBeSavedObservable;
+            }
+        }
         public bool NeedsToBeSaved
         {
             get { return this._needsToBeSaved.Value; }
         }
+        private IObservable<bool> _needsToBeSavedObservable;
         private readonly ObservableAsPropertyHelper<bool> _needsToBeSaved;
 
         public string DisplayName
@@ -118,7 +153,9 @@ namespace ShowManagement.Client.WPF.ViewModels
         private bool _isEnabled;
 
 
-        #region OnRefresh
+        #region Refresh
+        public ReactiveCommand<Tuple<ShowInfo, BusyContext>> RefreshCommand { get; private set; }
+
         private async Task<Tuple<ShowInfo, BusyContext>> OnRefresh()
         {
             var busyContext = this.AddBusyContext(string.Format("Refreshing {0}...", this.Name));
@@ -152,7 +189,15 @@ namespace ShowManagement.Client.WPF.ViewModels
         } 
         #endregion
 
-        #region OnCancel
+        #region Save
+        public ReactiveCommand<object> SaveCommand { get; private set; }
+
+
+        #endregion
+
+        #region Cancel
+        public ReactiveCommand<object> CancelCommand { get; private set; }
+
         private void OnCancel()
         {
             if (this.HasChanges)
@@ -164,6 +209,31 @@ namespace ShowManagement.Client.WPF.ViewModels
         }
         #endregion
 
+        #region Close
+        public ReactiveCommand<object> CloseCommand { get; private set; }
+
+        #endregion
+
+        #region Selected
+        public ReactiveCommand<object> SelectedCommand { get; private set; }
+
+        #endregion
+
+        #region Delete
+        public ReactiveCommand<object> DeleteCommand { get; private set; }
+
+        private void OnDelete()
+        {
+            this.ObjectState = Business.Models.ObjectState.Deleted;
+        }
+        #endregion
+
+
+
+        #region Clone
+        public ReactiveCommand<object> CloneCommand { get; private set; }
+
+        #endregion
 
         public void Update(ShowInfo showInfo, bool clearChanges)
         {
@@ -184,17 +254,6 @@ namespace ShowManagement.Client.WPF.ViewModels
 
 
 
-        #region Commands
-        public ReactiveCommand<object> SelectedCommand { get; private set; }
-        public ReactiveCommand<object> CloseCommand { get; private set; }
-
-        public ReactiveCommand<object> SaveCommand { get; private set; }
-        public ReactiveCommand<Tuple<ShowInfo, BusyContext>> RefreshCommand { get; private set; }
-        public ReactiveCommand<object> CancelCommand { get; private set; }
-        public ReactiveCommand<object> CloneCommand { get; private set; }
-        public ReactiveCommand<object> DeleteCommand { get; private set; } 
-        #endregion
-
         #region ServiceProvider
         private Services.IServiceProvider ServiceProvider
         {
@@ -202,16 +261,19 @@ namespace ShowManagement.Client.WPF.ViewModels
             {
                 if (this._serviceProvider == null)
                 {
-                    var baseAddress = this.UnityContainer.Resolve<string>("baseAddress");
-                    this._serviceProvider = new Services.ServiceProvider(baseAddress);
+                    this._serviceProvider = this.UnityContainer.Resolve<Services.IServiceProvider>();
                 }
                 return this._serviceProvider;
             }
+            set { this._serviceProvider = value; }
         }
         private Services.IServiceProvider _serviceProvider;
         #endregion
 
+        public ShowInfo Model
+        {
+            get { return this._model; }
+        }
         private ShowInfo _model;
-        
     }
 }

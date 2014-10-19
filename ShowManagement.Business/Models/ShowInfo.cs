@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace ShowManagement.Business.Models
 {
-    public class ShowInfo
+    public class ShowInfo : BaseModel
     {
-        public ShowInfo() { }
+        public ShowInfo()
+        {
+        }
 
         public int ShowId { get; set; }
         public int TvdbId { get; set; }
@@ -24,6 +26,10 @@ namespace ShowManagement.Business.Models
                     this._parsers = new List<Parser>();
                 }
                 return this._parsers;
+            }
+            set
+            {
+                this._parsers = value;
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using ShowManagement.Business.Models;
+﻿using RestSharp;
+using ShowManagement.Business.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,29 +41,46 @@ namespace ShowManagement.Client.Console
             //    }
             //}
 
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri("https://localhost:44300/");
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(
-                    new MediaTypeWithQualityHeaderValue("application/json"));
+            //using (var client = new HttpClient())
+            //{
+            //    client.BaseAddress = new Uri("https://localhost:44300/");
+            //    client.DefaultRequestHeaders.Accept.Clear();
+            //    client.DefaultRequestHeaders.Accept.Add(
+            //        new MediaTypeWithQualityHeaderValue("application/json"));
 
-                var values = new Dictionary<string, string>()
-                {
-                    { "TvdbId", "0" },
-                    { "ImdbId", null },
-                    { "Name", "Test Data" },
-                    { "Directory", @"C:\td\a" },
-                };
-                var content = new FormUrlEncodedContent(values);
+            //    var values = new Dictionary<string, string>()
+            //    {
+            //        { "TvdbId", "0" },
+            //        { "ImdbId", null },
+            //        { "Name", "Test Data" },
+            //        { "Directory", @"C:\td\a" },
+            //    };
+            //    var content = new FormUrlEncodedContent(values);
 
-                HttpResponseMessage response = await client.PostAsync("api/showInfo/PostShow", content);
+            //    HttpResponseMessage response = await client.PostAsync("api/showInfo/PostShow", content);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    var data = await response.Content.ReadAsAsync<ShowInfo>();
-                }
-            }
+            //    if (response.IsSuccessStatusCode)
+            //    {
+            //        var data = await response.Content.ReadAsAsync<ShowInfo>();
+            //    }
+            //}
+
+            var client = new RestClient("https://localhost:44300");
+            var request1 = new RestRequest("api/showInfo/Get/", Method.GET);
+            var response1 = await client.ExecuteGetTaskAsync<List<ShowInfo>>(request1);
+
+
+            var request2 = new RestRequest("api/showInfo/Get/{showId}", Method.GET);
+            request2.AddParameter("showId", 1);
+            var response2 = await client.ExecuteGetTaskAsync<ShowInfo>(request2);
+            
+
+            var show = response2.Data;
+            
+            var request3 = new RestRequest("api/showInfo/Post", Method.POST);
+            request3.RequestFormat = DataFormat.Json;
+            request3.AddBody(show);
+            var response3 = await client.ExecutePostTaskAsync<ShowInfo>(request3);
         }
     }
 }

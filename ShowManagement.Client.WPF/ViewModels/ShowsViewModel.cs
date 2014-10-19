@@ -1,6 +1,7 @@
 ﻿using Microsoft.Practices.Unity;
 using ReactiveUI;
 using ShowManagement.Business.Models;
+using ShowManagement.Client.WPF.Infrastructure;
 using ShowManagement.Client.WPF.Models;
 using ShowManagement.CommonServiceProviders;
 using System;
@@ -13,7 +14,11 @@ using System.Threading.Tasks;
 
 namespace ShowManagement.Client.WPF.ViewModels
 {
-    class ShowsViewModel : BaseViewModel
+    interface IShowsViewModel
+    {
+
+    }
+    class ShowsViewModel : BaseViewModel, IShowsViewModel
     {
         public ShowsViewModel(IUnityContainer unityContainer, Services.IServiceProvider serviceProvider)
             : base(unityContainer)
@@ -26,20 +31,36 @@ namespace ShowManagement.Client.WPF.ViewModels
 
         private void DefineData()
         {
-            this.Shows = this.ShowModels.CreateDerivedCollection(
+            this.AllShowViewModels = this.ShowModels.CreateDerivedCollection(
                 s => 
                     {
                         var vm = new ShowViewModel(this.UnityContainer, this.ServiceProvider, this.BusyContextManager, s);
 
                         vm.SelectedCommand.Subscribe(_ => this.SelectedShowViewModel = vm);
                         vm.CloseCommand.Subscribe(_ => this.SelectedShowViewModel = null);
+                        vm.DeleteCommand.Subscribe(_ =>
+                        {
+                            if (vm.ObjectState == ObjectState.Added)
+                            {
+                                this.ShowModels.Remove(vm.Model);
+                            }
+                        });
+                        vm.SaveCommand.Subscribe(async _ =>
+                        {
+                            // Close the EditPanel
+                            this.SelectedShowViewModel = null;
+
+                            var results = await this.OnSaveShows(new List<ShowViewModel> { vm });
+                            await this.OnSaveShowsComplete(results);
+                        });
 
                         return vm;
-                    },
-                    null, 
-                    (s1, s2) => s1.Name.CompareTo(s2.Name));
+                    });
 
-            this.ShowsToSave = this.Shows.CreateDerivedCollection(svm => svm, svm => svm.NeedsToBeSaved);
+            this.AllShowViewModels.ChangeTrackingEnabled = true;
+
+            this.VisibleShowViewModels = this.AllShowViewModels.CreateDerivedCollection(svm => svm, svm => svm.ObjectState != ObjectState.Deleted, (s1, s2) => s1.Name.CompareTo(s2.Name));
+            this.ShowsToSave = this.VisibleShowViewModels.CreateDerivedCollection(svm => svm, svm => svm.NeedsToBeSaved);
 
             this.WhenAnyValue(vm => vm.SelectedShowViewModel)
                 .Select(x => x != null)
@@ -62,18 +83,22 @@ namespace ShowManagement.Client.WPF.ViewModels
             #region Save All
             this.SaveShowsCommand = ReactiveCommand.CreateAsyncTask(
                 this.ShowsToSave.CountChanged.Select(x => x > 0),
-                async x => await this.OnSaveShows());
+                async _ => await this.OnSaveShows(this.ShowsToSave.ToList()));
+            this.SaveShowsCommand.Subscribe(async results => await this.OnSaveShowsComplete(results));
             this.SaveShowsCommand.ThrownExceptions.Subscribe(ex => { throw ex; });
             #endregion
         }
 
+        #region RefreshShows
+        public ReactiveCommand<Tuple<List<ShowInfo>, BusyContext>> RefreshShowsCommand { get; private set; }
 
-        #region OnRefreshShows
         private async Task<Tuple<List<ShowInfo>, BusyContext>> OnRefreshShows()
         {
             List<ShowInfo> results = null;
 
             var busyContext = this.AddBusyContext("Retrieving Shows...");
+
+            this.SelectedShowViewModel = null;
 
             results = await this.ServiceProvider.GetAllShows();
 
@@ -106,37 +131,77 @@ namespace ShowManagement.Client.WPF.ViewModels
         } 
         #endregion
 
-        #region OnAddShow
+        #region AddShow
+        public ReactiveCommand<object> AddShowCommand { get; private set; }
+
         private async Task OnAddShow()
         {
-            var count = this.Shows.Count(svm => svm.Name.StartsWith(NEWSHOW_NAME));
+            var count = this.VisibleShowViewModels.Count(svm => svm.Name.StartsWith(NEWSHOW_NAME));
 
             string showName = count == 0 ? NEWSHOW_NAME : string.Format("{0} ({1})", NEWSHOW_NAME, ++count);
 
-            this.ShowModels.Add(new ShowInfo { Name = showName });
+            this.ShowModels.Add(new ShowInfo { Name = showName, ObjectState = ObjectState.Added });
         }
         #endregion
 
-        #region OnSaveShows
-        private async Task OnSaveShows()
+        #region SaveShows
+        public ReactiveCommand<Tuple<List<ShowInfo>, List<ShowInfo>, BusyContext>> SaveShowsCommand { get; private set; }
+
+        private async Task<Tuple<List<ShowInfo>, List<ShowInfo>, BusyContext>> OnSaveShows(List<ShowViewModel> showViewModels)
         {
-            using (var context = this.AddBusyContext("Saving..."))
+            List<ShowInfo> results = null;
+
+            List<ShowInfo> modelsToSave = null;
+
+            var busyContext = this.AddBusyContext("Saving...");
+
+            if (showViewModels != null)
             {
-                await Task.Delay(10000);
+                modelsToSave = new List<ShowInfo>(showViewModels.Count);
+
+                foreach (var svm in showViewModels)
+                {
+                    svm.IsEnabled = false;
+
+                    if (svm == this.SelectedShowViewModel)
+                    {
+                        this.SelectedShowViewModel = null;
+                    }
+
+                    modelsToSave.Add(svm.Model);
+                }
+
+                results = await this.ServiceProvider.SaveShows(modelsToSave);
+            }
+
+            return new Tuple<List<ShowInfo>, List<ShowInfo>, BusyContext>(modelsToSave, results, busyContext);
+        }
+        private async Task OnSaveShowsComplete(Tuple<List<ShowInfo>, List<ShowInfo>, BusyContext> results)
+        {
+            if (results != null)
+            {
+                using (results.Item3)
+                {
+                    using (var context = this.AddBusyContext("Updating saved shows..."))
+                    {
+                        if (results.Item1 != null)
+                        {
+                            this.ShowModels.RemoveAll(results.Item1);
+                        }
+
+                        if (results.Item2 != null)
+                        {
+                            this.ShowModels.AddRange(results.Item2);
+                        }
+                    }
+                }
             }
         }
         #endregion
 
 
-
-        #region Commands
-        public ReactiveCommand<Tuple<List<ShowInfo>, BusyContext>> RefreshShowsCommand { get; private set; }
-        public ReactiveCommand<object> AddShowCommand { get; private set; }
-        public ReactiveCommand<Unit> SaveShowsCommand { get; private set; }
-        #endregion
-
-
-        public IReactiveDerivedList<ShowViewModel> Shows { get; private set; }
+        public IReactiveDerivedList<ShowViewModel> AllShowViewModels { get; private set; }
+        public IReactiveDerivedList<ShowViewModel> VisibleShowViewModels { get; private set; }
         private ReactiveList<ShowInfo> ShowModels = new ReactiveList<ShowInfo>();
 
         private IReactiveDerivedList<ShowViewModel> ShowsToSave { get; set; }
@@ -154,8 +219,21 @@ namespace ShowManagement.Client.WPF.ViewModels
         }
         private ObservableAsPropertyHelper<bool> _showEditPane;
 
-        #region ShowProvider
-        private Services.IServiceProvider ServiceProvider { get; set; }
+
+        #region ServiceProvider
+        private Services.IServiceProvider ServiceProvider
+        {
+            get
+            {
+                if (this._serviceProvider == null)
+                {
+                    this._serviceProvider = this.UnityContainer.Resolve<Services.IServiceProvider>();
+                }
+                return this._serviceProvider;
+            }
+            set { this._serviceProvider = value; }
+        }
+        private Services.IServiceProvider _serviceProvider;
         #endregion
 
         #region Constants

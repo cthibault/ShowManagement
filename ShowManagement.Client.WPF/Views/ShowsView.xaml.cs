@@ -29,11 +29,9 @@ namespace ShowManagement.Client.WPF.Views
         public ShowsView()
         {
             InitializeComponent();
-            
-            var baseAddress = App.UnityContainer.Resolve<string>("baseAddress");
-            var serviceProvider = new Services.ServiceProvider(baseAddress);
 
-            this.ViewModel = new ShowsViewModel(App.UnityContainer, serviceProvider);
+            this.ViewModel = App.UnityContainer.Resolve<ViewModels.IShowsViewModel>();
+
             this.DataContext = this.ViewModel;
 
             this.InvokeRefreshShows();
@@ -46,6 +44,6 @@ namespace ShowManagement.Client.WPF.Views
             invokeProvider.Invoke();
         }
 
-        private ShowsViewModel ViewModel { get; set; }
+        private IShowsViewModel ViewModel { get; set; }
     }
 }

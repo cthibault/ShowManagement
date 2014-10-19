@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ShowManagement.Business.Models
 {
-    public class Parser
+    public class Parser : BaseModel
     {
         public Parser() { }
 

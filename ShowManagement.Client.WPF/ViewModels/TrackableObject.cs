@@ -4,8 +4,10 @@ using ShowManagement.Client.WPF.Models;
 using ShowManagement.Core.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,7 +27,10 @@ namespace ShowManagement.Client.WPF.ViewModels
         protected TrackableObject(IUnityContainer unityContainer, bool trackChanges)
             : base(unityContainer)
         {
-            this.TrackChanges = trackChanges;            
+            this.TrackChanges = trackChanges;
+            this.ChangesInternal.ChangeTrackingEnabled = trackChanges;
+
+            this.HasChangesObservable.ToProperty(this, x => x.HasChanges, out this._hasChanges);
         }
 
         protected T LogRaiseAndSetIfChanged<T>(T oldValue, T newValue, Action<T> setAction, [CallerMemberName] string propertyName = null)
@@ -50,6 +55,7 @@ namespace ShowManagement.Client.WPF.ViewModels
         public void TurnTrackChangesOn()
         {
             this.TrackChanges = true;
+            this.ChangesInternal.ChangeTrackingEnabled = true;
         }
 
         /// <summary>
@@ -64,6 +70,8 @@ namespace ShowManagement.Client.WPF.ViewModels
             {
                 this.ClearChanges();
             }
+
+            this.ChangesInternal.ChangeTrackingEnabled = false;
         }
 
         public void ClearChanges()
@@ -78,44 +86,52 @@ namespace ShowManagement.Client.WPF.ViewModels
 
             if (this.TrackChanges)
             {
-                Change change;
+                Change change = this.ChangesInternal.DefaultIfEmpty(Change.Default).SingleOrDefault(c => c.ValueName == propertyName);
 
-                if (!this.ChangesInternal.TryGetValue(propertyName, out change))
+                if (change.Equals(Change.Default))
                 {
                     change = new Change(propertyName, oldValue, newValue);
 
-                    this.ChangesInternal.Add(propertyName, change);
-                    this.RaisePropertyChanged(this.ExtractPropertyName(x => x.HasChanges));
+                    this.ChangesInternal.Add(change);
                 }
                 else
                 {
-                    if (object.Equals(change.OriginalValue, newValue))
-                    {
-                        this.ChangesInternal.Remove(propertyName);
-                        this.RaisePropertyChanged(this.ExtractPropertyName(x => x.HasChanges));
-                    }
-                    else
+                    this.ChangesInternal.Remove(change);
+
+                    if (!object.Equals(change.OriginalValue, newValue))
                     {
                         var newChange = new Change(propertyName, change.OriginalValue, newValue);
-
-                        this.ChangesInternal[propertyName] = newChange;
+                        this.ChangesInternal.Add(change);
                     }
                 }
             }
         }
 
-        public bool TrackChanges { get; protected set; }
+        public bool TrackChanges { get; private set; }
 
+        public IObservable<bool> HasChangesObservable
+        {
+            get
+            {
+                if (this._hasChangesObservable == null)
+                {
+                    this._hasChangesObservable = this.ChangesInternal.CountChanged.Select(x => x > 0);
+                }
+                return this._hasChangesObservable;
+            }
+        }
+        private IObservable<bool> _hasChangesObservable;
         public bool HasChanges
         {
             get { return this.ChangesInternal.Any(); }
         }
+        private readonly ObservableAsPropertyHelper<bool> _hasChanges;
 
-        protected IEnumerable<Change> Changes
+        protected IReadOnlyCollection<Change> Changes
         {
-            get { return this.ChangesInternal.Values; }
+            get { return new ReadOnlyCollection<Change>(this.ChangesInternal); }
         }
 
-        private Dictionary<string, Change> ChangesInternal = new Dictionary<string, Change>();
+        private ReactiveList<Change> ChangesInternal = new ReactiveList<Change>();
     }
 }

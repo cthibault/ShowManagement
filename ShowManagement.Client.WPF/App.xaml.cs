@@ -19,8 +19,18 @@ namespace ShowManagement.Client.WPF
         {
             var unityContainer = new UnityContainer();
 
-            var baseAddress = ConfigurationManager.AppSettings["baseAddress"];
-            unityContainer.RegisterInstance<string>("baseAddress", baseAddress);
+            // Instance variables
+            var settingsManager = new SettingsManager(ConfigurationManager.AppSettings);
+
+
+            // Configuration
+            unityContainer.RegisterInstance<SettingsManager>(settingsManager);
+
+            //unityContainer.RegisterType<Services.IServiceProvider, Services.ServiceProvider>(new InjectionConstructor(settingsManager.BaseAddress));
+            unityContainer.RegisterType<Services.IServiceProvider, Services.MockServiceProvider>();
+
+            unityContainer.RegisterType<ViewModels.IShowsViewModel, ViewModels.ShowsViewModel>();
+
 
             App.UnityContainer = unityContainer;
             App.BusyContextManager = new BusyContextManager();
