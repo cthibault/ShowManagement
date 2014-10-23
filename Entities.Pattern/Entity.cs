@@ -1,14 +1,15 @@
-﻿using Entities.Pattern;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShowManagement.Business.Models
+namespace Entities.Pattern
 {
-    public abstract class BaseModel : IObjectState
+    public abstract class Entity : IObjectState
     {
+        [NotMapped]
         public ObjectState ObjectState { get; set; }
     }
 }

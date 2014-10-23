@@ -330,6 +330,10 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Entities.Pattern\Entities.Pattern.csproj">
+      <Project>{9c9da4a0-ef87-47d5-a5b7-72b676406e2d}</Project>
+      <Name>Entities.Pattern</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ShowManagement.Business\ShowManagement.Business.csproj">
       <Project>{f5b8871e-8108-4b8d-81c5-9df33ac19bfa}</Project>
       <Name>ShowManagement.Business</Name>
