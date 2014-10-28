@@ -33,10 +33,17 @@ namespace ShowManagement.Client.WPF.ViewModels
             this.HasChangesObservable.ToProperty(this, x => x.HasChanges, out this._hasChanges);
         }
 
+        #region LogRaiseAndSetIfChanged
         protected T LogRaiseAndSetIfChanged<T>(T oldValue, T newValue, Action<T> setAction, [CallerMemberName] string propertyName = null)
         {
-            Contract.Requires(propertyName != null);
-            Contract.Requires(setAction != null);
+            if (propertyName == null)
+            {
+                throw new ArgumentNullException("propertyName");
+            }
+            if (setAction == null)
+            {
+                throw new ArgumentNullException("setAction");
+            }
 
             if (!EqualityComparer<T>.Default.Equals(oldValue, newValue))
             {
@@ -47,39 +54,10 @@ namespace ShowManagement.Client.WPF.ViewModels
             }
 
             return newValue;
-        }
+        } 
+        #endregion
 
-        /// <summary>
-        /// Turn Track Changes On
-        /// </summary>
-        public void TurnTrackChangesOn()
-        {
-            this.TrackChanges = true;
-            this.ChangesInternal.ChangeTrackingEnabled = true;
-        }
-
-        /// <summary>
-        /// Turn Track Changes Off and optionally clear existing change records
-        /// </summary>
-        /// <param name="clearChanges">Clear existing change records</param>
-        public void TurnTrackChangesOff(bool clearChanges)
-        {
-            this.TrackChanges = false;
-
-            if (clearChanges)
-            {
-                this.ClearChanges();
-            }
-
-            this.ChangesInternal.ChangeTrackingEnabled = false;
-        }
-
-        public void ClearChanges()
-        {
-            this.ChangesInternal.Clear();
-            this.RaisePropertyChanged(this.ExtractPropertyName(x => x.HasChanges));
-        }
-
+        #region LogChange
         protected void LogChange(object oldValue, object newValue, [CallerMemberName] string propertyName = null)
         {
             Contract.Requires(propertyName != null);
@@ -105,10 +83,56 @@ namespace ShowManagement.Client.WPF.ViewModels
                     }
                 }
             }
+        } 
+        #endregion
+
+        #region TurnTrackChangesOn
+        /// <summary>
+        /// Turn Track Changes On
+        /// </summary>
+        public void TurnTrackChangesOn()
+        {
+            this.TrackChanges = true;
+            this.ChangesInternal.ChangeTrackingEnabled = true;
+        } 
+        #endregion
+
+        #region TurnTrackChangesOff
+        /// <summary>
+        /// Turn Track Changes Off and optionally clear existing change records
+        /// </summary>
+        /// <param name="clearChanges">Clear existing change records</param>
+        public void TurnTrackChangesOff(bool clearChanges)
+        {
+            this.TrackChanges = false;
+
+            if (clearChanges)
+            {
+                this.ClearChanges();
+            }
+
+            this.ChangesInternal.ChangeTrackingEnabled = false;
+        } 
+        #endregion
+
+        #region TrackChanges
+        public bool TrackChanges
+        {
+            get { return _trackChanges; }
+            set { this.RaiseAndSetIfChanged(ref this._trackChanges, value); }
         }
+        private bool _trackChanges; 
+        #endregion
 
-        public bool TrackChanges { get; private set; }
+        #region ClearChanges
+        public void ClearChanges()
+        {
+            this.ChangesInternal.Clear();
+            this.RaisePropertyChanged(this.ExtractPropertyName(x => x.HasChanges));
+        } 
+        #endregion
 
+        #region HasChanges
         public IObservable<bool> HasChangesObservable
         {
             get
@@ -123,15 +147,18 @@ namespace ShowManagement.Client.WPF.ViewModels
         private IObservable<bool> _hasChangesObservable;
         public bool HasChanges
         {
-            get { return this.ChangesInternal.Any(); }
+            get { return this._hasChanges.Value; }
         }
-        private readonly ObservableAsPropertyHelper<bool> _hasChanges;
+        private readonly ObservableAsPropertyHelper<bool> _hasChanges; 
+        #endregion
 
+        #region Changes
         protected IReadOnlyCollection<Change> Changes
         {
             get { return new ReadOnlyCollection<Change>(this.ChangesInternal); }
         }
 
-        private ReactiveList<Change> ChangesInternal = new ReactiveList<Change>();
+        private ReactiveList<Change> ChangesInternal = new ReactiveList<Change>(); 
+        #endregion
     }
 }

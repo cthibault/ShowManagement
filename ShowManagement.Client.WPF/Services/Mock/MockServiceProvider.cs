@@ -1,4 +1,5 @@
-﻿using ShowManagement.Business.Enums;
+﻿using Entities.Pattern;
+using ShowManagement.Business.Enums;
 using ShowManagement.Business.Models;
 using System;
 using System.Collections.Generic;
@@ -120,42 +121,59 @@ namespace ShowManagement.Client.WPF.Services
         {
             ShowInfo result = null;
 
-            var foundShow = this._shows.SingleOrDefault(s => s.ShowId == showInfo.ShowId);
-            if (foundShow != null)
+            switch (showInfo.ObjectState)
             {
-                foundShow.Name = showInfo.Name;
-                foundShow.Directory = showInfo.Directory;
-                foundShow.TvdbId = showInfo.TvdbId;
-                foundShow.ImdbId = showInfo.ImdbId;
+                case ObjectState.Added:
+                    var showCopy = this.Copy(showInfo);
+                    showCopy.ShowId = this._shows.Max(s => s.ShowId) + 1;
 
-                foreach (var parser in showInfo.Parsers)
-                {
-                    var foundParser = foundShow.Parsers.SingleOrDefault(p => p.ParserId == parser.ParserId);
-                    if (foundShow != null)
+                    this._shows.Add(showCopy);
+
+                    result = this.Copy(showCopy);
+                    break;
+                case ObjectState.Modified:
+                    var showToUpdate = this._shows.SingleOrDefault(s => s.ShowId == showInfo.ShowId);
+                    if (showToUpdate != null)
                     {
-                        foundParser.TypeKey = parser.TypeKey;
-                        foundParser.Pattern = parser.Pattern;
-                        foundParser.ExcludedCharacters = parser.ExcludedCharacters;
+                        showToUpdate.Name = showInfo.Name;
+                        showToUpdate.Directory = showInfo.Directory;
+                        showToUpdate.TvdbId = showInfo.TvdbId;
+                        showToUpdate.ImdbId = showInfo.ImdbId;
+
+                        foreach (var parser in showInfo.Parsers)
+                        {
+                            var foundParser = showToUpdate.Parsers.SingleOrDefault(p => p.ParserId == parser.ParserId);
+                            if (showToUpdate != null)
+                            {
+                                foundParser.TypeKey = parser.TypeKey;
+                                foundParser.Pattern = parser.Pattern;
+                                foundParser.ExcludedCharacters = parser.ExcludedCharacters;
+                            }
+                            else
+                            {
+                                var parserCopy = this.Copy(parser);
+                                parserCopy.ParserId = this._shows.SelectMany(s => s.Parsers).Max(p => p.ParserId) + 1;
+
+                                showToUpdate.Parsers.Add(parserCopy);
+                            }
+                        }
+
+                        result = this.Copy(showToUpdate);
                     }
                     else
                     {
-                        var parserCopy = this.Copy(parser);
-                        parserCopy.ParserId = this._shows.SelectMany(s => s.Parsers).Max(p => p.ParserId) + 1;
-
-                        foundShow.Parsers.Add(parserCopy);
+                        throw new InvalidOperationException("showInfo is marked as MODIFIED, but no record exists in the DB");
                     }
-                }
-
-                result = this.Copy(foundShow);
-            }
-            else
-            {
-                var showCopy = this.Copy(showInfo);
-                showCopy.ShowId = this._shows.Max(s => s.ShowId) + 1;
-
-                this._shows.Add(showCopy);
-
-                result = this.Copy(showCopy);
+                    break;
+                case ObjectState.Deleted:
+                    var showToDelete = this._shows.SingleOrDefault(s => s.ShowId == showInfo.ShowId);
+                    if (showToDelete != null)
+                    {
+                        this._shows.Remove(showToDelete);
+                    }
+                    break;
+                case ObjectState.Unchanged:
+                    break;
             }
 
             return result;
@@ -169,10 +187,13 @@ namespace ShowManagement.Client.WPF.Services
             {
                 var result = await this.SaveShow(showInfo);
 
-                results.Add(result);
+                if (result != null)
+                {
+                    results.Add(result);
+                }
             }
 
-            await Task.Delay(5000);
+            await Task.Delay(2000);
 
             return results;
         }

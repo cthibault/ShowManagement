@@ -1,4 +1,5 @@
-﻿using Microsoft.Practices.Unity;
+﻿using Entities.Pattern;
+using Microsoft.Practices.Unity;
 using ReactiveUI;
 using ShowManagement.Business.Models;
 using ShowManagement.Client.WPF.Infrastructure;
@@ -40,7 +41,7 @@ namespace ShowManagement.Client.WPF.ViewModels
                         vm.CloseCommand.Subscribe(_ => this.SelectedShowViewModel = null);
                         vm.DeleteCommand.Subscribe(_ =>
                         {
-                            if (vm.ObjectState == ObjectState.Added)
+                            if (vm.IsNew)
                             {
                                 this.ShowModels.Remove(vm.Model);
                             }
@@ -60,7 +61,7 @@ namespace ShowManagement.Client.WPF.ViewModels
             this.AllShowViewModels.ChangeTrackingEnabled = true;
 
             this.VisibleShowViewModels = this.AllShowViewModels.CreateDerivedCollection(svm => svm, svm => svm.ObjectState != ObjectState.Deleted, (s1, s2) => s1.Name.CompareTo(s2.Name));
-            this.ShowsToSave = this.VisibleShowViewModels.CreateDerivedCollection(svm => svm, svm => svm.NeedsToBeSaved);
+            this.ShowsToSave = this.AllShowViewModels.CreateDerivedCollection(svm => svm, svm => svm.NeedsToBeSaved);
 
             this.WhenAnyValue(vm => vm.SelectedShowViewModel)
                 .Select(x => x != null)
@@ -140,7 +141,13 @@ namespace ShowManagement.Client.WPF.ViewModels
 
             string showName = count == 0 ? NEWSHOW_NAME : string.Format("{0} ({1})", NEWSHOW_NAME, ++count);
 
-            this.ShowModels.Add(new ShowInfo { Name = showName, ObjectState = ObjectState.Added });
+            var showInfo = new ShowInfo { Name = showName, ObjectState = ObjectState.Added };
+
+            this.ShowModels.Add(showInfo);
+
+            var viewModel = this.VisibleShowViewModels.First(vm => vm.Model.Equals(showInfo));
+
+            viewModel.SelectedCommand.Execute(null);
         }
         #endregion
 

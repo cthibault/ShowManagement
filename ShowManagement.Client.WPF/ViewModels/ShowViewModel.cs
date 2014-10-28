@@ -1,4 +1,5 @@
-﻿using Microsoft.Practices.Unity;
+﻿using Entities.Pattern;
+using Microsoft.Practices.Unity;
 using ReactiveUI;
 using ShowManagement.Business.Models;
 using ShowManagement.Client.WPF.Infrastructure;
@@ -29,7 +30,7 @@ namespace ShowManagement.Client.WPF.ViewModels
 
             this.HasChangesObservable.Subscribe(hasChanges =>
                 {
-                    if (this.ObjectState != ObjectState.Added || this.ObjectState != ObjectState.Deleted)
+                    if (this.ObjectState != ObjectState.Added && this.ObjectState != ObjectState.Deleted)
                     {
                         this.ObjectState = hasChanges ? ObjectState.Modified : ObjectState.Unchanged;
                     }
@@ -102,15 +103,7 @@ namespace ShowManagement.Client.WPF.ViewModels
         public ObjectState ObjectState
         {
             get { return this._model.ObjectState; }
-            set 
-            {
-                if (this._model.ObjectState != value)
-                {
-                    this.RaisePropertyChanging();
-                    this._model.ObjectState = value;
-                    this.RaisePropertyChanged();
-                }
-            }
+            set { this.LogRaiseAndSetIfChanged(this._model.ObjectState, value, v => this._model.ObjectState = v); }
         }
 
         public List<Parser> Parsers { get; set; }
@@ -118,7 +111,7 @@ namespace ShowManagement.Client.WPF.ViewModels
 
         public bool IsNew
         {
-            get { return this.ObjectState == ObjectState.Added; }
+            get { return this.ShowId == 0; }
         }
 
         public IObservable<bool> NeedsToBeSavedObservable
@@ -224,7 +217,9 @@ namespace ShowManagement.Client.WPF.ViewModels
 
         private void OnDelete()
         {
-            this.ObjectState = Business.Models.ObjectState.Deleted;
+            this.CloseCommand.Execute(null);
+
+            this.ObjectState = ObjectState.Deleted;
         }
         #endregion
 
