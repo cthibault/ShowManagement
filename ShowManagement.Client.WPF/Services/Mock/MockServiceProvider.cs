@@ -99,7 +99,7 @@ namespace ShowManagement.Client.WPF.Services
 
         public async Task<List<ShowInfo>> GetAllShows()
         {
-            var results = this._shows.Select(this.Copy).ToList();
+            var results = this._shows.Select(s => this.Copy(s, true)).ToList();
 
             return results;
         }
@@ -111,7 +111,7 @@ namespace ShowManagement.Client.WPF.Services
             var foundShow = this._shows.SingleOrDefault(s => s.ShowId == showId);
             if (foundShow != null)
             {
-                result = this.Copy(foundShow);
+                result = this.Copy(foundShow, true);
             }
 
             return result;
@@ -124,12 +124,17 @@ namespace ShowManagement.Client.WPF.Services
             switch (showInfo.ObjectState)
             {
                 case ObjectState.Added:
-                    var showCopy = this.Copy(showInfo);
+                    var showCopy = this.Copy(showInfo, false);
                     showCopy.ShowId = this._shows.Max(s => s.ShowId) + 1;
+
+                    foreach (var parser in showInfo.Parsers)
+                    {
+                        await this.SaveParser(showCopy, parser);
+                    }
 
                     this._shows.Add(showCopy);
 
-                    result = this.Copy(showCopy);
+                    result = this.Copy(showCopy, true);
                     break;
                 case ObjectState.Modified:
                     var showToUpdate = this._shows.SingleOrDefault(s => s.ShowId == showInfo.ShowId);
@@ -142,23 +147,10 @@ namespace ShowManagement.Client.WPF.Services
 
                         foreach (var parser in showInfo.Parsers)
                         {
-                            var foundParser = showToUpdate.Parsers.SingleOrDefault(p => p.ParserId == parser.ParserId);
-                            if (showToUpdate != null)
-                            {
-                                foundParser.TypeKey = parser.TypeKey;
-                                foundParser.Pattern = parser.Pattern;
-                                foundParser.ExcludedCharacters = parser.ExcludedCharacters;
-                            }
-                            else
-                            {
-                                var parserCopy = this.Copy(parser);
-                                parserCopy.ParserId = this._shows.SelectMany(s => s.Parsers).Max(p => p.ParserId) + 1;
-
-                                showToUpdate.Parsers.Add(parserCopy);
-                            }
+                            await this.SaveParser(showToUpdate, parser);
                         }
 
-                        result = this.Copy(showToUpdate);
+                        result = this.Copy(showToUpdate, true);
                     }
                     else
                     {
@@ -173,10 +165,54 @@ namespace ShowManagement.Client.WPF.Services
                     }
                     break;
                 case ObjectState.Unchanged:
+                    var unchangedShow = this._shows.SingleOrDefault(s => s.ShowId == showInfo.ShowId);
+                    
+                    foreach (var parser in showInfo.Parsers)
+                    {
+                        await this.SaveParser(unchangedShow, parser);
+                    }
+
+                    result = this.Copy(unchangedShow, true);
                     break;
             }
 
             return result;
+        }
+
+        private async Task SaveParser(ShowInfo showInfo, Parser parser)
+        {
+            if (showInfo != null)
+            {
+                switch (parser.ObjectState)
+                {
+                    case ObjectState.Added:
+                        var parserCopy = this.Copy(parser);
+                        parserCopy.ParserId = this._shows.SelectMany(s => s.Parsers).Max(p => p.ParserId) + 1;
+
+                        showInfo.Parsers.Add(parserCopy);
+                        break;
+                    case ObjectState.Modified:
+                        var parserToUpdate = showInfo.Parsers.SingleOrDefault(p => p.ParserId == parser.ParserId);
+                        if (parserToUpdate != null)
+                        {
+                            parserToUpdate.TypeKey = parser.TypeKey;
+                            parserToUpdate.Pattern = parser.Pattern;
+                            parserToUpdate.ExcludedCharacters = parser.ExcludedCharacters;
+                        }
+                        else
+                        {
+                            parser.ObjectState = ObjectState.Added;
+                            this.SaveParser(showInfo, parser);
+                        }
+                        break;
+                    case ObjectState.Deleted:
+                        showInfo.Parsers.RemoveAll(p => p.ParserId == parser.ParserId);
+                        break;
+                    case ObjectState.Unchanged:
+
+                        break;
+                }
+            }
         }
 
         public async Task<List<ShowInfo>> SaveShows(List<ShowInfo> showInfos)
@@ -201,7 +237,7 @@ namespace ShowManagement.Client.WPF.Services
         public readonly List<ShowInfo> _shows;
 
 
-        private ShowInfo Copy(ShowInfo original)
+        private ShowInfo Copy(ShowInfo original, bool includeNavProperties)
         {
             var result = new ShowInfo
             {
@@ -212,7 +248,10 @@ namespace ShowManagement.Client.WPF.Services
                 ImdbId = original.ImdbId
             };
 
-            result.Parsers = new List<Parser>(original.Parsers.Select(p => this.Copy(p)));
+            if (includeNavProperties)
+            {
+                result.Parsers = new List<Parser>(original.Parsers.Select(p => this.Copy(p)));
+            }
 
             return result;
         }

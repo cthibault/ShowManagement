@@ -30,6 +30,7 @@ namespace ShowManagement.Client.WPF.ViewModels
             this.TrackChanges = trackChanges;
             this.ChangesInternal.ChangeTrackingEnabled = trackChanges;
 
+            this.HasChangesObservable = this.ChangesInternal.WhenAny(ci => ci.Count, x => x.GetValue() > 0);
             this.HasChangesObservable.ToProperty(this, x => x.HasChanges, out this._hasChanges);
         }
 
@@ -60,7 +61,10 @@ namespace ShowManagement.Client.WPF.ViewModels
         #region LogChange
         protected void LogChange(object oldValue, object newValue, [CallerMemberName] string propertyName = null)
         {
-            Contract.Requires(propertyName != null);
+            if (propertyName == null)
+            {
+                throw new ArgumentNullException("propertyName");
+            }
 
             if (this.TrackChanges)
             {
@@ -128,23 +132,11 @@ namespace ShowManagement.Client.WPF.ViewModels
         public void ClearChanges()
         {
             this.ChangesInternal.Clear();
-            this.RaisePropertyChanged(this.ExtractPropertyName(x => x.HasChanges));
         } 
         #endregion
 
         #region HasChanges
-        public IObservable<bool> HasChangesObservable
-        {
-            get
-            {
-                if (this._hasChangesObservable == null)
-                {
-                    this._hasChangesObservable = this.ChangesInternal.CountChanged.Select(x => x > 0);
-                }
-                return this._hasChangesObservable;
-            }
-        }
-        private IObservable<bool> _hasChangesObservable;
+        public IObservable<bool> HasChangesObservable { get; private set; }
         public bool HasChanges
         {
             get { return this._hasChanges.Value; }
@@ -158,7 +150,7 @@ namespace ShowManagement.Client.WPF.ViewModels
             get { return new ReadOnlyCollection<Change>(this.ChangesInternal); }
         }
 
-        private ReactiveList<Change> ChangesInternal = new ReactiveList<Change>(); 
+        private ReactiveList<Change> ChangesInternal = new ReactiveList<Change>();
         #endregion
     }
 }

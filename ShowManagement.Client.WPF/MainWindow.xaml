@@ -5,7 +5,8 @@
                       xmlns:views="clr-namespace:ShowManagement.Client.WPF.Views"
                       Title="SHOW MANAGEMENT" 
                       EnableDWMDropShadow="True"
-                      Height="400" Width="750">
+                      WindowStartupLocation="CenterScreen"
+                      Height="750" Width="950">
 
     <controls:MetroWindow.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />

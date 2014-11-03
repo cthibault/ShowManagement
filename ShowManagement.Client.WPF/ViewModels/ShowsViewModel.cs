@@ -33,30 +33,30 @@ namespace ShowManagement.Client.WPF.ViewModels
         private void DefineData()
         {
             this.AllShowViewModels = this.ShowModels.CreateDerivedCollection(
-                s => 
+                s =>
+                {
+                    var vm = new ShowViewModel(this.UnityContainer, this.ServiceProvider, this.BusyContextManager, s);
+
+                    vm.SelectedCommand.Subscribe(_ => this.SelectedShowViewModel = vm);
+                    vm.CloseCommand.Subscribe(_ => this.SelectedShowViewModel = null);
+                    vm.DeleteCommand.Subscribe(_ =>
                     {
-                        var vm = new ShowViewModel(this.UnityContainer, this.ServiceProvider, this.BusyContextManager, s);
-
-                        vm.SelectedCommand.Subscribe(_ => this.SelectedShowViewModel = vm);
-                        vm.CloseCommand.Subscribe(_ => this.SelectedShowViewModel = null);
-                        vm.DeleteCommand.Subscribe(_ =>
+                        if (vm.IsNew)
                         {
-                            if (vm.IsNew)
-                            {
-                                this.ShowModels.Remove(vm.Model);
-                            }
-                        });
-                        vm.SaveCommand.Subscribe(async _ =>
-                        {
-                            // Close the EditPanel
-                            this.SelectedShowViewModel = null;
-
-                            var results = await this.OnSaveShows(new List<ShowViewModel> { vm });
-                            await this.OnSaveShowsComplete(results);
-                        });
-
-                        return vm;
+                            this.ShowModels.Remove(vm.Model);
+                        }
                     });
+                    vm.SaveCommand.Subscribe(async _ =>
+                    {
+                        // Close the EditPanel
+                        this.SelectedShowViewModel = null;
+
+                        var results = await this.OnSaveShows(new List<ShowViewModel> { vm });
+                        await this.OnSaveShowsComplete(results);
+                    });
+
+                    return vm;
+                });
 
             this.AllShowViewModels.ChangeTrackingEnabled = true;
 
@@ -141,11 +141,13 @@ namespace ShowManagement.Client.WPF.ViewModels
 
             string showName = count == 0 ? NEWSHOW_NAME : string.Format("{0} ({1})", NEWSHOW_NAME, ++count);
 
-            var showInfo = new ShowInfo { Name = showName, ObjectState = ObjectState.Added };
-
+            var showInfo = new ShowInfo { ObjectState = ObjectState.Added };
             this.ShowModels.Add(showInfo);
 
             var viewModel = this.VisibleShowViewModels.First(vm => vm.Model.Equals(showInfo));
+
+            // Set Name on the ViewModel for property changed handling
+            viewModel.Name = showName;
 
             viewModel.SelectedCommand.Execute(null);
         }

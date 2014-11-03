@@ -24,36 +24,66 @@ namespace ShowManagement.Client.WPF.ViewModels
         {
             this._serviceProvider = serviceProvider;
             this._model = showInfo;
+            this.ParserModels.AddRange(showInfo.Parsers);
 
             this.IsEnabled = true;
 
+            this.DefineData();
+            this.DefineCommands();
+        }
+
+        private void DefineData()
+        {
+            this.ParserModels.ItemsAdded.Subscribe(p => this.Model.Parsers.Add(p));
+            this.ParserViewModels = this.ParserModels.CreateDerivedCollection(
+                p =>
+                {
+                    var vm = new ParserViewModel(this.UnityContainer, p);
+
+                    return vm;
+                });
+            this.ParserViewModels.ChangeTrackingEnabled = true;
+            this.ParsersToSave = this.ParserViewModels.CreateDerivedCollection(pvm => pvm, pvm => pvm.HasChanges || pvm.ObjectState == ObjectState.Deleted);
+
 
             this.HasChangesObservable.Subscribe(hasChanges =>
+            {
+                if (this.ObjectState != ObjectState.Added && this.ObjectState != ObjectState.Deleted)
                 {
-                    if (this.ObjectState != ObjectState.Added && this.ObjectState != ObjectState.Deleted)
-                    {
-                        this.ObjectState = hasChanges ? ObjectState.Modified : ObjectState.Unchanged;
-                    }
-                });
+                    this.ObjectState = hasChanges ? ObjectState.Modified : ObjectState.Unchanged;
+                }
+            });
 
-            this.NeedsToBeSavedObservable.ToProperty(this, svm => svm.NeedsToBeSaved, out this._needsToBeSaved);
-            
+            this.NeedsToBeSavedObservable = Observable.Merge
+                (
+                    this.HasChangesObservable,
+                    this.ObservableForProperty(
+                        vm => vm.ObjectState, 
+                        ob => ob == ObjectState.Deleted
+                           || ob == ObjectState.Added, 
+                        beforeChange:false),
+                    this.ParsersToSave.WhenAny(pvm => pvm.Count, x => x.GetValue() > 0)
+                );
+            this.NeedsToBeSavedObservable.ToProperty(this, x => x.NeedsToBeSaved, out this._needsToBeSaved);
+
             // Populate the DisplayName value
             Observable.Merge
                 (
-                    this.NeedsToBeSavedObservable, 
+                    this.NeedsToBeSavedObservable,
                     this.Changed
                         .Where(x => x.PropertyName == this.ExtractPropertyName(svm => svm.Name))
                         .Select(_ => this.Changes.Any(c => c.ValueName == this.ExtractPropertyName(svm => svm.Name)))
                 )
                 .Select(x => string.Format("{0}{1}", this.Name, x ? "*" : string.Empty))
                 .ToProperty(this, svm => svm.DisplayName, out this._displayName);
+        }
+        private void DefineCommands()
+        {
+            var falseObservable = Observable.Return<bool>(false);
 
 
             this.SelectedCommand = ReactiveCommand.Create();
-
             this.CloseCommand = ReactiveCommand.Create();
-
             this.SaveCommand = ReactiveCommand.Create(this.NeedsToBeSavedObservable);
 
             this.RefreshCommand = ReactiveCommand.CreateAsyncTask(async x => await this.OnRefresh());
@@ -61,13 +91,19 @@ namespace ShowManagement.Client.WPF.ViewModels
             this.RefreshCommand.ThrownExceptions.Subscribe(ex => { throw ex; });
 
             this.CancelCommand = ReactiveCommand.Create();
-            this.CancelCommand.Subscribe(_ => this.OnCancel());
+            this.CancelCommand.Subscribe(async _ => await this.OnCancel());
 
             this.DeleteCommand = ReactiveCommand.Create();
-            this.DeleteCommand.Subscribe(_ => this.OnDelete());
+            this.DeleteCommand.Subscribe(async _ => await this.OnDelete());
 
-            var falseObservable = Observable.Return<bool>(false);
+            this.BrowseDirectoryCommand = ReactiveCommand.Create();
+            this.BrowseDirectoryCommand.Subscribe(async _ => await this.OnBrowseDirectory());
+
             this.CloneCommand = ReactiveCommand.Create(falseObservable);
+
+
+            this.AddParserCommand = ReactiveCommand.Create();
+            this.AddParserCommand.Subscribe(async _ => await this.OnAddParser());
         }
 
         #region Wrapper Properties
@@ -98,45 +134,59 @@ namespace ShowManagement.Client.WPF.ViewModels
         {
             get { return this._model.Directory; }
             set { this.LogRaiseAndSetIfChanged(this._model.Directory, value, v => this._model.Directory = v); }
-        } 
+        }
 
         public ObjectState ObjectState
         {
             get { return this._model.ObjectState; }
-            set { this.LogRaiseAndSetIfChanged(this._model.ObjectState, value, v => this._model.ObjectState = v); }
+            //set { this.LogRaiseAndSetIfChanged(this._model.ObjectState, value, v => this._model.ObjectState = v); }
+            set
+            {
+                if (this._model.ObjectState != value)
+                {
+                    this.RaisePropertyChanging(this.ExtractPropertyName(x => x.ObjectState));
+                    this._model.ObjectState = value;
+                    this.RaisePropertyChanged(this.ExtractPropertyName(x => x.ObjectState));
+                }
+            }
         }
 
-        public List<Parser> Parsers { get; set; }
+        public int ParserCount { get { return 2; } }
         #endregion
+
+
+        #region Parsers
+        public IReactiveDerivedList<ParserViewModel> ParserViewModels { get; private set; }
+        private ReactiveList<Parser> ParserModels = new ReactiveList<Parser>();
+        private IReactiveDerivedList<ParserViewModel> ParsersToSave { get; set; }
+
+        public ReactiveCommand<object> AddParserCommand { get; private set; }
+        private async Task OnAddParser()
+        {
+            var parser = new Parser { ObjectState = ObjectState.Added };
+
+            this.ParserModels.Add(parser);
+        }
+        #endregion
+
 
         public bool IsNew
         {
             get { return this.ShowId == 0; }
         }
 
-        public IObservable<bool> NeedsToBeSavedObservable
-        {
-            get
-            {
-                if (this._needsToBeSavedObservable == null)
-                {
-                    this._needsToBeSavedObservable = this.WhenAnyValue(svm => svm.ObjectState).Select(os => os != ObjectState.Unchanged);
-                }
-                return this._needsToBeSavedObservable;
-            }
-        }
-        public bool NeedsToBeSaved
-        {
-            get { return this._needsToBeSaved.Value; }
-        }
-        private IObservable<bool> _needsToBeSavedObservable;
-        private readonly ObservableAsPropertyHelper<bool> _needsToBeSaved;
-
         public string DisplayName
         {
             get { return this._displayName.Value; }
         }
-        readonly ObservableAsPropertyHelper<string> _displayName;
+        private ObservableAsPropertyHelper<string> _displayName;
+
+        public bool NeedsToBeSaved
+        {
+            get { return this._needsToBeSaved.Value; }
+        }
+        private ObservableAsPropertyHelper<bool> _needsToBeSaved;
+        private IObservable<bool> NeedsToBeSavedObservable { get; set; }
 
         public bool IsEnabled
         {
@@ -191,7 +241,7 @@ namespace ShowManagement.Client.WPF.ViewModels
         #region Cancel
         public ReactiveCommand<object> CancelCommand { get; private set; }
 
-        private void OnCancel()
+        private async Task OnCancel()
         {
             if (this.HasChanges)
             {
@@ -215,7 +265,7 @@ namespace ShowManagement.Client.WPF.ViewModels
         #region Delete
         public ReactiveCommand<object> DeleteCommand { get; private set; }
 
-        private void OnDelete()
+        private async Task OnDelete()
         {
             this.CloseCommand.Execute(null);
 
@@ -223,12 +273,34 @@ namespace ShowManagement.Client.WPF.ViewModels
         }
         #endregion
 
-
-
         #region Clone
         public ReactiveCommand<object> CloneCommand { get; private set; }
 
         #endregion
+
+        #region BrowseDirectory
+        public ReactiveCommand<object> BrowseDirectoryCommand { get; private set; }
+
+        private async Task OnBrowseDirectory()
+        {
+            var dialog = new System.Windows.Forms.FolderBrowserDialog
+            {
+                ShowNewFolderButton = true,
+                Description = "Select Series Directory",
+                RootFolder = Environment.SpecialFolder.MyComputer,
+                SelectedPath = this.Directory
+            };
+
+            var result = dialog.ShowDialog();
+
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                this.Directory = dialog.SelectedPath;
+            }
+        }
+        #endregion
+
+        public ReactiveCommand<object> SearchTvdbCommand { get; private set; }
 
         public void Update(ShowInfo showInfo, bool clearChanges)
         {

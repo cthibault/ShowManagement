@@ -19,7 +19,6 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <!--<controls:ShowInfoControl Grid.Row="0" DataContext="{Binding}" />-->
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -54,12 +53,62 @@
                 </Grid>
 
                 <!--<controls:ParsersGridControl Grid.Row="1" DataContext="{Binding}" />-->
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <DataGrid Grid.Row="0"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="True"
+                              CanUserDeleteRows="False"
+                              Style="{DynamicResource AzureDataGrid}"
+                              ItemsSource="{Binding ParserViewModels}"
+                              Margin="5,5,2,0">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Id" Binding="{Binding ParserId, Mode=OneWay}" />
+                            <DataGridComboBoxColumn Header="Type"  
+                                                    DisplayMemberPath="DisplayValue" 
+                                                    SelectedValuePath="Key" 
+                                                    SelectedValueBinding="{Binding TypeKey}">
+                                <DataGridComboBoxColumn.ElementStyle>
+                                    <Style TargetType="ComboBox">
+                                        <Setter Property="ItemsSource" Value="{Binding DataContext.ParserTypes, RelativeSource={RelativeSource Mode=Self}}" />
+                                    </Style>
+                                </DataGridComboBoxColumn.ElementStyle>
+                                <DataGridComboBoxColumn.EditingElementStyle>
+                                    <Style TargetType="ComboBox">
+                                        <Setter Property="ItemsSource" Value="{Binding DataContext.ParserTypes, RelativeSource={RelativeSource Mode=Self}}" />
+                                    </Style>
+                                </DataGridComboBoxColumn.EditingElementStyle>
+                            </DataGridComboBoxColumn>
+                            <DataGridTextColumn Header="Pattern" Binding="{Binding Pattern, Mode=TwoWay}" />
+                            <DataGridTextColumn Header="Excluded Chars" Binding="{Binding ExcludedCharacters, Mode=TwoWay}" />
+                            
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Button Grid.Row="1" 
+                            Content="Add Parser" 
+                            HorizontalAlignment="Stretch" 
+                            HorizontalContentAlignment="Center" 
+                            Command="{Binding AddParserCommand}"
+                            Margin="5,0,2,5" />
+                </Grid>
             </Grid>
         </ScrollViewer>
 
         <!--AppBar Buttons-->
         <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center">
-            <Button Width="50" Height="50" ToolTip="save" Style="{DynamicResource MetroCircleButtonStyle}"
+            <Button Width="50" Height="50" ToolTip="close" Style="{DynamicResource MetroCircleButtonStyle}"
+                    Command="{Binding CloseCommand}">
+                <Rectangle Width="20" Height="20">
+                    <Rectangle.Fill>
+                        <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_arrow_left}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Button>
+            
+            <Button Width="50" Height="50" ToolTip="save" Style="{DynamicResource MetroCircleButtonStyle}" Margin="20,0,0,0"
                     Command="{Binding SaveCommand}">
                 <Rectangle Width="20" Height="20">
                     <Rectangle.Fill>
