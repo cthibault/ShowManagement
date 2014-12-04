@@ -220,7 +220,7 @@ namespace Repository.Pattern.Ef6.Repository
                 }
 
                 // Apply changes to 1-M properties
-                var items = prop.GetValue(entity, null) as IList<IObjectState>;
+                var items = prop.GetValue(entity, null) as IEnumerable<IObjectState>;
                 if (items != null)
                 {
                     foreach (var item in items)

@@ -28,15 +28,15 @@ namespace ShowManagement.Client.WPF.Services
                         {
                             ParserId = 1,
                             Type = ParserType.Season,
-                            Pattern = "sPattern",
-                            ExcludedCharacters = "sx",
+                            Pattern = @"(\.[sS]\d\d?)",
+                            ExcludedCharacters = ".sS",
                         },
                         new Parser
                         {
                             ParserId = 2,
                             Type = ParserType.Episode,
-                            Pattern = "ePattern",
-                            ExcludedCharacters = "ex",
+                            Pattern = @"([eE]\d\d?\.)",
+                            ExcludedCharacters = ".eE",
                         },
                     },
                 },

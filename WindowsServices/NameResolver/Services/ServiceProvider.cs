@@ -1,4 +1,5 @@
-﻿using ShowManagement.Business.Models;
+﻿using RestSharp;
+using ShowManagement.Business.Models;
 using ShowManagement.CommonServiceProviders;
 using System;
 using System.Collections.Generic;
@@ -16,28 +17,42 @@ namespace ShowManagement.WindowsServices.NameResolver.Services
 
         }
 
-        public async Task<ShowInfo> GetShowInfo(string directoryPath)
+        public async Task<List<ShowInfo>> GetShowInfos(string directoryPath)
         {
-            var parameters = new Dictionary<string, object>()
+            List<ShowInfo> showInfos = null;
+
+            var client = new RestClient(this.BaseAddress);
+
+            var request = new RestRequest("api/showInfo/", Method.GET);
+            request.AddParameter("directoryPath", directoryPath);
+
+            var response = await client.ExecuteGetTaskAsync<List<ShowInfo>>(request);
+
+            if (response.ResponseStatus == ResponseStatus.Completed)
             {
-                { "directoryPath", directoryPath },
-            };
+                showInfos = response.Data;
+            }
 
-            ShowInfo showInfo = await this.GetAsync<ShowInfo>("api/showInfo/Get", parameters);
-
-            return showInfo;
+            return showInfos;
         }
 
         public async Task<EpisodeData> GetEpisodeData(int tvdbId, int seasonNumber, int episodeNumber)
         {
-            var parameters = new Dictionary<string, object>()
-            {
-                { "seriesId", tvdbId },
-                { "seasonNumber", seasonNumber },
-                { "episodeNumber", episodeNumber },
-            };
+            EpisodeData episodeData = null;
 
-            EpisodeData episodeData = await this.GetAsync<EpisodeData>("api/tvdb/GetEpisodeData", parameters);
+            var client = new RestClient(this.BaseAddress);
+
+            var request = new RestRequest("api/tvdb/", Method.GET);
+            request.AddParameter("seriesId", tvdbId);
+            request.AddParameter("seasonNumber", seasonNumber);
+            request.AddParameter("episodeNumber", episodeNumber);
+
+            var response = await client.ExecuteGetTaskAsync<EpisodeData>(request);
+
+            if (response.ResponseStatus == ResponseStatus.Completed)
+            {
+                episodeData = response.Data;
+            }
 
             return episodeData;
         }

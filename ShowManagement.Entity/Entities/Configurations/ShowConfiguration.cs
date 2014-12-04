@@ -22,7 +22,7 @@ namespace ShowManagement.Entity.Configurations
                 .HasMaxLength(255);
 
             // Table and Column Mappings
-            this.ToTable("Show");
+            this.ToTable("Shows");
         }
     }
 }

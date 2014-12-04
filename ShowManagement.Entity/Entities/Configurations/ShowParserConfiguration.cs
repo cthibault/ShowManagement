@@ -22,7 +22,7 @@ namespace ShowManagement.Entity.Configurations
                 .HasMaxLength(20);
 
             // Table and Column Mappings
-            this.ToTable("ShowParser");
+            this.ToTable("ShowParsers");
 
             // Relationships
             //this.HasRequired(x => x.Show)

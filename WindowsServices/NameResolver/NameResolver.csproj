@@ -43,6 +43,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="RestSharp">
+      <HintPath>..\..\packages\RestSharp.105.0.1\lib\net4\RestSharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />
@@ -76,6 +79,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Entities.Pattern\Entities.Pattern.csproj">
+      <Project>{9c9da4a0-ef87-47d5-a5b7-72b676406e2d}</Project>
+      <Name>Entities.Pattern</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\ShowManagement.Business\ShowManagement.Business.csproj">
       <Project>{f5b8871e-8108-4b8d-81c5-9df33ac19bfa}</Project>
       <Name>ShowManagement.Business</Name>

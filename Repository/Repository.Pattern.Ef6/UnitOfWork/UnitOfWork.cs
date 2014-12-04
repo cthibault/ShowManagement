@@ -26,6 +26,8 @@ namespace Repository.Pattern.Ef6.UnitOfWork
 
         public UnitOfWork(IDataContextAsync dataContext, IRepositoryProvider repositoryProvider)
         {
+            this._dataContext = dataContext;
+
             this.RepositoryProvider = repositoryProvider;
             this.RepositoryProvider.DataContext = dataContext;
             this.RepositoryProvider.UnitOfWork = this;

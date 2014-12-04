@@ -9,7 +9,7 @@ namespace ShowManagement.WindowsServices.NameResolver.Services
 {
     public interface IServiceProvider
     {
-        Task<ShowInfo> GetShowInfo(string directoryPath);
+        Task<List<ShowInfo>> GetShowInfos(string directoryPath);
 
         Task<EpisodeData> GetEpisodeData(int tvdbId, int seasonNumber, int episodeNumber);
     }

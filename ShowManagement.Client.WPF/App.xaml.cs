@@ -26,8 +26,8 @@ namespace ShowManagement.Client.WPF
             // Configuration
             unityContainer.RegisterInstance<SettingsManager>(settingsManager);
 
-            //unityContainer.RegisterType<Services.IServiceProvider, Services.ServiceProvider>(new InjectionConstructor(settingsManager.BaseAddress));
-            unityContainer.RegisterType<Services.IServiceProvider, Services.MockServiceProvider>();
+            unityContainer.RegisterType<Services.IServiceProvider, Services.ServiceProvider>(new InjectionConstructor(settingsManager.BaseAddress));
+            //unityContainer.RegisterType<Services.IServiceProvider, Services.MockServiceProvider>();
 
             unityContainer.RegisterType<ViewModels.IShowsViewModel, ViewModels.ShowsViewModel>();
 

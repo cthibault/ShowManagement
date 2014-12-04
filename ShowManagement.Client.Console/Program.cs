@@ -1,4 +1,6 @@
-﻿using RestSharp;
+﻿using Entities.Pattern;
+using RestSharp;
+using ShowManagement.Business.Enums;
 using ShowManagement.Business.Models;
 using System;
 using System.Collections.Generic;
@@ -65,22 +67,75 @@ namespace ShowManagement.Client.Console
             //    }
             //}
 
-            var client = new RestClient("https://localhost:44300");
-            var request1 = new RestRequest("api/showInfo/Get/", Method.GET);
-            var response1 = await client.ExecuteGetTaskAsync<List<ShowInfo>>(request1);
+            var client = new RestClient("http://localhost:25220");
+            //var getAllRequest = new RestRequest("api/showInfo/", Method.GET);
+            //var getAllResponse = await client.ExecuteGetTaskAsync<List<ShowInfo>>(getAllRequest);
 
 
-            var request2 = new RestRequest("api/showInfo/Get/{showId}", Method.GET);
-            request2.AddParameter("showId", 1);
-            var response2 = await client.ExecuteGetTaskAsync<ShowInfo>(request2);
-            
+            //var getOneRequest = new RestRequest("api/showInfo/", Method.GET);
+            //getOneRequest.AddParameter("directoryPath", @"E:\Media\Videos\TV Shows\30 Rock");
+            //var getOneResponse = await client.ExecuteGetTaskAsync<List<ShowInfo>>(getOneRequest);
 
-            var show = response2.Data;
-            
-            var request3 = new RestRequest("api/showInfo/Post", Method.POST);
-            request3.RequestFormat = DataFormat.Json;
-            request3.AddBody(show);
-            var response3 = await client.ExecutePostTaskAsync<ShowInfo>(request3);
+            var getOneRequest = new RestRequest("api/tvdb/", Method.GET);
+            getOneRequest.AddParameter("seriesId", 257655);
+            getOneRequest.AddParameter("seasonNumber", 1);
+            getOneRequest.AddParameter("episodeNumber", 1);
+            var getOneResponse = await client.ExecuteGetTaskAsync<EpisodeData>(getOneRequest);
+
+
+            var newShowInfo = new ShowInfo();
+            newShowInfo.ObjectState = ObjectState.Added;
+            newShowInfo.Name = "Client Console Test";
+            newShowInfo.Directory = @"C:\Test Show\";
+            newShowInfo.TvdbId = 0;
+            newShowInfo.ImdbId = "imdbTest";
+            newShowInfo.Parsers.Add(
+                new Parser
+                {
+                    ObjectState = ObjectState.Added,
+                    Type = ParserType.Season,
+                    Pattern = "seasonPattern",
+                    ExcludedCharacters = "seasonExclude"
+                });
+            newShowInfo.Parsers.Add(
+                new Parser
+                {
+                    ObjectState = ObjectState.Added,
+                    Type = ParserType.Episode,
+                    Pattern = "episodePattern",
+                    ExcludedCharacters = "episodeExclude"
+                });
+
+            var createOneRequest = new RestRequest("api/showInfo/", Method.POST);
+            createOneRequest.RequestFormat = DataFormat.Json;
+            createOneRequest.AddBody(newShowInfo);
+            var createOneResponse = await client.ExecutePostTaskAsync<ShowInfo>(createOneRequest);
+
+
+            var returnedShowInfo = createOneResponse.Data;
+
+            returnedShowInfo.Name = "Client Console Test - Updated";
+            returnedShowInfo.ObjectState = ObjectState.Modified;
+
+
+            var updateRequest = new RestRequest("api/showInfo/", Method.POST);
+            updateRequest.RequestFormat = DataFormat.Json;
+            //updateRequest.AddParameter("id", returnedShowInfo.ShowId);
+            updateRequest.AddBody(returnedShowInfo);
+            var updateResponse = await client.ExecutePostTaskAsync<ShowInfo>(updateRequest);
+
+            //var updateRequest = new RestRequest("api/showInfo/", Method.PUT);
+            //updateRequest.RequestFormat = DataFormat.Json;
+            ////updateRequest.AddParameter("id", returnedShowInfo.ShowId);
+            //updateRequest.AddUrlSegment("id", returnedShowInfo.ShowId.ToString());
+            //updateRequest.AddBody(returnedShowInfo);
+            //var updateResponse = await client.ExecuteTaskAsync<ShowInfo>(updateRequest);
+
+
+            var deleteRequest = new RestRequest("api/showInfo/", Method.DELETE);
+            deleteRequest.RequestFormat = DataFormat.Json;
+            deleteRequest.AddParameter("id", returnedShowInfo.ShowId);
+            var deleteResponse = await client.ExecuteTaskAsync(deleteRequest); 
         }
     }
 }

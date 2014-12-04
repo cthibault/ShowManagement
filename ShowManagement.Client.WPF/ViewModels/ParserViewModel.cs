@@ -7,6 +7,7 @@ using ShowManagement.Core.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,10 +40,26 @@ namespace ShowManagement.Client.WPF.ViewModels
                     this.ObjectState = hasChanges ? ObjectState.Modified : ObjectState.Unchanged;
                 }
             });
+
+            this.WhenAnyValue(vm => vm.EvaluateInput)
+                .Select(x => 
+                {
+                    int result = 0;
+
+                    if (!this.Model.TryParse(x, out result))
+                    {
+                        result = -1;
+                    }
+
+                    return result;
+                })
+                .ToProperty(this, vm => vm.EvaluateOutput, out this._evaluateOutput);
+                
         }
         private void InitializeCommands()
         {
-
+            this.BeginEvaluateParserCommand = ReactiveCommand.Create();
+            this.EndEvaluateParserCommand = ReactiveCommand.Create();
         }
 
         #region Wrapper Properties
@@ -90,7 +107,25 @@ namespace ShowManagement.Client.WPF.ViewModels
             get { return this.ParserId == 0; }
         }
 
+        public string EvaluateInput
+        {
+            get { return this._evaluateInput; }
+            set { this.RaiseAndSetIfChanged(ref this._evaluateInput, value); }
+        }
+        private string _evaluateInput;
+        public int EvaluateOutput
+        {
+            get { return this._evaluateOutput.Value; }
+        }
+        private ObservableAsPropertyHelper<int> _evaluateOutput;
+
         public List<ItemViewModel<ParserType, int>> ParserTypes { get; private set; }
+
+
+        #region EvaluateParser
+        public ReactiveCommand<object> BeginEvaluateParserCommand { get; private set; }
+        public ReactiveCommand<object> EndEvaluateParserCommand { get; private set; }
+        #endregion
 
 
         public Parser Model

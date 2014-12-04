@@ -3,15 +3,17 @@
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                       xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
                       xmlns:views="clr-namespace:ShowManagement.Client.WPF.Views"
+                      Icon="tv.ico"
+                      ShowIconOnTitleBar="True"
                       Title="SHOW MANAGEMENT" 
                       EnableDWMDropShadow="True"
                       WindowStartupLocation="CenterScreen"
                       Height="750" Width="950">
-
+    
     <controls:MetroWindow.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </controls:MetroWindow.Resources>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="5" />
@@ -19,22 +21,21 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!--<controls:MetroProgressBar Grid.Row="0"
-                                   IsIndeterminate="true" 
-                                   Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}"
-                                   Foreground="{DynamicResource AccentColorBrush}" />-->
-
         <controls:MetroContentControl Grid.Row="1">
             <controls:MetroAnimatedSingleRowTabControl>
                 <controls:MetroAnimatedSingleRowTabControl.Items>
-                    <TabItem Header="shows">
-                        <views:ShowsView />
+                    <TabItem Header="recent downloads">
+                        <TextBlock Text="coming soon..." Margin="5" FontSize="16" FontStyle="Italic"/>
                     </TabItem>
-                    <TabItem Header="parsers">
-                        <TextBlock Text="This is the parsers view" FontSize="30" />
+                    <TabItem Header="shows &amp; parsers">
+                        <views:ShowsView />
                     </TabItem>
                 </controls:MetroAnimatedSingleRowTabControl.Items>
             </controls:MetroAnimatedSingleRowTabControl>
         </controls:MetroContentControl>
+        
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Label x:Name="version" FontSize="10" />
+        </StackPanel>
     </Grid>
 </controls:MetroWindow>

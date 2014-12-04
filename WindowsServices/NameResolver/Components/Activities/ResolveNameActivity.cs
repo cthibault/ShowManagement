@@ -201,7 +201,21 @@ namespace ShowManagement.WindowsServices.NameResolver.Components.Activities
             {
                 TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Calling GetShowInfo with Directory = {0}.", showDirectoryFullName);
                 
-                showInfo = await this.ServiceProvider.GetShowInfo(showDirectoryFullName);
+                List<ShowInfo> showInfos = await this.ServiceProvider.GetShowInfos(showDirectoryFullName);
+
+                if (showInfos == null || !showInfos.Any())
+                {
+                    var specificMessage = showInfos == null ? "a null" : "an empty";
+
+                    throw new InvalidDataException(string.Format("ServiceProvider.GetShowInfos returned {0} list.", specificMessage));
+                }
+
+                if (showInfos.Count != 1)
+                {
+                    throw new InvalidDataException("ServiceProvider.GetShowInfos returned too many results.");
+                }
+
+                showInfo = showInfos.Single();
             }
             catch (Exception ex)
             {

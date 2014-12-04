@@ -8,6 +8,15 @@ namespace ShowManagement.Business.Models
 {
     public class EpisodeData
     {
+        #region Constructors
+        /// <summary>
+        ///  For serialization purposes only
+        /// </summary>
+        public EpisodeData()
+        {
+
+        } 
+
         public EpisodeData(int id, string imdbId, int seriesId, int seasonId, DateTime lastUpdated, int absoluteNumber, int seasonNumber, int episodeNumber, string episodeName, string overview)
         {
             this.Id = id;
@@ -21,6 +30,7 @@ namespace ShowManagement.Business.Models
             this.EpisodeName = episodeName;
             this.Overview = overview;
         }
+        #endregion
 
         public int Id { get; private set;}
 

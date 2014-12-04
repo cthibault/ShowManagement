@@ -23,27 +23,37 @@ namespace ShowManagement.Client.WPF.ViewModels
             : base(unityContainer, true)
         {
             this._serviceProvider = serviceProvider;
-            this._model = showInfo;
-            this.ParserModels.AddRange(showInfo.Parsers);
 
-            this.IsEnabled = true;
+            this.Update(showInfo, true);
 
             this.DefineData();
             this.DefineCommands();
+
+            this.IsEnabled = true;
         }
 
         private void DefineData()
         {
-            this.ParserModels.ItemsAdded.Subscribe(p => this.Model.Parsers.Add(p));
+            this.ParserModels.ItemsAdded.Subscribe(p =>
+            {
+                if (!this.Model.Parsers.Contains(p))
+                {
+                    this.Model.Parsers.Add(p);
+                }
+            });
             this.ParserViewModels = this.ParserModels.CreateDerivedCollection(
                 p =>
                 {
                     var vm = new ParserViewModel(this.UnityContainer, p);
 
+                    vm.BeginEvaluateParserCommand.Subscribe(_ => this.SelectedParserViewModel = vm);
+                    vm.EndEvaluateParserCommand.Subscribe(_ => this.SelectedParserViewModel = null);
+
                     return vm;
                 });
             this.ParserViewModels.ChangeTrackingEnabled = true;
-            this.ParsersToSave = this.ParserViewModels.CreateDerivedCollection(pvm => pvm, pvm => pvm.HasChanges || pvm.ObjectState == ObjectState.Deleted);
+            this.VisibleParserViewModels = this.ParserViewModels.CreateDerivedCollection(pvm => pvm, pvm => pvm.ObjectState != ObjectState.Deleted);
+            this.ParsersToSave = this.ParserViewModels.CreateDerivedCollection(pvm => pvm, pvm => pvm.HasChanges || pvm.ObjectState != ObjectState.Unchanged);
 
 
             this.HasChangesObservable.Subscribe(hasChanges =>
@@ -76,6 +86,14 @@ namespace ShowManagement.Client.WPF.ViewModels
                 )
                 .Select(x => string.Format("{0}{1}", this.Name, x ? "*" : string.Empty))
                 .ToProperty(this, svm => svm.DisplayName, out this._displayName);
+
+            this.WhenAnyValue(svm => svm.SelectedParserViewModel)
+                .Select(pvm => pvm != null)
+                .ToProperty(this, vm => vm.ShowEvaluateParserPane, out this._showEvaluateParserPane);
+
+            this.WhenAnyValue(svm => svm.SelectedParserViewModel)
+                .Select(pvm => pvm == null)
+                .ToProperty(this, vm => vm.EnabledParserEditing, out this._enableParserEditing);
         }
         private void DefineCommands()
         {
@@ -96,14 +114,20 @@ namespace ShowManagement.Client.WPF.ViewModels
             this.DeleteCommand = ReactiveCommand.Create();
             this.DeleteCommand.Subscribe(async _ => await this.OnDelete());
 
-            this.BrowseDirectoryCommand = ReactiveCommand.Create();
-            this.BrowseDirectoryCommand.Subscribe(async _ => await this.OnBrowseDirectory());
+            this.BrowseDirectoryCommand = ReactiveCommand.CreateAsyncTask(async _ => await this.OnBrowseDirectory());
+            this.BrowseDirectoryCommand.ThrownExceptions.Subscribe(ex => { throw ex; });
+
+            this.SearchTvdbCommand = ReactiveCommand.CreateAsyncTask(async _ => await this.OnSearchTvdb());
+            this.SearchTvdbCommand.ThrownExceptions.Subscribe(ex => { throw ex; });
 
             this.CloneCommand = ReactiveCommand.Create(falseObservable);
 
 
             this.AddParserCommand = ReactiveCommand.Create();
             this.AddParserCommand.Subscribe(async _ => await this.OnAddParser());
+
+            this.DeleteParserCommand = ReactiveCommand.CreateAsyncTask(async pvm => await this.OnDeleteParser(pvm as ParserViewModel));
+            this.CloneParserCommand = ReactiveCommand.CreateAsyncTask(async pvm => await this.OnCloneParser(pvm as ParserViewModel));
         }
 
         #region Wrapper Properties
@@ -139,7 +163,6 @@ namespace ShowManagement.Client.WPF.ViewModels
         public ObjectState ObjectState
         {
             get { return this._model.ObjectState; }
-            //set { this.LogRaiseAndSetIfChanged(this._model.ObjectState, value, v => this._model.ObjectState = v); }
             set
             {
                 if (this._model.ObjectState != value)
@@ -156,17 +179,54 @@ namespace ShowManagement.Client.WPF.ViewModels
 
 
         #region Parsers
-        public IReactiveDerivedList<ParserViewModel> ParserViewModels { get; private set; }
-        private ReactiveList<Parser> ParserModels = new ReactiveList<Parser>();
+        public IReactiveDerivedList<ParserViewModel> VisibleParserViewModels { get; private set; }
+        private IReactiveDerivedList<ParserViewModel> ParserViewModels { get; set; }
         private IReactiveDerivedList<ParserViewModel> ParsersToSave { get; set; }
+        private ReactiveList<Parser> ParserModels = new ReactiveList<Parser>();
 
+        #region AddParser
         public ReactiveCommand<object> AddParserCommand { get; private set; }
         private async Task OnAddParser()
         {
             var parser = new Parser { ObjectState = ObjectState.Added };
 
             this.ParserModels.Add(parser);
+        } 
+        #endregion
+
+        #region CloneParser
+        public ReactiveCommand<Unit> CloneParserCommand { get; private set; }
+
+        private async Task OnCloneParser(ParserViewModel parserViewModel)
+        {
+            if (parserViewModel != null)
+            {
+                var clonedParser = new Parser { ObjectState = ObjectState.Added };
+                clonedParser.TypeKey = parserViewModel.TypeKey;
+                clonedParser.Pattern = parserViewModel.Pattern;
+                clonedParser.ExcludedCharacters = parserViewModel.ExcludedCharacters;
+
+                this.ParserModels.Add(clonedParser);
+            }
         }
+        #endregion
+
+        #region DeleteParser
+        public ReactiveCommand<Unit> DeleteParserCommand { get; private set; }
+
+        private async Task OnDeleteParser(ParserViewModel parserViewModel)
+        {
+            if (parserViewModel != null)
+            {
+                parserViewModel.ObjectState = ObjectState.Deleted;
+
+                if (parserViewModel.IsNew)
+                {
+                    this.ParserModels.Remove(parserViewModel.Model);
+                }
+            }
+        }
+        #endregion
         #endregion
 
 
@@ -194,6 +254,24 @@ namespace ShowManagement.Client.WPF.ViewModels
             set { this.RaiseAndSetIfChanged(ref this._isEnabled, value); }
         }
         private bool _isEnabled;
+
+
+        public ParserViewModel SelectedParserViewModel
+        {
+            get { return this._selectedParserViewModel; }
+            set { this.RaiseAndSetIfChanged(ref this._selectedParserViewModel, value); }
+        }
+        private ParserViewModel _selectedParserViewModel;
+        public bool ShowEvaluateParserPane
+        {
+            get { return this._showEvaluateParserPane.Value; }
+        }
+        private ObservableAsPropertyHelper<bool> _showEvaluateParserPane;
+        public bool EnabledParserEditing
+        {
+            get { return this._enableParserEditing.Value; }
+        }
+        private ObservableAsPropertyHelper<bool> _enableParserEditing;
 
 
         #region Refresh
@@ -243,7 +321,7 @@ namespace ShowManagement.Client.WPF.ViewModels
 
         private async Task OnCancel()
         {
-            if (this.HasChanges)
+            if (this.NeedsToBeSaved)
             {
                 this.RefreshCommand.Execute(null);
             }
@@ -279,7 +357,7 @@ namespace ShowManagement.Client.WPF.ViewModels
         #endregion
 
         #region BrowseDirectory
-        public ReactiveCommand<object> BrowseDirectoryCommand { get; private set; }
+        public ReactiveCommand<Unit> BrowseDirectoryCommand { get; private set; }
 
         private async Task OnBrowseDirectory()
         {
@@ -300,13 +378,27 @@ namespace ShowManagement.Client.WPF.ViewModels
         }
         #endregion
 
-        public ReactiveCommand<object> SearchTvdbCommand { get; private set; }
+        #region SearchTvdb
+        public ReactiveCommand<Unit> SearchTvdbCommand { get; private set; }
+
+        private async Task OnSearchTvdb()
+        {
+        }
+        #endregion
 
         public void Update(ShowInfo showInfo, bool clearChanges)
         {
             this.TurnTrackChangesOff(clearChanges);
 
             this._model = showInfo;
+
+            this.ParserModels.Clear();
+            this.ParserModels.AddRange(showInfo.Parsers);
+
+            if (this.SelectedParserViewModel != null)
+            {
+                this.SelectedParserViewModel.EndEvaluateParserCommand.Execute(null);
+            }
 
             this.RaisePropertyChanged(this.ExtractPropertyName(x => x.ShowId));
             this.RaisePropertyChanged(this.ExtractPropertyName(x => x.TvdbId));

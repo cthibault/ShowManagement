@@ -1,4 +1,5 @@
-﻿using Repository.Pattern.Ef6.DataContext;
+﻿using Repository.Pattern.DataContext;
+using Repository.Pattern.Ef6.DataContext;
 using ShowManagement.Entity.Configurations;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ShowManagement.Entity
 {
-    public partial class ShowManagementDataContext : DataContext
+    public partial class ShowManagementDataContext : DataContext, IDataContextAsync
     {
         static ShowManagementDataContext()
         {
