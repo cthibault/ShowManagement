@@ -29,7 +29,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uTorrentCleanup.UnitTest", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.CommonServiceProviders", "ShowManagement.CommonServiceProviders\ShowManagement.CommonServiceProviders.csproj", "{DC06D071-869E-44F9-97C0-CD1188999AEE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities.Pattern", "Entities.Pattern\Entities.Pattern.csproj", "{9C9DA4A0-EF87-47D5-A5B7-72B676406E2D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities.Pattern", "ShowManagement.Web\Entities.Pattern\Entities.Pattern.csproj", "{9C9DA4A0-EF87-47D5-A5B7-72B676406E2D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

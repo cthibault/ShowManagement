@@ -9,23 +9,23 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.Business", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.Core", "ShowManagement.Core\ShowManagement.Core.csproj", "{5BAC28ED-95AD-4830-A2A1-C67F85D1BFAD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repository.Pattern", "Repository\Repository.Pattern\Repository.Pattern.csproj", "{E102599C-6BB7-402B-B725-CE2650E97EAE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repository.Pattern", "ShowManagement.Web\Repository\Repository.Pattern\Repository.Pattern.csproj", "{E102599C-6BB7-402B-B725-CE2650E97EAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repository.Pattern.Ef6", "Repository\Repository.Pattern.Ef6\Repository.Pattern.Ef6.csproj", "{532BF909-A3C3-4074-B16D-9B743FFC0890}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repository.Pattern.Ef6", "ShowManagement.Web\Repository\Repository.Pattern.Ef6\Repository.Pattern.Ef6.csproj", "{532BF909-A3C3-4074-B16D-9B743FFC0890}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service.Pattern", "Service.Pattern\Service.Pattern.csproj", "{8630AC3C-CE3F-4953-977B-C10895BCF178}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service.Pattern", "ShowManagement.Web\Service.Pattern\Service.Pattern.csproj", "{8630AC3C-CE3F-4953-977B-C10895BCF178}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{8367B3ED-7529-4368-9308-DC15335538A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities.Pattern", "Entities.Pattern\Entities.Pattern.csproj", "{9C9DA4A0-EF87-47D5-A5B7-72B676406E2D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities.Pattern", "ShowManagement.Web\Entities.Pattern\Entities.Pattern.csproj", "{9C9DA4A0-EF87-47D5-A5B7-72B676406E2D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.Entity", "ShowManagement.Entity\ShowManagement.Entity.csproj", "{AB9A69C6-A222-4F56-B052-53246979D4F2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.Entity", "ShowManagement.Web\ShowManagement.Entity\ShowManagement.Entity.csproj", "{AB9A69C6-A222-4F56-B052-53246979D4F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.Repository", "ShowManagement.Repository\ShowManagement.Repository.csproj", "{9EFC9D9C-24AD-4B8C-9806-787FD1487C1E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.Repository", "ShowManagement.Web\ShowManagement.Repository\ShowManagement.Repository.csproj", "{9EFC9D9C-24AD-4B8C-9806-787FD1487C1E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.Service", "ShowManagement.Service\ShowManagement.Service.csproj", "{04F5DD4D-9074-48E4-B65F-D90D2C7D9095}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.Service", "ShowManagement.Web\ShowManagement.Service\ShowManagement.Service.csproj", "{04F5DD4D-9074-48E4-B65F-D90D2C7D9095}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagent.WebApi", "ShowManagent.WebApi\ShowManagent.WebApi.csproj", "{37853EFE-FFEB-4509-98DA-2D2331F62DC1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagent.WebApi", "ShowManagement.Web\ShowManagent.WebApi\ShowManagent.WebApi.csproj", "{37853EFE-FFEB-4509-98DA-2D2331F62DC1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

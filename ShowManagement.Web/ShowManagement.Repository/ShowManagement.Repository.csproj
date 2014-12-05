@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F5B8871E-8108-4B8D-81C5-9DF33AC19BFA}</ProjectGuid>
+    <ProjectGuid>{9EFC9D9C-24AD-4B8C-9806-787FD1487C1E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ShowManagement.Business</RootNamespace>
-    <AssemblyName>ShowManagement.Business</AssemblyName>
+    <RootNamespace>ShowManagement.Repository</RootNamespace>
+    <AssemblyName>ShowManagement.Repository</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,7 +30,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="LinqKit">
+      <HintPath>..\packages\LINQKit.1.1.1\lib\net45\LinqKit.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -39,21 +49,38 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Enums\ParserType.cs" />
-    <Compile Include="Models\BaseModel.cs" />
-    <Compile Include="Models\EpisodeData.cs" />
-    <Compile Include="Models\Parser.cs" />
-    <Compile Include="Models\ShowInfo.cs" />
+    <Compile Include="ModelFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Queries\ShowQuery.cs" />
+    <Compile Include="Repositories\ShowRepository.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ShowManagement.Web\Entities.Pattern\Entities.Pattern.csproj">
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Entities.Pattern\Entities.Pattern.csproj">
       <Project>{9c9da4a0-ef87-47d5-a5b7-72b676406e2d}</Project>
       <Name>Entities.Pattern</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ShowManagement.Core\ShowManagement.Core.csproj">
-      <Project>{5bac28ed-95ad-4830-a2a1-c67f85d1bfad}</Project>
-      <Name>ShowManagement.Core</Name>
+    <ProjectReference Include="..\Repository\Repository.Pattern.Ef6\Repository.Pattern.Ef6.csproj">
+      <Project>{532bf909-a3c3-4074-b16d-9b743ffc0890}</Project>
+      <Name>Repository.Pattern.Ef6</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Repository\Repository.Pattern\Repository.Pattern.csproj">
+      <Project>{e102599c-6bb7-402b-b725-ce2650e97eae}</Project>
+      <Name>Repository.Pattern</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ShowManagement.Business\ShowManagement.Business.csproj">
+      <Project>{f5b8871e-8108-4b8d-81c5-9df33ac19bfa}</Project>
+      <Name>ShowManagement.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ShowManagement.Entity\ShowManagement.Entity.csproj">
+      <Project>{ab9a69c6-a222-4f56-b052-53246979d4f2}</Project>
+      <Name>ShowManagement.Entity</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

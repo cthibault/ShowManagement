@@ -79,7 +79,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Entities.Pattern\Entities.Pattern.csproj">
+    <ProjectReference Include="..\..\ShowManagement.Web\Entities.Pattern\Entities.Pattern.csproj">
       <Project>{9c9da4a0-ef87-47d5-a5b7-72b676406e2d}</Project>
       <Name>Entities.Pattern</Name>
     </ProjectReference>

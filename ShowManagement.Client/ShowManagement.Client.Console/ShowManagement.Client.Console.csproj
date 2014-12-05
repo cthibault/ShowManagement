@@ -4,15 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F5B8871E-8108-4B8D-81C5-9DF33AC19BFA}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{8798040E-024E-494C-BE74-46DE6FE2FDDA}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ShowManagement.Business</RootNamespace>
-    <AssemblyName>ShowManagement.Business</AssemblyName>
+    <RootNamespace>ShowManagement.Client.Console</RootNamespace>
+    <AssemblyName>ShowManagement.Client.Console</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +23,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -30,8 +32,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp">
+      <HintPath>..\packages\RestSharp.104.4.0\lib\net4\RestSharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.2\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -39,19 +53,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Enums\ParserType.cs" />
-    <Compile Include="Models\BaseModel.cs" />
-    <Compile Include="Models\EpisodeData.cs" />
-    <Compile Include="Models\Parser.cs" />
-    <Compile Include="Models\ShowInfo.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ShowManagement.Web\Entities.Pattern\Entities.Pattern.csproj">
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\ShowManagement.Web\Entities.Pattern\Entities.Pattern.csproj">
       <Project>{9c9da4a0-ef87-47d5-a5b7-72b676406e2d}</Project>
       <Name>Entities.Pattern</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ShowManagement.Core\ShowManagement.Core.csproj">
+    <ProjectReference Include="..\..\ShowManagement.Business\ShowManagement.Business.csproj">
+      <Project>{f5b8871e-8108-4b8d-81c5-9df33ac19bfa}</Project>
+      <Name>ShowManagement.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ShowManagement.Core\ShowManagement.Core.csproj">
       <Project>{5bac28ed-95ad-4830-a2a1-c67f85d1bfad}</Project>
       <Name>ShowManagement.Core</Name>
     </ProjectReference>

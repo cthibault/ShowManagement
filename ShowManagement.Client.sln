@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.Client.Console", "ShowManagement.Client.Console\ShowManagement.Client.Console.csproj", "{8798040E-024E-494C-BE74-46DE6FE2FDDA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.Client.Console", "ShowManagement.Client\ShowManagement.Client.Console\ShowManagement.Client.Console.csproj", "{8798040E-024E-494C-BE74-46DE6FE2FDDA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.Client.WPF", "ShowManagement.Client.WPF\ShowManagement.Client.WPF.csproj", "{534696E3-1441-4094-86DB-480328731496}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.Client.WPF", "ShowManagement.Client\ShowManagement.Client.WPF\ShowManagement.Client.WPF.csproj", "{534696E3-1441-4094-86DB-480328731496}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Shared", "_Shared", "{A5BFF4BF-E10E-4572-A526-977FA2D23B16}"
 EndProject
@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.CommonServic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.Core", "ShowManagement.Core\ShowManagement.Core.csproj", "{5BAC28ED-95AD-4830-A2A1-C67F85D1BFAD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities.Pattern", "Entities.Pattern\Entities.Pattern.csproj", "{9C9DA4A0-EF87-47D5-A5B7-72B676406E2D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities.Pattern", "ShowManagement.Web\Entities.Pattern\Entities.Pattern.csproj", "{9C9DA4A0-EF87-47D5-A5B7-72B676406E2D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
