@@ -1,0 +1,208 @@
+﻿<UserControl x:Class="ShowManagement.Client.WPF.Views.ShowView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:behaviors="clr-namespace:ShowManagement.Client.WPF.Behaviors"
+             xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:views="clr-namespace:ShowManagement.Client.WPF.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!--Show Details-->
+        <Grid Grid.Row="0" IsEnabled="{Binding IsEnabled}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="ID" Margin="5" />
+            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding ShowId, Mode=OneWay}" IsReadOnly="True" Margin="2,2" />
+
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="Name" Margin="5" />
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Name}" Margin="2,2" />
+
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Directory" Margin="5" />
+            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Directory}" Margin="2,2" />
+            <!-- Style="{DynamicResource SearchMetroTextBox}" controls:TextboxHelper.ButtonCommand="{Binding BrowseDirectoryCommand, Mode=OneWay}" -->
+            <Button Grid.Row="2" Grid.Column="2" Content="..." Command="{Binding BrowseDirectoryCommand}" Margin="2,2" />
+
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="Tvdb ID" Margin="5" />
+            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding TvdbId, Mode=OneWay}" IsReadOnly="True" Margin="2,2" />
+            <Button Grid.Row="3" Grid.Column="2" Content="..." Command="{Binding TvdbSearchViewModel.OpenCommand}" Margin="2,2" />
+
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="Imdb ID" Margin="5" />
+            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding ImbdId, Mode=OneWay}" IsReadOnly="True" Margin="2,2" />
+        </Grid>
+        
+        <!--Parser Details-->
+        <Grid Grid.Row="1" IsEnabled="{Binding EnabledParserEditing}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            
+            <DataGrid Grid.Row="0"
+                            AutoGenerateColumns="False"
+                            CanUserAddRows="True"
+                            CanUserDeleteRows="False"
+                            Style="{DynamicResource AzureDataGrid}"
+                            ItemsSource="{Binding VisibleParserViewModels}"
+                            Margin="5,5,2,0">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Id" Binding="{Binding ParserId, Mode=OneWay}" />
+                    <DataGridComboBoxColumn Header="Type"  
+                                                DisplayMemberPath="DisplayValue" 
+                                                SelectedValuePath="Key" 
+                                                SelectedValueBinding="{Binding TypeKey}">
+                        <DataGridComboBoxColumn.ElementStyle>
+                            <Style TargetType="ComboBox">
+                                <Setter Property="ItemsSource" Value="{Binding DataContext.ParserTypes, RelativeSource={RelativeSource Mode=Self}}" />
+                            </Style>
+                        </DataGridComboBoxColumn.ElementStyle>
+                        <DataGridComboBoxColumn.EditingElementStyle>
+                            <Style TargetType="ComboBox">
+                                <Setter Property="ItemsSource" Value="{Binding DataContext.ParserTypes, RelativeSource={RelativeSource Mode=Self}}" />
+                            </Style>
+                        </DataGridComboBoxColumn.EditingElementStyle>
+                    </DataGridComboBoxColumn>
+                    <DataGridTextColumn Header="Pattern" Binding="{Binding Pattern, Mode=TwoWay}" />
+                    <DataGridTextColumn Header="Excluded Chars" Binding="{Binding ExcludedCharacters, Mode=TwoWay}" />
+
+                    <DataGridTemplateColumn Header="">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="Evaluate" Margin="1" 
+                                                Command="{Binding BeginEvaluateParserCommand}" />
+                                    <Button Content="Clone" Margin="1" 
+                                                Command="{Binding DataContext.CloneParserCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}, Mode=FindAncestor}}" 
+                                                CommandParameter="{Binding}" />
+                                    <Button Content="DELETE" Margin="5,1,1,1" 
+                                                Background="LightCoral" 
+                                                Command="{Binding DataContext.DeleteParserCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}, Mode=FindAncestor}}" 
+                                                CommandParameter="{Binding}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+            <Button Grid.Row="1" 
+                        Content="Add Parser" 
+                        HorizontalAlignment="Stretch" 
+                        HorizontalContentAlignment="Center" 
+                        Command="{Binding AddParserCommand}"
+                        Margin="5,0,2,5" />
+        </Grid>
+
+        <!--AppBar Buttons-->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center">
+            <Button Width="50" Height="50" ToolTip="close" Style="{DynamicResource MetroCircleButtonStyle}"
+                    Command="{Binding CloseCommand}">
+                <Rectangle Width="20" Height="20">
+                    <Rectangle.Fill>
+                        <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_arrow_left}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Button>
+            
+            <Button Width="50" Height="50" ToolTip="save" Style="{DynamicResource MetroCircleButtonStyle}" Margin="20,0,0,0"
+                    Command="{Binding SaveCommand}">
+                <Rectangle Width="20" Height="20">
+                    <Rectangle.Fill>
+                        <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_save}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Button>
+            <Button Width="50" Height="50" ToolTip="refresh" Style="{DynamicResource MetroCircleButtonStyle}"
+                    Command="{Binding RefreshCommand}">
+                <Rectangle Width="20" Height="20">
+                    <Rectangle.Fill>
+                        <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_refresh}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Button>
+            <Button Width="50" Height="50" ToolTip="cancel" Style="{DynamicResource MetroCircleButtonStyle}"
+                    Command="{Binding CancelCommand}">
+                <Rectangle Width="20" Height="20">
+                    <Rectangle.Fill>
+                        <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_cancel}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Button>
+
+
+            <Button Width="50" Height="50" ToolTip="clone" Style="{DynamicResource MetroCircleButtonStyle}" Margin="20,0,0,0"
+                    Command="{Binding CloneCommand}">
+                <Rectangle Width="20" Height="20">
+                    <Rectangle.Fill>
+                        <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_clipboard}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Button>
+            <Button Width="50" Height="50" ToolTip="delete" Style="{DynamicResource MetroCircleButtonStyle}"
+                    Command="{Binding DeleteCommand}">
+                <Rectangle Width="20" Height="20">
+                    <Rectangle.Fill>
+                        <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_delete}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Button>
+        </StackPanel>
+
+        <!--Flyout Panels: Evaluate Parser-->
+        <DockPanel Grid.Row="1" Grid.RowSpan="2">
+            <controls:FlyoutsControl>
+                <controls:Flyout DataContext="{Binding SelectedParserViewModel}"
+                                     Header="evaluate"
+                                     CloseCommand="{Binding EndEvaluateParserCommand}"
+                                     IsOpen="{Binding DataContext.ShowEvaluateParserPane, Mode=OneWay, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DockPanel}}}"
+                                     Position="Right" 
+                                     Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DockPanel}}}">
+                    <i:Interaction.Behaviors>
+                        <behaviors:RemoveCloseFromFlyoutBehavior />
+                    </i:Interaction.Behaviors>
+
+                    <views:ParserEvaluationView DataContext="{Binding}" />
+
+                </controls:Flyout>
+            </controls:FlyoutsControl>
+        </DockPanel>
+
+        <!--Flyout Panels: Search Tvdb-->
+        <DockPanel Grid.Row="1" Grid.RowSpan="2">
+            <controls:FlyoutsControl >
+                <controls:Flyout DataContext="{Binding TvdbSearchViewModel}"
+                                 Header="search tvdb"
+                                 CloseCommand="{Binding CancelCommand}"
+                                 IsOpen="{Binding IsOpen}"
+                                 Position="Right"
+                                 Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DockPanel}}}">
+                    <i:Interaction.Behaviors>
+                        <behaviors:RemoveCloseFromFlyoutBehavior />
+                    </i:Interaction.Behaviors>
+
+                    <views:TvdbSearchView  />
+
+                </controls:Flyout>
+            </controls:FlyoutsControl>
+        </DockPanel>
+        
+    </Grid>
+</UserControl>

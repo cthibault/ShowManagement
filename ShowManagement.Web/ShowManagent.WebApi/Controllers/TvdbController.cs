@@ -46,6 +46,34 @@ namespace ShowManagent.WebApi.Controllers
             return response;
         }
 
+        [HttpGet]
+        public HttpResponseMessage SearchForSeries(string seriesTitle)
+        {
+            HttpResponseMessage response = null;
+
+            try
+            {
+                List<TvdbSearchResult> tvdbResults = this.TvdbHandler.SearchSeries(seriesTitle, TvdbLanguage.DefaultLanguage);
+
+                if (tvdbResults != null)
+                {
+                    List<SeriesSearchResult> results = tvdbResults.Select(r => this.Convert(r)).ToList();
+
+                    response = Request.CreateResponse(HttpStatusCode.OK, results);
+                }
+                else
+                {
+                    response = Request.CreateResponse(HttpStatusCode.NotFound);
+                }
+            }
+            catch (Exception ex)
+            {
+                response = Request.CreateErrorResponse(HttpStatusCode.NotFound, ex);
+            }
+
+            return response;
+        }
+
 
         private EpisodeData Convert(TvdbEpisode tvdbEpisode)
         {
@@ -70,6 +98,23 @@ namespace ShowManagent.WebApi.Controllers
             return episodeData;
         }
 
+        private SeriesSearchResult Convert(TvdbSearchResult tvdbSearchResult)
+        {
+            SeriesSearchResult searchResultData = null;
+
+            if (tvdbSearchResult != null)
+            {
+                searchResultData = new SeriesSearchResult(
+                    tvdbId: tvdbSearchResult.Id,
+                    imdbId: tvdbSearchResult.ImdbId,
+                    title: tvdbSearchResult.SeriesName,
+                    overview: tvdbSearchResult.Overview,
+                    firstAired: tvdbSearchResult.FirstAired
+                );
+            }
+
+            return searchResultData;
+        }
 
         private TvdbHandler TvdbHandler
         {
