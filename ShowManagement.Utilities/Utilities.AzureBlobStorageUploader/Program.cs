@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AzureBlobStorageUploader
+namespace Utilities.AzureBlobStorageUploader
 {
     class Program
     {
@@ -24,10 +24,12 @@ namespace AzureBlobStorageUploader
                 uploadTask.Wait();
 
                 isSuccess = uploadTask.Result;
+
+                Console.WriteLine();
             }
 
-            if (isSuccess) Console.WriteLine("Upload Successful....");
-            else Console.WriteLine("Upload Failed....");
+            if (isSuccess) Console.WriteLine("UPLOAD SUCCESSFUL....");
+            else Console.WriteLine("UPLOAD FAILED....");
 
             Console.ReadKey();
         }
@@ -49,7 +51,9 @@ namespace AzureBlobStorageUploader
                 cloudBlobContainer.SetPermissions(permissions);
             }
 
-            List<string> filePaths = Directory.EnumerateFiles(rootFolderPath, "*.*", SearchOption.AllDirectories).ToList();
+            List<string> filePaths = Directory.EnumerateFiles(rootFolderPath, "*.*", SearchOption.AllDirectories)
+                .Where(fp => !fp.Contains(@"\IGNORE_"))
+                .ToList();
 
             bool uploaded = await UploadFiles(cloudBlobContainer, filePaths, rootFolderPath);
 
@@ -62,6 +66,8 @@ namespace AzureBlobStorageUploader
 
             try
             {
+                Console.WriteLine("==== UPLOADING FILES TO BLOB STORAGE ====");
+
                 var replacementFolderPath = folderPath;
 
                 if (!replacementFolderPath.EndsWith(Path.DirectorySeparatorChar.ToString()))
@@ -74,6 +80,8 @@ namespace AzureBlobStorageUploader
                     string filePathReference = filePath.Replace(replacementFolderPath, string.Empty);
 
                     CloudBlockBlob blob = blobContainer.GetBlockBlobReference(filePathReference);
+
+                    Console.WriteLine(filePathReference);
 
                     await blob.UploadFromFileAsync(filePath, FileMode.Open);
                 }

@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("AzureBlobStorageUploader")]
+[assembly: AssemblyTitle("Utilities.AzureBlobStorageUploader")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Sogeti")]
-[assembly: AssemblyProduct("AzureBlobStorageUploader")]
+[assembly: AssemblyProduct("Utilities.AzureBlobStorageUploader")]
 [assembly: AssemblyCopyright("Copyright © Sogeti 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("99bc5f0c-8ec6-4fe5-9ad2-f4e27c9f75f1")]
+[assembly: Guid("45f8296c-ced6-4127-8326-c5dbc9fb8648")]
 
 // Version information for an assembly consists of the following four values:
 //
