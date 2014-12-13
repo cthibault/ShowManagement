@@ -19,7 +19,9 @@ namespace Utilities.AzureBlobStorageUploader
 
             if (args.Length > 0)
             {
-                var uploadTask = Upload(args[0]);
+                string cleanupFolderPath = args.Length > 1 ? args[1] : string.Empty;
+
+                var uploadTask = Upload(args[0], cleanupFolderPath);
 
                 uploadTask.Wait();
 
@@ -34,10 +36,11 @@ namespace Utilities.AzureBlobStorageUploader
             Console.ReadKey();
         }
 
-        private static async Task<bool> Upload(string rootFolderPath)
+        private static async Task<bool> Upload(string rootFolderPath, string relativeCleanupFolderPath)
         {
             string connectionString = ConfigurationManager.AppSettings["StorageConnectionString"];
             string containerName = ConfigurationManager.AppSettings["ContainerName"];
+            string ignoreSubstring = ConfigurationManager.AppSettings["IgnoreSubstring"];
 
             CloudStorageAccount cloudStorageAccount = CloudStorageAccount.Parse(connectionString);
             CloudBlobClient cloudBlobClient = cloudStorageAccount.CreateCloudBlobClient();
@@ -52,10 +55,12 @@ namespace Utilities.AzureBlobStorageUploader
             }
 
             List<string> filePaths = Directory.EnumerateFiles(rootFolderPath, "*.*", SearchOption.AllDirectories)
-                .Where(fp => !fp.Contains(@"\IGNORE_"))
+                .Where(fp => !fp.Contains(ignoreSubstring))
                 .ToList();
 
             bool uploaded = await UploadFiles(cloudBlobContainer, filePaths, rootFolderPath);
+
+            await CleanupFiles(rootFolderPath, relativeCleanupFolderPath, ignoreSubstring);
 
             return uploaded;
         }
@@ -94,6 +99,27 @@ namespace Utilities.AzureBlobStorageUploader
             }
 
             return isSuccess;
+        }
+
+        private static async Task CleanupFiles(string rootFolderPath, string relativeCleanupFolderPath, string ignoreSubstring)
+        {
+            if (!string.IsNullOrWhiteSpace(relativeCleanupFolderPath))
+            {
+                string cleanupFolderPath = Path.Combine(rootFolderPath, relativeCleanupFolderPath);
+
+                List<string> directories = Directory.EnumerateDirectories(cleanupFolderPath, "*.*", SearchOption.TopDirectoryOnly)
+                    .Where(dir => !dir.Contains(ignoreSubstring))
+                    .ToList();
+
+                foreach (string directoryPath in directories)
+                {
+                    var di = new DirectoryInfo(directoryPath);
+
+                    string newDirectoryPath = Path.Combine(cleanupFolderPath, ignoreSubstring + di.Name);
+
+                    Directory.Move(directoryPath, newDirectoryPath);
+                }
+            }
         }
     }
 }
