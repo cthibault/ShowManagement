@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShowManagement.Core", "Show
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities.Pattern", "ShowManagement.Web\Entities.Pattern\Entities.Pattern.csproj", "{9C9DA4A0-EF87-47D5-A5B7-72B676406E2D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureBlobStorageUploader", "AzureBlobStorageUploader\AzureBlobStorageUploader.csproj", "{920C2DB7-B3E2-41B2-9826-D0BD166297E5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{9C9DA4A0-EF87-47D5-A5B7-72B676406E2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C9DA4A0-EF87-47D5-A5B7-72B676406E2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C9DA4A0-EF87-47D5-A5B7-72B676406E2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{920C2DB7-B3E2-41B2-9826-D0BD166297E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{920C2DB7-B3E2-41B2-9826-D0BD166297E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{920C2DB7-B3E2-41B2-9826-D0BD166297E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{920C2DB7-B3E2-41B2-9826-D0BD166297E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
