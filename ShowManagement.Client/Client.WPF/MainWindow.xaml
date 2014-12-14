@@ -31,7 +31,7 @@
                         <views:ShowsView />
                     </TabItem>
                     <TabItem Header="services">
-                        <TextBlock Text="coming soon..." Margin="5" FontSize="16" FontStyle="Italic"/>
+                        <views:ServicesView />
                     </TabItem>
                 </controls:MetroAnimatedSingleRowTabControl.Items>
             </controls:MetroAnimatedSingleRowTabControl>

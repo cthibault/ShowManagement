@@ -14,6 +14,7 @@ namespace ShowManagement.Client.WPF.ViewModels
 {
     abstract class BaseViewModel : ReactiveObject
     {
+        protected BaseViewModel() : this(App.UnityContainer) { }
         protected BaseViewModel(IUnityContainer unityContainer)
         {
             this._unityContainer = unityContainer;

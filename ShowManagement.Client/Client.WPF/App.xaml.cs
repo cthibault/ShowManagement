@@ -28,10 +28,12 @@ namespace ShowManagement.Client.WPF
 
             unityContainer.RegisterType<Services.IServiceProvider, Services.ServiceProvider>(new InjectionConstructor(settingsManager.BaseAddress));
             //unityContainer.RegisterType<Services.IServiceProvider, Services.MockServiceProvider>();
+
             unityContainer.RegisterType<Services.ITvdbSearchProvider, Services.TvdbSearchProvider>(new InjectionConstructor(settingsManager.BaseAddress));
 
 
             unityContainer.RegisterType<ViewModels.IShowsViewModel, ViewModels.ShowsViewModel>();
+            unityContainer.RegisterType<ViewModels.IServicesViewModel, ViewModels.ServicesViewModel>();
 
 
             App.UnityContainer = unityContainer;
