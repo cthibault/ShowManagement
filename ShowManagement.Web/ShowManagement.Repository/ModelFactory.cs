@@ -45,6 +45,41 @@ namespace ShowManagement.Repository
             return newParser;
         }
 
+        public static ShowDownload Convert(ShowDownloadInfo showDownloadInfo)
+        {
+            ShowDownload showDownload = null;
+
+            if (showDownload != null)
+            {
+                showDownload = new ShowDownload();
+                showDownload.ObjectState = showDownloadInfo.ObjectState;
+                showDownload.ShowDownloadId = showDownloadInfo.ShowDownloadId;
+                showDownload.CurrentPath = showDownloadInfo.CurrentPath;
+                showDownload.OriginalPath = showDownloadInfo.OriginalPath;
+                showDownload.ModifiedDate = DateTime.Now;
+                showDownload.CreatedDate = showDownloadInfo.CreatedDate ?? DateTime.Now;
+            }
+
+            return showDownload;
+        }
+        public static ShowDownloadInfo Convert(ShowDownload showDownload)
+        {
+            ShowDownloadInfo showDownloadInfo = null;
+
+            if (showDownload != null)
+            {
+                showDownloadInfo = new ShowDownloadInfo();
+                showDownloadInfo.ObjectState = showDownload.ObjectState;
+                showDownloadInfo.ShowDownloadId = showDownload.ShowDownloadId;
+                showDownloadInfo.CurrentPath = showDownload.CurrentPath;
+                showDownloadInfo.OriginalPath = showDownload.OriginalPath;
+                showDownloadInfo.ModifiedDate = showDownload.ModifiedDate;
+                showDownloadInfo.CreatedDate = showDownload.CreatedDate;
+            }
+
+            return showDownloadInfo;
+        }
+
         public static void Copy(Show from, Show to, bool includePrimaryKey)
         {
             if (from != null && to != null)

@@ -46,10 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entities\Configurations\ShowDownloadConfiguration.cs" />
     <Compile Include="Entities\Configurations\ShowParserConfiguration.cs" />
     <Compile Include="Entities\Configurations\ShowConfiguration.cs" />
     <Compile Include="Entities\Show.cs" />
     <Compile Include="Entities\ShowManagementDataContext.cs" />
+    <Compile Include="Entities\ShowDownload.cs" />
     <Compile Include="Entities\ShowParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StoredProcedures\IShowManagementStoredProcedures.cs" />

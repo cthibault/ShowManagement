@@ -234,8 +234,6 @@ namespace ShowManagement.Client.WPF.Services
             return results;
         }
 
-        public readonly List<ShowInfo> _shows;
-
 
         private ShowInfo Copy(ShowInfo original, bool includeNavProperties)
         {
@@ -267,5 +265,7 @@ namespace ShowManagement.Client.WPF.Services
 
             return result;
         }
+
+        public readonly List<ShowInfo> _shows;
     }
 }

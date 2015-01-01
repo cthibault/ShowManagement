@@ -51,7 +51,9 @@
   <ItemGroup>
     <Compile Include="ModelFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Queries\ShowDownloadByDateRangeQuery.cs" />
     <Compile Include="Queries\ShowQuery.cs" />
+    <Compile Include="Repositories\ShowDownloadRepository.cs" />
     <Compile Include="Repositories\ShowRepository.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -33,5 +33,6 @@ namespace ShowManagement.Entity
 
         public DbSet<Show> Shows { get; set; }
         public DbSet<ShowParser> ShowParsers { get; set; }
+        public DbSet<ShowDownload> ShowDownloads { get; set; }
     }
 }

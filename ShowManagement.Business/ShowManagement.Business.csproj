@@ -43,6 +43,8 @@
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\EpisodeData.cs" />
     <Compile Include="Models\Parser.cs" />
+    <Compile Include="Models\RangeParameter.cs" />
+    <Compile Include="Models\ShowDownloadInfo.cs" />
     <Compile Include="Models\ShowInfo.cs" />
     <Compile Include="Models\SearchResultData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

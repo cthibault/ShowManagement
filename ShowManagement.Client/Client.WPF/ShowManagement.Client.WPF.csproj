@@ -181,22 +181,30 @@
     <Compile Include="Infrastructure\VisualTreeHelpers.cs" />
     <Compile Include="Models\BusyContext.cs" />
     <Compile Include="Models\Change.cs" />
+    <Compile Include="Services\Interfaces\IRecentDownloadsServiceProvider.cs" />
     <Compile Include="Services\Interfaces\ITvdbSearchProvider.cs" />
     <Compile Include="Services\Interfaces\IServiceProvider.cs" />
+    <Compile Include="Services\Mock\MockRecentDownloadsServiceProvider.cs" />
     <Compile Include="Services\Mock\MockServiceProvider.cs" />
+    <Compile Include="Services\RecentDownloadsServiceProvider.cs" />
     <Compile Include="Services\TvdbSearchProvider.cs" />
     <Compile Include="Services\ServiceProvider.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\ItemViewModel.cs" />
     <Compile Include="ViewModels\ParserViewModel.cs" />
+    <Compile Include="ViewModels\RecentDownloadViewModel.cs" />
     <Compile Include="ViewModels\ServiceViewModel.cs" />
     <Compile Include="ViewModels\ShowsViewModel.cs" />
     <Compile Include="ViewModels\ShowViewModel.cs" />
     <Compile Include="ViewModels\TrackableObject.cs" />
     <Compile Include="ViewModels\ServicesViewModel.cs" />
+    <Compile Include="ViewModels\RecentDownloadsViewModel.cs" />
     <Compile Include="ViewModels\TvdbSearchViewModel.cs" />
     <Compile Include="Views\ParserEvaluationView.xaml.cs">
       <DependentUpon>ParserEvaluationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RecentDownloadsView.xaml.cs">
+      <DependentUpon>RecentDownloadsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ServicesView.xaml.cs">
       <DependentUpon>ServicesView.xaml</DependentUpon>
@@ -227,6 +235,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\ParserEvaluationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\RecentDownloadsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

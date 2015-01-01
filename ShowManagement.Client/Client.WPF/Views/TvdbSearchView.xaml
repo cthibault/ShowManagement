@@ -39,6 +39,8 @@
                       Style="{DynamicResource AzureDataGrid}"
                       ItemsSource="{Binding VisibleSearchResults}"
                       SelectedItem="{Binding SelectedResult}"
+                      SelectionMode="Single"
+                      SelectionUnit="FullRow"
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Title" 

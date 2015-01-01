@@ -20,15 +20,15 @@ using System.Windows.Shapes;
 namespace ShowManagement.Client.WPF.Views
 {
     /// <summary>
-    /// Interaction logic for ServicesView.xaml
+    /// Interaction logic for RecentDownloadsView.xaml
     /// </summary>
-    public partial class ServicesView : UserControl
+    public partial class RecentDownloadsView : UserControl
     {
-        public ServicesView()
+        public RecentDownloadsView()
         {
             InitializeComponent();
 
-            this.ViewModel = App.UnityContainer.Resolve<ViewModels.IServicesViewModel>();
+            this.ViewModel = App.UnityContainer.Resolve<ViewModels.IRecentDownloadsViewModel>();
 
             this.DataContext = this.ViewModel;
 
@@ -36,11 +36,11 @@ namespace ShowManagement.Client.WPF.Views
         }
         private void InvokeRefresh()
         {
-            var peer = UIElementAutomationPeer.CreatePeerForElement(this.refreshServicesBtn);
+            var peer = UIElementAutomationPeer.CreatePeerForElement(this.refreshRecentDownloadsBtn);
             var invokeProvider = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
             invokeProvider.Invoke();
         }
 
-        private IServicesViewModel ViewModel { get; set; }
+        private IRecentDownloadsViewModel ViewModel { get; set; }
     }
 }

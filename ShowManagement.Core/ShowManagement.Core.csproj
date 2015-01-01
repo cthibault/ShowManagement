@@ -42,6 +42,7 @@
     <Compile Include="Diagnostics\BaseTraceSourceManager.cs" />
     <Compile Include="Extensions\ExceptionExtensions.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
+    <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\TraceSourceExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

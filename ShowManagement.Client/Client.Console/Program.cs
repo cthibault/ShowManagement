@@ -2,6 +2,7 @@
 using RestSharp;
 using ShowManagement.Business.Enums;
 using ShowManagement.Business.Models;
+using ShowManagement.Core.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,9 +77,16 @@ namespace ShowManagement.Client.Console
             //getOneRequest.AddParameter("directoryPath", @"E:\Media\Videos\TV Shows\30 Rock");
             //var getOneResponse = await client.ExecuteGetTaskAsync<List<ShowInfo>>(getOneRequest);
 
-            var req = new RestRequest("api/tvdb/searchSeries", Method.GET);
-            req.AddParameter("seriesTitle", "Castle");
-            var resp = await client.ExecuteGetTaskAsync<List<SeriesSearchResult>>(req);
+            //var req = new RestRequest("api/tvdb/searchSeries", Method.GET);
+            //req.AddParameter("seriesTitle", "Castle");
+            //var resp = await client.ExecuteGetTaskAsync<List<SeriesSearchResult>>(req);
+
+            var downloadRequest = new RestRequest("api/showDownloadInfo/", Method.GET);
+            downloadRequest.RequestFormat = DataFormat.Json;
+            //var rangeParameter = new RangeParameter(null, null);
+            //downloadRequest.AddParameter("rangeParameter", rangeParameter);
+            downloadRequest.AddParameter("start", DateTimeExtensions.NullDate);// DateTime.Now.Date.AddDays(-14));
+            var downloadResponse = await client.ExecuteGetTaskAsync<List<ShowDownloadInfo>>(downloadRequest);
 
 
             var getOneRequest = new RestRequest("api/tvdb/", Method.GET);

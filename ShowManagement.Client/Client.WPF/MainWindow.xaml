@@ -25,7 +25,7 @@
             <controls:MetroAnimatedSingleRowTabControl>
                 <controls:MetroAnimatedSingleRowTabControl.Items>
                     <TabItem Header="recent downloads">
-                        <TextBlock Text="coming soon..." Margin="5" FontSize="16" FontStyle="Italic"/>
+                        <views:RecentDownloadsView />
                     </TabItem>
                     <TabItem Header="shows &amp; parsers">
                         <views:ShowsView />

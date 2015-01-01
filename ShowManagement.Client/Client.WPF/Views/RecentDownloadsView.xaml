@@ -1,0 +1,158 @@
+﻿<UserControl x:Class="ShowManagement.Client.WPF.Views.RecentDownloadsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:behaviors="clr-namespace:ShowManagement.Client.WPF.Behaviors"
+             xmlns:views="clr-namespace:ShowManagement.Client.WPF.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+
+        <Style TargetType="DataGridCell">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DataGridCell}">
+                        <Border Padding="3" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                                <ContentPresenter.ContentTemplate>
+                                    <DataTemplate>
+                                        <TextBlock TextTrimming="CharacterEllipsis" Text="{Binding Text}" FontSize="{Binding FontSize}" FontWeight="{Binding FontWeight}" />
+                                    </DataTemplate>
+                                </ContentPresenter.ContentTemplate>
+                            </ContentPresenter>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!--AppBar Buttons-->
+        <StackPanel Grid.Column="0" Orientation="Vertical">
+            <Button x:Name="refreshRecentDownloadsBtn" Width="50" Height="50" Margin="0,12,0,0" ToolTip="refresh"
+                    Command="{Binding RefreshCommand}">
+                <Rectangle Width="20" Height="20">
+                    <Rectangle.Fill>
+                        <VisualBrush Stretch="Fill" Visual="{DynamicResource appbar_refresh}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource MetroCircleButtonStyle}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding NeedsToBeRefreshed}" Value="True">
+                                <Setter Property="Background" Value="Red" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </StackPanel>
+
+        <Grid Grid.Row="0" Grid.Column="1" Margin="0,12,0,2" IsEnabled="{Binding IsEnabled}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="As of" Margin="5" VerticalAlignment="Center" FontWeight="Bold" FontSize="14" FontStyle="Italic" />
+            <DatePicker Grid.Row="0" Grid.Column="1" SelectedDate="{Binding StartDate}" Margin="2,2" />
+
+            <DataGrid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,5,0,0"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      SelectionMode="Single"
+                      SelectionUnit="FullRow"
+                      ItemsSource="{Binding VisibleSearchResults}"
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <DataGrid.Style>
+                    <Style TargetType="DataGrid" BasedOn="{StaticResource AzureDataGrid}">
+                        <Setter Property="IsEnabled" Value="True" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding NeedsToBeRefreshed}" Value="True">
+                                <Setter Property="IsEnabled" Value="False" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.Style>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Title"
+                                        Width="*"
+                                        Binding="{Binding Title, Mode=OneWay}"
+                                        FontWeight="Bold"
+                                        FontSize="14" />
+
+                    <DataGridTextColumn Header="Downloaded" 
+                                        Width="Auto"
+                                        Binding="{Binding Model.CreatedDate, Mode=OneWay, StringFormat=d}" />
+                    <DataGridTextColumn Header="Modified" 
+                                        Width="Auto"
+                                        Binding="{Binding Model.ModifiedDate, Mode=OneWay, StringFormat=d}" />
+                </DataGrid.Columns>
+                <DataGrid.RowDetailsTemplate>
+                    <DataTemplate>
+                        <Grid Margin="2,2,2,5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Current" FontWeight="Bold" Margin="2" />
+                            <TextBlock Grid.Row="0" Grid.Column="1" 
+                                       Text="{Binding Model.CurrentPath}" 
+                                       ToolTip="{Binding Model.CurrentPath}" 
+                                       TextTrimming="CharacterEllipsis" 
+                                       TextWrapping="NoWrap" 
+                                       Margin="7,2,2,2" />
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Original" FontWeight="Bold" Margin="2" />
+                            <TextBlock Grid.Row="1" Grid.Column="1" 
+                                       Text="{Binding Model.OriginalPath}" 
+                                       ToolTip="{Binding Model.OriginalPath}" 
+                                       TextTrimming="CharacterEllipsis" 
+                                       TextWrapping="NoWrap" 
+                                       Margin="7,2,2,2" />
+                        </Grid>
+                    </DataTemplate>
+                </DataGrid.RowDetailsTemplate>
+            </DataGrid>
+        </Grid>
+        
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Vertical">
+            <StackPanel.Style>
+                <Style TargetType="StackPanel">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=busyProgressBar, Path=Visibility}" Value="Hidden">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Style>
+            <TextBlock Text="{Binding BusyContextManager.Current}" />
+            <ProgressBar x:Name="busyProgressBar" IsIndeterminate="True" Visibility="{Binding BusyContextManager.IsBusy, Converter={StaticResource BoolToVisibilityConverter}}" />
+        </StackPanel>
+    </Grid>
+</UserControl>

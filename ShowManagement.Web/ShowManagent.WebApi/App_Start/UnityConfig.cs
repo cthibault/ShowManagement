@@ -32,6 +32,7 @@ namespace ShowManagent.WebApi
                 new InjectionConstructor(new object[] { new RepositoryFactories() }));
 
             container.RegisterType<IRepositoryAsync<Show>, Repository<Show>>();
+            container.RegisterType<IRepositoryAsync<ShowDownload>, Repository<ShowDownload>>();
 
             GlobalConfiguration.Configuration.DependencyResolver = new UnityDependencyResolver(container);
         }
