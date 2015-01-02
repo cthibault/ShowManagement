@@ -26,6 +26,8 @@ namespace ShowManagement.WindowsServices.NameResolver.Service
 
             this._serviceInstaller = new ServiceInstaller();
             this._serviceInstaller.ServiceName = NameResolverWindowsService.SpecifiedServiceName;
+            this._serviceInstaller.DisplayName = NameResolverWindowsService.SpecifiedServiceDisplayName;
+            this._serviceInstaller.Description = string.Format("Version: {0}", NameResolverWindowsService.Version);
             TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Service Installer Service Name: {0}", this._serviceInstaller.ServiceName);
 
             this.Installers.Add(this._processInstaller);

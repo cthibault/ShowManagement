@@ -201,5 +201,7 @@ namespace ShowManagement.WindowsServices.uTorrentCleanup.Service
         }
 
         public static string SpecifiedServiceName = "SM.uTorrentCleanupWindowsService";
+        public static readonly string SpecifiedServiceDisplayName = "Show Management - uTorrent Cleanup Windows Service";
+        public static readonly string Version = "1.2015.0101.1";
     }
 }

@@ -28,6 +28,8 @@ namespace ShowManagement.WindowsServices.uTorrentCleanup.Service
 
             this._serviceInstaller = new ServiceInstaller();
             this._serviceInstaller.ServiceName = uTorrentCleanupWindowsService.SpecifiedServiceName;
+            this._serviceInstaller.DisplayName = uTorrentCleanupWindowsService.SpecifiedServiceDisplayName;
+            this._serviceInstaller.Description = string.Format("Version: {0}", uTorrentCleanupWindowsService.Version);
             TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Service Installer Service Name: {0}", this._serviceInstaller.ServiceName);
 
             this.Installers.Add(this._processInstaller);

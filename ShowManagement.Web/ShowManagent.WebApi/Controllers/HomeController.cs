@@ -11,7 +11,7 @@ namespace ShowManagent.WebApi.Controllers
         public ActionResult Index()
         {
             ViewBag.Title = "Home Page";
-            ViewBag.Version = "v2014.12.1.2";
+            ViewBag.Version = "1.2014.0101.1";
 
             return View();
         }

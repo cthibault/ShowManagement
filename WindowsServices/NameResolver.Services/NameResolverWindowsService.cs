@@ -191,5 +191,7 @@ namespace ShowManagement.WindowsServices.NameResolver.Service
         }
 
         public static string SpecifiedServiceName = "SM.NameResolverWindowsService";
+        public static readonly string SpecifiedServiceDisplayName = "Show Management - Name Resolver Windows Service";
+        public static readonly string Version = "1.2015.0101.1";
     }
 }
