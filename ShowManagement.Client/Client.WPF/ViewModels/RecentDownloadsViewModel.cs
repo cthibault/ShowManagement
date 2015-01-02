@@ -3,6 +3,7 @@ using ReactiveUI;
 using ShowManagement.Business.Models;
 using ShowManagement.Client.WPF.Models;
 using ShowManagement.Client.WPF.Services;
+using ShowManagement.Core.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,6 +47,17 @@ namespace ShowManagement.Client.WPF.ViewModels
                 (rdvm1, rdvm2) => rdvm2.Model.CreatedDate.Value.CompareTo(rdvm1.Model.CreatedDate.Value));
 
             this.StartDate = DateTime.Now.Date.AddDays(-14);
+
+            this.Timer = new System.Timers.Timer(1000);
+            this.Timer.Elapsed += (s, e) =>
+                {
+                    this.CurrentRefreshInterval += 1;
+
+                    if (this.CurrentRefreshInterval >= this._maxRefreshInterval)
+                    {
+                        this.RefreshCommand.Execute(null);
+                    }
+                };
         }
 
         private void DefineCommands()
@@ -63,6 +75,8 @@ namespace ShowManagement.Client.WPF.ViewModels
         {
             List<ShowDownloadInfo> results = null;
 
+            this.Timer.Stop();
+            this.CurrentRefreshInterval = 0;
             this.IsEnabled = false;
 
             BusyContext busyContext = null;
@@ -79,6 +93,7 @@ namespace ShowManagement.Client.WPF.ViewModels
 
                 results = await this.ServiceProvider.GetRecentDownloads();
             }
+            
 
             return new Tuple<List<ShowDownloadInfo>, BusyContext>(results, busyContext);
         }
@@ -107,6 +122,7 @@ namespace ShowManagement.Client.WPF.ViewModels
             }
 
             this.IsEnabled = true;
+            this.Timer.Start();
         }
         #endregion
 
@@ -124,6 +140,27 @@ namespace ShowManagement.Client.WPF.ViewModels
             set { this.RaiseAndSetIfChanged(ref this._isEnabled, value); }
         }
         private bool _isEnabled;
+
+        private System.Timers.Timer Timer { get; set; }
+        public int RefreshPercentage
+        {
+            get
+            {
+                return (int)((this._currentRefreshInterval / this._maxRefreshInterval) * 100);
+            }
+        }
+        public double CurrentRefreshInterval
+        {
+            get { return this._currentRefreshInterval; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref this._currentRefreshInterval, value);
+                this.RaisePropertyChanged(this.ExtractPropertyName(x => x.RefreshPercentage));
+            }
+        }
+        private double _currentRefreshInterval;
+
+        private double _maxRefreshInterval = 15;
 
         public bool NeedsToBeRefreshed
         {

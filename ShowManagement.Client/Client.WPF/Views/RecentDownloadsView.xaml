@@ -66,6 +66,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -139,6 +140,12 @@
                     </DataTemplate>
                 </DataGrid.RowDetailsTemplate>
             </DataGrid>
+
+            <ProgressBar Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" 
+                         HorizontalAlignment="Stretch" 
+                         IsIndeterminate="False" 
+                         Height="4"
+                         Value="{Binding RefreshPercentage, Mode=OneWay}" />
         </Grid>
         
         <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Vertical">
