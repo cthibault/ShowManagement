@@ -12,5 +12,7 @@ namespace ShowManagement.WindowsServices.NameResolver.Services
         Task<List<ShowInfo>> GetShowInfos(string directoryPath);
 
         Task<EpisodeData> GetEpisodeData(int tvdbId, int seasonNumber, int episodeNumber);
+
+        Task SaveShowDownloadInfo(string originalShowPath, string newShowPath);
     }
 }

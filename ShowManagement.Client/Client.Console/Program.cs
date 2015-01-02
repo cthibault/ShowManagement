@@ -81,12 +81,16 @@ namespace ShowManagement.Client.Console
             //req.AddParameter("seriesTitle", "Castle");
             //var resp = await client.ExecuteGetTaskAsync<List<SeriesSearchResult>>(req);
 
-            var downloadRequest = new RestRequest("api/showDownloadInfo/", Method.GET);
+            //var downloadRequest = new RestRequest("api/showDownloadInfo/", Method.GET);
+            //downloadRequest.RequestFormat = DataFormat.Json;
+            //downloadRequest.AddParameter("start", DateTimeExtensions.NullDate);// DateTime.Now.Date.AddDays(-14));
+            //var downloadResponse = await client.ExecuteGetTaskAsync<List<ShowDownloadInfo>>(downloadRequest);
+
+            var downloadRequest = new RestRequest("api/showDownloadInfo/", Method.POST);
             downloadRequest.RequestFormat = DataFormat.Json;
-            //var rangeParameter = new RangeParameter(null, null);
-            //downloadRequest.AddParameter("rangeParameter", rangeParameter);
-            downloadRequest.AddParameter("start", DateTimeExtensions.NullDate);// DateTime.Now.Date.AddDays(-14));
-            var downloadResponse = await client.ExecuteGetTaskAsync<List<ShowDownloadInfo>>(downloadRequest);
+            downloadRequest.AddParameter("currentPath", "current");
+            downloadRequest.AddParameter("newPath", "new");
+            var downloadResponse = await client.ExecutePostTaskAsync<ShowDownloadInfo>(downloadRequest);
 
 
             var getOneRequest = new RestRequest("api/tvdb/", Method.GET);

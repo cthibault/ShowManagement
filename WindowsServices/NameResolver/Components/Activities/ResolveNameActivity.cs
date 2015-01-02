@@ -153,19 +153,22 @@ namespace ShowManagement.WindowsServices.NameResolver.Components.Activities
         {
             bool isSuccess = false;
 
+            string originalPath = string.Empty;
+            string newPath = string.Empty;
+
             if (fileInfo != null && episodeData != null)
             {
                 try
                 {
-                    var originalName = fileInfo.FullName;
+                    originalPath = fileInfo.FullName;
 
-                    var fullPath = this.BuildPath(fileInfo, episodeData);
+                    newPath = this.BuildPath(fileInfo, episodeData);
 
-                    fileInfo.MoveTo(fullPath);
+                    fileInfo.MoveTo(newPath);
 
                     isSuccess = true;
 
-                    TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Information, 0, "Renamed \"{0}\"  == TO ==  \"{1}\"", originalName, fullPath);
+                    TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Information, 0, "Renamed \"{0}\"  == TO ==  \"{1}\"", originalPath, newPath);
                 }
                 catch (IOException ioException)
                 {
@@ -177,6 +180,18 @@ namespace ShowManagement.WindowsServices.NameResolver.Components.Activities
                     // TODO
                     TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Error, 0, "Exception caught in ResolveNameActivity.PerformRename(): {0}", ex.ExtractExceptionMessage());
                     isSuccess = false;
+                }
+
+                if (isSuccess)
+                {
+                    try
+                    {
+                        await this.ServiceProvider.SaveShowDownloadInfo(originalPath, newPath);
+                    }
+                    catch (Exception ex)
+                    {
+                        TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Error, 0, "Exception caught in ResolveNameActivity.PerformRename()-SaveShowDownloadInfo: {0}", ex.ExtractExceptionMessage());
+                    }
                 }
             }
 

@@ -40,10 +40,10 @@ namespace ShowManagement.WindowsServices.uTorrentCleanup.Service
         {
             TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Enter ShowManagement.WindowsServices.uTorrentCleanup.Service.uTorrentCleanupWindowsService.TryStart()");
 
-            var interval = this.SettingsManager.CleanupIntervalInMinutes;
+            var interval = this.SettingsManager.CleanupIntervalInSeconds;
 
             var immediateTimer = Observable.Timer(TimeSpan.FromSeconds(1));
-            var recurringTimer = Observable.Interval(TimeSpan.FromMinutes(interval));
+            var recurringTimer = Observable.Interval(TimeSpan.FromSeconds(interval));
 
             this._timer = Observable.Merge(immediateTimer, recurringTimer)
                 .Subscribe(_ => this.TorrentManager.RemoveCompletedTorrents());
@@ -116,7 +116,8 @@ namespace ShowManagement.WindowsServices.uTorrentCleanup.Service
                     TraceSourceManager.TraceSource.TraceWithDateFormat(TraceEventType.Verbose, 0, "Initializing the ITorrentManager instance.");
 
                     this._torrentManager = this.UnityContainer.Resolve<ITorrentManager>(
-                        new ParameterOverride("settingsManager", this.SettingsManager));
+                        new ParameterOverride("settingsManager", this.SettingsManager),
+                        new ParameterOverride("baseAddress", this.SettingsManager.BaseAddress));
                 }
                 return this._torrentManager;
             }

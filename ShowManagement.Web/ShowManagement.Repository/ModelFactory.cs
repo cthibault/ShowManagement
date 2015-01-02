@@ -112,5 +112,22 @@ namespace ShowManagement.Repository
                 to.ShowId = from.ShowId;
             }
         }
+
+        public static void Copy(ShowDownload from, ShowDownload to, bool includePrimaryKey)
+        {
+            if (from != null && to != null)
+            {
+                if (includePrimaryKey)
+                {
+                    to.ShowDownloadId = from.ShowDownloadId;
+                }
+
+                to.ObjectState = from.ObjectState;
+                to.CurrentPath = from.CurrentPath;
+                to.OriginalPath = from.OriginalPath;
+                to.CreatedDate = from.CreatedDate;
+                to.ModifiedDate = from.ModifiedDate;
+            }
+        }
     }
 }

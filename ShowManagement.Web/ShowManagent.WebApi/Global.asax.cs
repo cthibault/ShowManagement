@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ShowManagent.WebApi.Bindings;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -13,6 +14,8 @@ namespace ShowManagent.WebApi
     {
         protected void Application_Start()
         {
+            GlobalConfiguration.Configuration.ParameterBindingRules.Insert(0, SimplePostVariableParameterBinding.HookupParameterBinding);
+
             AreaRegistration.RegisterAllAreas();
             UnityConfig.RegisterComponents(); 
             GlobalConfiguration.Configure(WebApiConfig.Register);

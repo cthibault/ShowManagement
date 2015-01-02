@@ -106,11 +106,11 @@ namespace ShowManagement.WindowsServices.uTorrentCleanup
             }
         }
 
-        public int CleanupIntervalInMinutes
+        public int CleanupIntervalInSeconds
         {
             get
             {
-                if (!this._cleanupIntervalInMinutes.HasValue)
+                if (!this._cleanupIntervalInSeconds.HasValue)
                 {
                     string settingValue = string.Empty;
                     if (this._settingsDictionary.ContainsKey(CLEANUP_INTERVAL))
@@ -119,13 +119,29 @@ namespace ShowManagement.WindowsServices.uTorrentCleanup
                     }
 
                     int convertedValue = 0;
-                    this._cleanupIntervalInMinutes = int.TryParse(settingValue, out convertedValue) ? convertedValue : CLEANUP_INTERVAL_DEFAULT_VALUE;
+                    this._cleanupIntervalInSeconds = int.TryParse(settingValue, out convertedValue) ? convertedValue : CLEANUP_INTERVAL_DEFAULT_VALUE;
                 }
 
-                return this._cleanupIntervalInMinutes.Value;
+                return this._cleanupIntervalInSeconds.Value;
             }
         }
 
+        public string BaseAddress
+        {
+            get
+            {
+                if (this._baseAddress == null)
+                {
+                    this._baseAddress = string.Empty;
+                    if (this._settingsDictionary.ContainsKey(BASE_ADDRESS_KEY))
+                    {
+                        _baseAddress = this._settingsDictionary[BASE_ADDRESS_KEY];
+                    }
+                }
+
+                return this._baseAddress;
+            }
+        }
         #endregion
 
         #region Private Fields
@@ -137,7 +153,9 @@ namespace ShowManagement.WindowsServices.uTorrentCleanup
         private string _webuiPassword;
 
         private int? _webuiPort;
-        private int? _cleanupIntervalInMinutes;
+        private int? _cleanupIntervalInSeconds;
+
+        private string _baseAddress;
 
         #endregion
 
@@ -147,10 +165,11 @@ namespace ShowManagement.WindowsServices.uTorrentCleanup
         public const string WEBUI_PORT = "WebUiPort";
         public const string WEBUI_USER = "WebUiUser";
         public const string WEBUI_PASSWORD = "WebUiPassword";
-        public const string CLEANUP_INTERVAL = "CleanupIntervalInMinutes";
+        public const string CLEANUP_INTERVAL = "CleanupIntervalInSeconds";
+        public const string BASE_ADDRESS_KEY = "baseAddress";
 
         public const int WEBUI_PORT_DEFAULT_VALUE = 8080;
-        public const int CLEANUP_INTERVAL_DEFAULT_VALUE = 10;
+        public const int CLEANUP_INTERVAL_DEFAULT_VALUE = 600;
 
         #endregion
     }

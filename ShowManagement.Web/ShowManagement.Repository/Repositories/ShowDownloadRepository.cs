@@ -27,13 +27,24 @@ namespace ShowManagement.Repository.Repositories
             return showDownloads;
         }
 
+        public static ShowDownload GetById(this IRepositoryAsync<ShowDownload> repository, int id)
+        {
+            var query = repository
+                .Queryable()
+                .Where(sd => sd.ShowDownloadId == id);
+
+            var showDownload = query.SingleOrDefault();
+
+            return showDownload;
+        }
+
         public static ShowDownload GetByCurrentPath(this IRepositoryAsync<ShowDownload> repository, string currentPath)
         {
             var query = repository
                 .Queryable()
                 .Where(sd => sd.CurrentPath == currentPath);
 
-            var showDownload = query.Single();
+            var showDownload = query.SingleOrDefault();
 
             return showDownload;
         }

@@ -26,205 +26,128 @@ namespace ShowManagent.WebApi.Controllers
         [HttpGet]
         public IEnumerable<ShowDownloadInfo> Get(DateTime start)
         {
-            var showRepository = this._uow.RepositoryAsync<ShowDownload>();
+            var showDownloadRepository = this._uow.RepositoryAsync<ShowDownload>();
 
             var rangeParameter = RangeParameter.Create(start);
 
-            List<ShowDownload> showInfos = showRepository.GetAll(rangeParameter);
+            List<ShowDownload> showInfos = showDownloadRepository.GetAll(rangeParameter);
 
             List<ShowDownloadInfo> showDownloadInfos = showInfos.Select(sd => ModelFactory.Convert(sd)).ToList();
 
             return showDownloadInfos;
         }
 
-        //// GET: api/ShowInfo/5
-        //[HttpGet]
-        //public HttpResponseMessage Get(int id)
-        //{
-        //    HttpResponseMessage response = null;
+        [HttpGet]
+        public HttpResponseMessage Get(int id)
+        {
+            HttpResponseMessage response = null;
 
-        //    try
-        //    {
-        //        var showRepository = this._uow.RepositoryAsync<Show>();
+            try
+            {
+                var showDownloadRepository = this._uow.RepositoryAsync<ShowDownload>();
 
-        //        ShowInfo showInfo = showRepository.GetShowInfo(id);
+                ShowDownload showDownload = showDownloadRepository.GetById(id);
 
-        //        if (showInfo != null)
-        //        {
-        //            response = Request.CreateResponse(HttpStatusCode.OK, showInfo);
-        //        }
-        //        else
-        //        {
-        //            response = Request.CreateResponse(HttpStatusCode.NotFound);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        response = Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
-        //    }
+                if (showDownload != null)
+                {
+                    ShowDownloadInfo showDownloadInfo = ModelFactory.Convert(showDownload);
 
-        //    return response;
-        //}
+                    response = Request.CreateResponse(HttpStatusCode.OK, showDownloadInfo);
+                }
+                else
+                {
+                    response = Request.CreateResponse(HttpStatusCode.NotFound);
+                }
+            }
+            catch (Exception ex)
+            {
+                response = Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
 
-        //// GET: api/ShowInfo/directoryPath
-        //[HttpGet]
-        //public HttpResponseMessage Get(string directoryPath)
-        //{
-        //    HttpResponseMessage response = null;
+            return response;
+        }
 
-        //    try
-        //    {
-        //        var showRepository = this._uow.RepositoryAsync<Show>();
+        [HttpGet]
+        public HttpResponseMessage Get(string currentPath)
+        {
+            HttpResponseMessage response = null;
 
-        //        List<ShowInfo> showInfos = showRepository.GetShowInfos(directoryPath);
+            try
+            {
+                var showDownloadRepository = this._uow.RepositoryAsync<ShowDownload>();
 
-        //        if (showInfos != null)
-        //        {
-        //            response = Request.CreateResponse(HttpStatusCode.OK, showInfos);
-        //        }
-        //        else
-        //        {
-        //            response = Request.CreateResponse(HttpStatusCode.NotFound);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        response = Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
-        //    }
+                ShowDownload showDownload = showDownloadRepository.GetByCurrentPath(currentPath);
 
-        //    return response;
-        //}
+                if (showDownload != null)
+                {
+                    ShowDownloadInfo showDownloadInfo = ModelFactory.Convert(showDownload);
 
+                    response = Request.CreateResponse(HttpStatusCode.OK, showDownloadInfo);
+                }
+                else
+                {
+                    response = Request.CreateResponse(HttpStatusCode.NotFound);
+                }
+            }
+            catch (Exception ex)
+            {
+                response = Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
 
-        //// POST: api/ShowInfo
-        //[HttpPost]
-        //public HttpResponseMessage Post([FromBody]ShowInfo showInfo)
-        //{
-        //    HttpResponseMessage response = null;
+            return response;
+        }
 
-        //    try
-        //    {
-        //        if (showInfo != null)
-        //        {
-        //            Func<int> getShowId = () => showInfo.ShowId;
+        [HttpPost]
+        public HttpResponseMessage Post(string currentPath, string newPath)
+        {
+            HttpResponseMessage response = null;
 
-        //            var showRepository = this._uow.RepositoryAsync<Show>();
+            try
+            {
+                if (!string.IsNullOrEmpty(currentPath) && !string.IsNullOrEmpty(newPath))
+                {
+                    var showDownloadRepository = this._uow.RepositoryAsync<ShowDownload>();
 
-        //            if (showInfo.ObjectState == ObjectState.Added)
-        //            {
-        //                Show newShow = ModelFactory.Convert(showInfo);
+                    ShowDownload showDownload = showDownloadRepository.GetByCurrentPath(currentPath);
 
-        //                List<ShowParser> newParsers = showInfo.Parsers.Select(p => ModelFactory.Convert(p, 0)).ToList();
+                    if (showDownload == null)
+                    {
+                        var now = DateTime.Now;
 
-        //                newParsers.ForEach(sp => newShow.ShowParsers.Add(sp));
+                        showDownload = new ShowDownload
+                        {
+                            ObjectState = ObjectState.Added,
+                            CurrentPath = newPath,
+                            OriginalPath = currentPath,
+                            CreatedDate = now,
+                            ModifiedDate =now,
+                        };
 
-        //                showRepository.InsertOrUpdateGraph(newShow);
+                        showDownloadRepository.Insert(showDownload);
+                    }
+                    else
+                    {
+                        showDownload.ObjectState = ObjectState.Modified;
+                        showDownload.CurrentPath = newPath;
+                        showDownload.ModifiedDate = DateTime.Now;
+                    }
 
-        //                getShowId = () => newShow.ShowId;
-        //            }
-        //            else 
-        //            {
-        //                if (showInfo.ObjectState == ObjectState.Modified)
-        //                {
-        //                    Show updatedShow = ModelFactory.Convert(showInfo);
+                    this._uow.SaveChanges();
 
-        //                    Show existingShow = showRepository.GetShow(updatedShow.ShowId, false);
+                    response = this.Get(showDownload.ShowDownloadId);
+                }
+                else
+                {
+                    response = Request.CreateResponse(HttpStatusCode.BadRequest, "Missing Current Path or New Path.");
+                }
+            }
+            catch (Exception ex)
+            {
+                response = Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
 
-        //                    ModelFactory.Copy(updatedShow, existingShow, false);
-        //                }
-
-                        
-        //                var changedParsers = showInfo.Parsers.Where(p => p.ObjectState != ObjectState.Unchanged);
-
-        //                if (changedParsers.Any())
-        //                {
-        //                    var showParsersRepository = this._uow.RepositoryAsync<ShowParser>();
-
-        //                    foreach (var parser in changedParsers)
-        //                    {
-        //                        switch (parser.ObjectState)
-        //                        {
-        //                            case ObjectState.Added:
-        //                                ShowParser newParser = ModelFactory.Convert(parser, showInfo.ShowId);
-
-        //                                showParsersRepository.Insert(newParser);
-        //                                break;
-
-        //                            case ObjectState.Modified:
-        //                                ShowParser updatedParser = ModelFactory.Convert(parser, showInfo.ShowId);
-
-        //                                ShowParser existingParser = showParsersRepository.Find(parser.ParserId);
-
-        //                                ModelFactory.Copy(updatedParser, existingParser, false);
-        //                                break;
-
-        //                            case ObjectState.Deleted:
-        //                                showParsersRepository.Delete(parser.ParserId);
-        //                                break;
-        //                        }
-        //                    }
-        //                }
-        //            }
-
-        //            this._uow.SaveChanges();
-
-        //            int showId = getShowId();
-
-        //            response = this.Get(showId);
-        //        }
-        //        else
-        //        {
-        //            response = Request.CreateResponse(HttpStatusCode.BadRequest, "Could not read ShowInfo from the body.");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        response = Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
-        //    }
-
-        //    return response;
-        //}
-
-
-        //// DELETE: api/ShowInfo
-        //[HttpDelete]
-        //public HttpResponseMessage Delete(int id)
-        //{
-        //    HttpResponseMessage response = null;
-
-        //    try
-        //    {
-        //        var showRepository = this._uow.RepositoryAsync<Show>();
-
-        //        var existingShow = showRepository.GetShow(id, true);
-
-        //        if (existingShow != null)
-        //        {
-        //            var showParserRepository = this._uow.RepositoryAsync<ShowParser>();
-
-        //            for (int i = existingShow.ShowParsers.Count - 1; i >= 0; i--)
-        //            {
-        //                showParserRepository.Delete(existingShow.ShowParsers.ElementAt(i).ShowParserId);
-        //            }
-                    
-        //            showRepository.Delete(existingShow.ShowId);
-                    
-        //            this._uow.SaveChanges();
-
-        //            response = Request.CreateResponse(HttpStatusCode.OK);
-        //        }
-        //        else
-        //        {
-        //            response = Request.CreateResponse(HttpStatusCode.NotFound);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        response = Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
-        //    }
-
-        //    return response;
-        //}
+            return response;
+        }
 
 
         #region Private Fields

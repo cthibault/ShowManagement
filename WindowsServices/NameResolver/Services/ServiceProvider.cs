@@ -1,6 +1,7 @@
 ﻿using RestSharp;
 using ShowManagement.Business.Models;
 using ShowManagement.CommonServiceProviders;
+using ShowManagement.WindowsServices.NameResolver.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,6 +56,23 @@ namespace ShowManagement.WindowsServices.NameResolver.Services
             }
 
             return episodeData;
+        }
+
+        public async Task SaveShowDownloadInfo(string originalShowPath, string newShowPath)
+        {
+            var client = new RestClient(this.BaseAddress);
+
+            var request = new RestRequest("api/showDownloadInfo/", Method.POST);
+            request.RequestFormat = DataFormat.Json;
+            request.AddParameter("currentPath", originalShowPath);
+            request.AddParameter("newPath", newShowPath);
+
+            var response = await client.ExecutePostTaskAsync<ShowDownloadInfo>(request);
+
+            if (response.ResponseStatus != ResponseStatus.Completed)
+            {
+                throw new RestServiceResponseException("Failed to Save", response);
+            }
         }
     }
 }
