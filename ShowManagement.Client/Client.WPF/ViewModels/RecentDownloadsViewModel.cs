@@ -48,16 +48,7 @@ namespace ShowManagement.Client.WPF.ViewModels
 
             this.StartDate = DateTime.Now.Date.AddDays(-14);
 
-            this.Timer = new System.Timers.Timer(1000);
-            this.Timer.Elapsed += (s, e) =>
-                {
-                    this.CurrentRefreshInterval += 1;
-
-                    if (this.CurrentRefreshInterval >= this._maxRefreshInterval)
-                    {
-                        this.RefreshCommand.Execute(null);
-                    }
-                };
+            this.Timer = Observable.Interval(TimeSpan.FromSeconds(1)).Select(x => x + 1);
         }
 
         private void DefineCommands()
@@ -75,8 +66,6 @@ namespace ShowManagement.Client.WPF.ViewModels
         {
             List<ShowDownloadInfo> results = null;
 
-            this.Timer.Stop();
-            this.CurrentRefreshInterval = 0;
             this.IsEnabled = false;
 
             BusyContext busyContext = null;
@@ -122,7 +111,22 @@ namespace ShowManagement.Client.WPF.ViewModels
             }
 
             this.IsEnabled = true;
-            this.Timer.Start();
+            this.TimerSubscription = this.Timer.Subscribe(x =>
+                {
+                    this.CurrentRefreshInterval = (double)x;
+
+                    if (this.CurrentRefreshInterval >= this._maxRefreshInterval)
+                    {
+                        this.CurrentRefreshInterval = 0;
+
+                        if (this.TimerSubscription != null)
+                        {
+                            this.TimerSubscription.Dispose();
+                        }
+
+                        this.RefreshCommand.Execute(null);
+                    }
+                });
         }
         #endregion
 
@@ -141,26 +145,29 @@ namespace ShowManagement.Client.WPF.ViewModels
         }
         private bool _isEnabled;
 
-        private System.Timers.Timer Timer { get; set; }
         public int RefreshPercentage
         {
             get
             {
-                return (int)((this._currentRefreshInterval / this._maxRefreshInterval) * 100);
+                return (int)((this.CurrentRefreshInterval / this._maxRefreshInterval) * 100);
             }
         }
+
         public double CurrentRefreshInterval
         {
             get { return this._currentRefreshInterval; }
-            set
-            {
+            set 
+            { 
                 this.RaiseAndSetIfChanged(ref this._currentRefreshInterval, value);
                 this.RaisePropertyChanged(this.ExtractPropertyName(x => x.RefreshPercentage));
             }
         }
         private double _currentRefreshInterval;
-
+        
         private double _maxRefreshInterval = 15;
+        
+        private IObservable<long> Timer { get; set; }
+        private IDisposable TimerSubscription { get; set; }
 
         public bool NeedsToBeRefreshed
         {
